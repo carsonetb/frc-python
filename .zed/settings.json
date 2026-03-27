@@ -1,0 +1,16 @@
+{
+  "project_name": "frc-python",
+  "languages": {
+    "Python": {
+      "format_on_save": "on",
+      "preferred_line_length": 130
+    }
+  },
+  "lsp": {
+    "ruff": {
+      "initialization_options": {
+        "line-length": 130
+      }
+    }
+  }
+}

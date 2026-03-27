@@ -1,0 +1,11 @@
+{
+  "include": ["src"],
+  "extraPaths": ["src"],
+  "executionEnvironments": [
+    {
+      "root": "src"
+    }
+  ],
+  "reportUnusedCallResult": "none",
+  "reportMissingTypeStubs": "none"
+}

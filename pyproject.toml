@@ -1,0 +1,28 @@
+[project]
+name = "frc-python"
+version = "2026.0.0"
+dependencies = [
+    "robotpy[commands2]",
+    "robotpy-pykit",
+    "robotpy-pykit-watch",
+    "phoenix6",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.robotpy]
+robotpy_version = "2026.2.2"
+components = [
+    # "all",
+    # "apriltag",
+    "commands2",
+    # "cscore",
+    # "romi",
+    # "sim",
+    # "xrp",
+]
+requires = [
+    "robotpy-pykit",
+    "phoenix6"
+]
