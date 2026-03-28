@@ -4,7 +4,7 @@ from math import cos, pi, sin
 
 from units.angle import Angle, degrees, radians, rotations
 from units.base import UnitPerUnit
-from units.distance import Distance, meters
+from units.distance import Distance, feet, meters
 from units.time import Time, seconds
 
 
@@ -50,6 +50,10 @@ class AngularVelocity(UnitPerUnit[Angle, Time]):
 
 def meters_per_second(val: float) -> LinearVelocity:
     return LinearVelocity(meters(val), seconds(1))
+
+
+def feet_per_second(val: float) -> LinearVelocity:
+    return LinearVelocity(feet(val), seconds(1))
 
 
 def radians_per_second(val: float) -> AngularVelocity:

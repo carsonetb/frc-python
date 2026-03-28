@@ -16,6 +16,10 @@ class Distance(Unit):
         match self.unit:
             case "meters":
                 return self.meters()
+            case "inches":
+                return self.inches()
+            case "feet":
+                return self.feet()
             case _:
                 assert False
 
@@ -24,10 +28,13 @@ class Distance(Unit):
         return Distance(new, self.unit)
 
     def meters(self) -> float:
-        return self
+        return self.raw
 
     def inches(self) -> float:
-        return self * 39.3701
+        return self.raw * 39.3701
+
+    def feet(self) -> float:
+        return self.raw / 0.3048
 
 
 def meters(val: float) -> Distance:
@@ -36,6 +43,10 @@ def meters(val: float) -> Distance:
 
 def inches(val: float) -> Distance:
     return Distance(val / 39.3701, "inches")
+
+
+def feet(val: float) -> Distance:
+    return Distance(val * 0.3048, "feet")
 
 
 DistanceTime = UnitUnit[Distance, Time]

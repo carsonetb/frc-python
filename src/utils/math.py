@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from math import cos, sin, sqrt
 from typing import override
 
-from wpimath.geometry import Translation2d
+from wpimath.geometry import Pose2d, Rotation2d, Translation2d
 
 from units.base import Unit
 
@@ -21,6 +21,14 @@ def t2d_dot(left: Translation2d, right: Translation2d) -> float:
 class Vector2[U: Unit]:
     x: U
     y: U
+
+    def to_pose2d(self) -> Pose2d:
+        """
+        Returns this vector as a Pose2d with zero rotation, in the
+        raw units, which is probably meters or m/s.
+        """
+
+        return Pose2d(Translation2d(self.x.raw, self.y.raw), Rotation2d())
 
     def normalized(self) -> Vector2[U]:
         return self / self.length()

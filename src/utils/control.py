@@ -39,6 +39,9 @@ class LinearMotorFFGains:
     v: VoltageTimePerDistance = volt_seconds_per_meter(0)
     a: VoltageTimeSquaredPerDistance = volt_seconds_squared_per_meter(0)
 
+    def slot_with(self, slot: Slot0Configs) -> Slot0Configs:
+        return slot.with_k_s(self.s.raw).with_k_v(self.s.raw).with_k_a(self.a.raw)
+
     def to_feedforward(self) -> SimpleMotorFeedforwardMeters:
         return SimpleMotorFeedforwardMeters(float(self.s), float(self.v), float(self.a))
 
@@ -101,7 +104,7 @@ class LinearPIDGains:
     ) -> ProfiledPIDController:
         return ProfiledPIDController(self.p, self.i, self.d, constraints)
 
-    def slot_with(self, slot: SlotConfigs) -> SlotConfigs:
+    def slot_with(self, slot: Slot0Configs) -> Slot0Configs:
         return (
             slot.with_k_p(float(self.p)).with_k_i(float(self.i)).with_k_d(float(self.d))
         )

@@ -15,14 +15,14 @@ class Voltage(Unit):
 
     @override
     def in_current(self) -> float:
-        return self
+        return self.raw
 
     @override
     def withval(self, new: float) -> Voltage:
         return Voltage(new, self.unit)
 
     def voltage(self) -> float:
-        return self
+        return self.raw
 
 
 def voltage(val: float) -> Voltage:
