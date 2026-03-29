@@ -18,6 +18,7 @@ from phoenix6.configs import (
 from phoenix6.controls import PositionVoltage, VelocityVoltage, VoltageOut
 from phoenix6.hardware import TalonFX
 from phoenix6.signals import FeedbackSensorSourceValue, NeutralModeValue
+from wpimath.geometry import Rotation2d
 from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 
 from can import CTREDeviceID
@@ -109,19 +110,19 @@ class Mk5nSwerveModule(SwerveModule):
         self,
         drive: SwerveDrivingMotor,
         turn: SwerveTurningMotor,
-        chassis_angle: Angle,
+        chassis_angle: Rotation2d,
         odometry_thread: PhoenixOdometryThread,
     ) -> None:
         self.drive: SwerveDrivingMotor = drive
         self.turn: SwerveTurningMotor = turn
-        self.chassis_angle: Angle = chassis_angle
+        self.chassis_angle: Rotation2d = chassis_angle
 
         self.timestamp_queue: Queue[float] = odometry_thread.make_timestamp_queue()
 
         self._odometry_timestamps: list[float] = []
         self._odometry_positions: list[SwerveModulePosition] = []
         self._desired_state: SwerveModuleState = SwerveModuleState(
-            0.0, -self.chassis_angle.to_rotation2d()
+            0.0, -self.chassis_angle
         )
 
     @property
@@ -144,7 +145,7 @@ class Mk5nSwerveModule(SwerveModule):
     def state(self) -> SwerveModuleState:
         return SwerveModuleState(
             self.drive.velocity.meters_per_second(),
-            (self.turn.position + self.chassis_angle).to_rotation2d(),  # ?
+            self.turn.position.to_rotation2d() + self.chassis_angle,  # ?
         )
 
     @property
@@ -152,7 +153,7 @@ class Mk5nSwerveModule(SwerveModule):
     def position(self) -> SwerveModulePosition:
         return SwerveModulePosition(
             self.drive.position.meters(),
-            (self.turn.position + self.chassis_angle).to_rotation2d(),
+            self.turn.position.to_rotation2d() + self.chassis_angle,
         )
 
     @property
@@ -165,15 +166,13 @@ class Mk5nSwerveModule(SwerveModule):
     def desired_state(self) -> SwerveModuleState:
         return SwerveModuleState(
             self._desired_state.speed,
-            self._desired_state.angle + self.chassis_angle.to_rotation2d(),
+            self._desired_state.angle + self.chassis_angle,
         )
 
     @desired_state.setter
     @override
     def desired_state(self, val: SwerveModuleState) -> None:
-        corrected = SwerveModuleState(
-            val.speed, val.angle - self.chassis_angle.to_rotation2d()
-        )
+        corrected = SwerveModuleState(val.speed, val.angle - self.chassis_angle)
         corrected.optimize(self.turn.position.to_rotation2d())
         corrected.cosineScale(self.turn.position.to_rotation2d())
 
@@ -220,11 +219,11 @@ class Mk5nSwerveModule(SwerveModule):
                 radians(self.odometry_drive_positions[i])
                 - (self.odometry_turn_positions[i].mulratio(self.COUPLING_RATIO))
             ).to_linear(DrivingTalon.WHEEL_RADIUS)
-            angle = self.odometry_turn_positions[i] + self.chassis_angle
+            angle = self.odometry_turn_positions[i].to_rotation2d() + self.chassis_angle
             pos = self.odometry_positions[i]
 
             pos.distance = distance.meters()
-            pos.angle = angle.to_rotation2d()
+            pos.angle = angle
 
 
 class SwerveDrivingMotor(ABC):
@@ -422,7 +421,7 @@ class TurningTalon(SwerveTurningMotor):
         self,
         id: CTREDeviceID,
         encoder_id: CTREDeviceID,
-        magnet_offset: float,
+        magnet_offset: Angle,
         odometry_thread: PhoenixOdometryThread,
     ) -> None:
         motor_config = TalonFXConfiguration()
@@ -438,7 +437,7 @@ class TurningTalon(SwerveTurningMotor):
         self.motor.configurator.apply(motor_config)
 
         encoder_config = CANcoderConfiguration()
-        encoder_config.magnet_sensor.magnet_offset = magnet_offset
+        encoder_config.magnet_sensor.magnet_offset = magnet_offset.rotations()
         encoder_id.to_cancoder().configurator.apply(encoder_config)
 
         self.position_control: PositionVoltage = PositionVoltage(0.0).with_enable_foc(

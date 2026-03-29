@@ -5,9 +5,9 @@ from typing import override
 
 from wpimath.geometry import Rotation2d
 
-from units.base import Unit, UnitPerUnit, UnitUnit
-from units.distance import Distance, meters
-from units.time import Time, seconds
+from frc_python.units.base import Unit, UnitPerUnit, UnitUnit
+from frc_python.units.distance import Distance, meters
+from frc_python.units.time import Time, seconds
 
 
 class Angle(Unit):

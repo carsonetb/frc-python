@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import override
 
-from units.base import Unit, UnitUnit
-from units.time import Time, seconds
+from frc_python.units.base import Unit, UnitUnit
+from frc_python.units.time import Time, seconds
 
 
 class Distance(Unit):

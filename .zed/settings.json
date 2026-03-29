@@ -3,7 +3,7 @@
   "languages": {
     "Python": {
       "format_on_save": "on",
-      "preferred_line_length": 130
+      "preferred_line_length": 130,
     }
   },
   "lsp": {

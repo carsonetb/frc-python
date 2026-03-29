@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from math import cos, pi, sin
+from typing import override
 
-from units.angle import Angle, degrees, radians, rotations
-from units.base import UnitPerUnit
-from units.distance import Distance, feet, meters
-from units.time import Time, seconds
+from frc_python.units.angle import Angle, degrees, radians, rotations
+from frc_python.units.base import UnitPerUnit
+from frc_python.units.distance import Distance, feet, meters
+from frc_python.units.time import Time, minutes, seconds
 
 
 class LinearVelocity(UnitPerUnit[Distance, Time]):
@@ -34,6 +35,10 @@ class AngularVelocity(UnitPerUnit[Angle, Time]):
     """
     Angular velocity, stored raw in radians / second
     """
+
+    @override
+    def withval(self, new: float) -> AngularVelocity:
+        return AngularVelocity(self.value.withval(new), self.per.withval(1))
 
     def to_linear(self, radius: Distance) -> LinearVelocity:
         return meters_per_second(self.raw * radius.raw)
@@ -66,3 +71,7 @@ def degrees_per_second(val: float) -> AngularVelocity:
 
 def rotations_per_second(val: float) -> AngularVelocity:
     return AngularVelocity(rotations(val), seconds(1))
+
+
+def rotations_per_minute(val: float) -> AngularVelocity:
+    return AngularVelocity(rotations(val), minutes(1))

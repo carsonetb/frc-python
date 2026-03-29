@@ -6,7 +6,11 @@ dependencies = [
     "robotpy-pykit",
     "robotpy-pykit-watch",
     "phoenix6",
+    "mujoco"
 ]
+
+[tool.pyright]
+stubPath = ".typings"
 
 [tool.setuptools.packages.find]
 where = ["src"]

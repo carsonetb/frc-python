@@ -7,5 +7,6 @@
     }
   ],
   "reportUnusedCallResult": "none",
-  "reportMissingTypeStubs": "none"
+  "reportMissingTypeStubs": "none",
+  "stubPath": ".typings"
 }

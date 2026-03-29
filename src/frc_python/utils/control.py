@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from phoenix6.configs import Slot0Configs, SlotConfigs
 from wpimath.controller import (
@@ -11,7 +11,7 @@ from wpimath.controller import (
 )
 from wpimath.trajectory import TrapezoidProfile
 
-from units.voltage import (
+from frc_python.units.voltage import (
     Voltage,
     VoltagePerAngle,
     VoltagePerAngleTime,
@@ -35,9 +35,11 @@ from units.voltage import (
 
 @dataclass
 class LinearMotorFFGains:
-    s: Voltage = voltage(0)
-    v: VoltageTimePerDistance = volt_seconds_per_meter(0)
-    a: VoltageTimeSquaredPerDistance = volt_seconds_squared_per_meter(0)
+    s: Voltage = field(default_factory=lambda: voltage(0))
+    v: VoltageTimePerDistance = field(default_factory=lambda: volt_seconds_per_meter(0))
+    a: VoltageTimeSquaredPerDistance = field(
+        default_factory=lambda: volt_seconds_squared_per_meter(0)
+    )
 
     def slot_with(self, slot: Slot0Configs) -> Slot0Configs:
         return slot.with_k_s(self.s.raw).with_k_v(self.s.raw).with_k_a(self.a.raw)
@@ -64,9 +66,11 @@ class LinearMotorFFGains:
 
 @dataclass
 class AngularMotorFFGains:
-    s: Voltage = voltage(0)
-    v: VoltageTimePerAngle = volt_seconds_per_radian(0)
-    a: VoltageTimeSquaredPerAngle = volt_seconds_squared_per_radian(0)
+    s: Voltage = field(default_factory=lambda: voltage(0))
+    v: VoltageTimePerAngle = field(default_factory=lambda: volt_seconds_per_radian(0))
+    a: VoltageTimeSquaredPerAngle = field(
+        default_factory=lambda: volt_seconds_squared_per_radian(0)
+    )
 
     def to_feedforward(self) -> SimpleMotorFeedforwardRadians:
         return SimpleMotorFeedforwardRadians(
@@ -92,9 +96,9 @@ class AngularMotorFFGains:
 
 @dataclass
 class LinearPIDGains:
-    p: VoltagePerDistance = volts_per_meter(0)
-    i: VoltagePerDistanceTime = volts_per_meter_second(0)
-    d: VoltageTimePerDistance = volt_seconds_per_meter(0)
+    p: VoltagePerDistance = field(default_factory=lambda: volts_per_meter(0))
+    i: VoltagePerDistanceTime = field(default_factory=lambda: volts_per_meter_second(0))
+    d: VoltageTimePerDistance = field(default_factory=lambda: volt_seconds_per_meter(0))
 
     def to_controller(self) -> PIDController:
         return PIDController(self.p, self.i, self.d)
@@ -128,9 +132,9 @@ class LinearPIDGains:
 
 @dataclass
 class AngularPIDGains:
-    p: VoltagePerAngle = volts_per_radian(0)
-    i: VoltagePerAngleTime = volts_per_radian_second(0)
-    d: VoltageTimePerAngle = volt_seconds_per_radian(0)
+    p: VoltagePerAngle = field(default_factory=lambda: volts_per_radian(0))
+    i: VoltagePerAngleTime = field(default_factory=lambda: volts_per_radian_second(0))
+    d: VoltageTimePerAngle = field(default_factory=lambda: volt_seconds_per_radian(0))
 
     def to_controller(self) -> PIDController:
         return PIDController(self.p, self.i, self.d)

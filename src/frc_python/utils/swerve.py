@@ -9,8 +9,14 @@ from pykit.autolog import autolog
 from wpimath.geometry import Pose2d, Translation2d
 from wpimath.kinematics import ChassisSpeeds, SwerveDrive4Kinematics, SwerveModuleState
 
+from units.angle import Angle
 from units.temperature import Temperature
-from units.velocity import AngularVelocity, LinearVelocity, mps, radps
+from units.velocity import (
+    AngularVelocity,
+    LinearVelocity,
+    meters_per_second,
+    radians_per_second,
+)
 
 
 class DrivetrainCorner(Enum):
@@ -23,7 +29,7 @@ class DrivetrainCorner(Enum):
 @dataclass
 class Corner:
     position: Pose2d
-    magnet_offset: float
+    magnet_offset: Angle
 
 
 @autolog
@@ -88,6 +94,14 @@ class PerCorner[T]:
             fun(self.back_right),
         )
 
+    def zip_with[O](self, other: PerCorner[O]) -> PerCorner[tuple[T, O]]:
+        return PerCorner(
+            (self.front_left, other.front_left),
+            (self.front_right, other.front_right),
+            (self.back_left, other.back_right),
+            (self.back_right, other.back_right),
+        )
+
     @staticmethod
     def generate(block: Callable[[DrivetrainCorner], T]) -> PerCorner[T]:
         return PerCorner(
@@ -126,7 +140,7 @@ class SwerveDriveKinematicsExt(SwerveDrive4Kinematics):
 class SwerveModuleStateExt(SwerveModuleState):
     @property
     def speed_units(self) -> LinearVelocity:
-        return mps(self.speed)
+        return meters_per_second(self.speed)
 
     @property
     def translation2d_per_second(self) -> Translation2d:
@@ -136,7 +150,7 @@ class SwerveModuleStateExt(SwerveModuleState):
 class ChassisSpeedsExt(ChassisSpeeds):
     @property
     def angular_velocity(self) -> AngularVelocity:
-        return radps(self.omega)
+        return radians_per_second(self.omega)
 
     @property
     def translation2d_per_second(self) -> Translation2d:

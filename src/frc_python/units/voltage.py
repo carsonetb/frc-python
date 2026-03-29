@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import override
 
-from units.angle import Angle, AngleTime, radian_seconds, radians
-from units.base import Unit, UnitPerUnit, UnitUnit
-from units.distance import Distance, DistanceTime, meter_seconds, meters
-from units.time import Time, TimeSquared, seconds
+from frc_python.units.angle import Angle, AngleTime, radian_seconds, radians
+from frc_python.units.base import Unit, UnitPerUnit, UnitUnit
+from frc_python.units.distance import Distance, DistanceTime, meter_seconds, meters
+from frc_python.units.time import Time, TimeSquared, seconds
 
 
 class Voltage(Unit):

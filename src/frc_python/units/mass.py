@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import override
 
-from units.base import Unit, UnitSquared, UnitUnit
-from units.distance import Distance
+from frc_python.units.base import Unit, UnitSquared, UnitUnit
+from frc_python.units.distance import Distance
 
 
 class Mass(Unit):

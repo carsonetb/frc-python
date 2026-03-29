@@ -16,8 +16,9 @@ from can import CTREDeviceID
 from units.amps import amps
 from units.angle import rotations
 from units.distance import inches
+from units.force import newtons
 from units.mass import kilogram_meters_squared
-from units.velocity import feet_per_second, meters_per_second
+from units.velocity import feet_per_second, meters_per_second, rotations_per_minute
 from units.voltage import (
     volt_seconds_per_meter,
     volt_seconds_squared_per_meter,
