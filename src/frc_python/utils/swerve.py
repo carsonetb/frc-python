@@ -5,13 +5,14 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Callable
 
+from numpy._core import right_shift
 from pykit.autolog import autolog
 from wpimath.geometry import Pose2d, Translation2d
 from wpimath.kinematics import ChassisSpeeds, SwerveDrive4Kinematics, SwerveModuleState
 
-from units.angle import Angle
-from units.temperature import Temperature
-from units.velocity import (
+from frc_python.units.angle import Angle
+from frc_python.units.temperature import Temperature
+from frc_python.units.velocity import (
     AngularVelocity,
     LinearVelocity,
     meters_per_second,
@@ -85,6 +86,12 @@ class PerCorner[T]:
         block(DrivetrainCorner.FRONT_RIGHT, 1, self.front_right)
         block(DrivetrainCorner.BACK_LEFT, 2, self.back_left)
         block(DrivetrainCorner.BACK_RIGHT, 3, self.back_right)
+
+    def for_each(self, block: Callable[[T], None]) -> None:
+        block(self.front_left)
+        block(self.front_right)
+        block(self.back_left)
+        block(self.back_right)
 
     def map_items[O](self, fun: Callable[[T], O]) -> PerCorner[O]:
         return PerCorner(

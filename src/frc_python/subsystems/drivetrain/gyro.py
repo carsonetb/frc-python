@@ -8,10 +8,9 @@ from phoenix6.hardware import Pigeon2
 from phoenix6.status_signal import StatusSignal
 from phoenix6.units import degree
 
-from robot import Robot
-from subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
-from units.angle import Angle, degrees
-from units.velocity import AngularVelocity, degrees_per_second
+from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
+from frc_python.units.angle import Angle, degrees
+from frc_python.units.velocity import AngularVelocity, degrees_per_second
 
 
 class Gyro(ABC):

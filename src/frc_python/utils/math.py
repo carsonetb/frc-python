@@ -6,7 +6,7 @@ from typing import override
 
 from wpimath.geometry import Pose2d, Rotation2d, Translation2d
 
-from units.base import Unit
+from frc_python.units.base import Unit
 
 
 def t2d_from_polar(magnitude: float, angle: float) -> Translation2d:
@@ -22,13 +22,16 @@ class Vector2[U: Unit]:
     x: U
     y: U
 
+    def to_translation2d(self) -> Translation2d:
+        return Translation2d(self.x.raw, self.y.raw)
+
     def to_pose2d(self) -> Pose2d:
         """
         Returns this vector as a Pose2d with zero rotation, in the
         raw units, which is probably meters or m/s.
         """
 
-        return Pose2d(Translation2d(self.x.raw, self.y.raw), Rotation2d())
+        return Pose2d(self.to_translation2d(), Rotation2d())
 
     def normalized(self) -> Vector2[U]:
         return self / self.length()

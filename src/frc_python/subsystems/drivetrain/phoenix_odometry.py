@@ -7,8 +7,6 @@ from phoenix6 import BaseStatusSignal, StatusSignal
 from phoenix6.status_code import StatusCode
 from wpilib import RobotController
 
-from units.angle import Angle
-
 
 class PhoenixOdometryThread(Process):
     def __init__(self, odometry_lock: RLockType) -> None:

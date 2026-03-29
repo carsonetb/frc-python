@@ -17,9 +17,9 @@ from pykit.networktables.nt4Publisher import NT4Publisher
 from pykit.wpilog.wpilogwriter import WPILOGWriter
 from wpilib import Alert, DriverStation, PowerDistribution, Preferences
 
-from bindings import configure_bindings
-from dashboard import Auto, Dashboard
-from subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
+from frc_python.bindings import configure_bindings
+from frc_python.dashboard import Auto, Dashboard
+from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
 
 
 class Model(Enum):

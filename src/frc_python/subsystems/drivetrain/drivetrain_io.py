@@ -7,12 +7,12 @@ from pykit.autolog import autolog
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 
-from can import CTREDeviceID
-from subsystems.drivetrain.gyro import Gyro, GyroPigeon
-from subsystems.drivetrain.module import SwerveModule
-from subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
-from units.velocity import AngularVelocity, radians_per_second
-from utils.swerve import DrivetrainCorner, PerCorner
+from frc_python.can import CTREDeviceID
+from frc_python.subsystems.drivetrain.gyro import Gyro, GyroPigeon
+from frc_python.subsystems.drivetrain.module import SwerveModule
+from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
+from frc_python.units.velocity import AngularVelocity, radians_per_second
+from frc_python.utils.swerve import DrivetrainCorner, PerCorner
 
 
 @autolog
