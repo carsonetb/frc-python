@@ -1,3 +1,4 @@
+from can import CTREDeviceID
 from phoenix6.configs import (
     CANcoderConfiguration,
     CurrentLimitsConfigs,
@@ -11,8 +12,6 @@ from phoenix6.swerve import (
     SteerMotorArrangement,
     SwerveModuleConstantsFactory,
 )
-
-from can import CTREDeviceID
 from units.amps import amps
 from units.angle import rotations
 from units.distance import inches
@@ -36,7 +35,6 @@ STEER_MOTOR_TYPE = SteerMotorArrangement.TALON_FX_INTEGRATED
 STEER_FEEDBACK_TYPE = SteerFeedbackType.FUSED_CANCODER
 
 STEER_GAINS = AngularPIDGains(volts_per_radian(125))
-DRIVE_GAINS = Slot0Configs()
 DRIVE_PID = LinearPIDGains(volts_per_meter(0.7433))
 DRIVE_FF = LinearMotorFFGains(
     voltage(0.19991),
