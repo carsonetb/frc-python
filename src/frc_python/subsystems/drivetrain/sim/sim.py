@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from importlib.resources import read_text
 from math import cos, remainder, sin
+from random import randrange
 from time import sleep, time
 
 import mujoco
@@ -117,7 +118,7 @@ class SimGyro:
 
     @property
     def yaw_velocity(self) -> AngularVelocity:
-        return data.sensordata[self.sensor_id + 2]
+        return radians_per_second(data.sensordata[self.sensor_id + 2])
 
     def periodic(self) -> None:
         self.yaw += self.yaw_velocity.muldim(TIMESTEP)
@@ -129,7 +130,7 @@ class SimGyro:
 class SimKrakenX60:
     FREE_SPEED: AngularVelocity = rotations_per_minute(6000)
     STALL_TORQUE: Newtons = newtons(
-        0.9
+        1.8
     )  # Importantly, this is with the Phoenix Pro license. This might also be a lot less because of current limits.
     NOMINAL_VOLTAGE: Voltage = voltage(12)
 
@@ -169,7 +170,7 @@ class SimMk5nSwerveModule:
     DRIVE_GEAR_RATIO: float = 5.27
     STEER_GEAR_RATIO: float = 26.09
     STEER_GAINS: AngularPIDGains = AngularPIDGains(
-        volts_per_radian(125), volts_per_radian_second(0), volt_seconds_per_radian(4)
+        volts_per_radian(125), volts_per_radian_second(0), volt_seconds_per_radian(10)
     )
 
     DRIVE_PID: LinearPIDGains = LinearPIDGains(volts_per_meter(0.7433))
@@ -242,6 +243,10 @@ class Mk5nDrivetrainIOSim:
         self.gyro = SimGyro(self.GYRO_NAME)
 
     @property
+    def angle(self) -> Angle:
+        return self.gyro.yaw
+
+    @property
     def desired_states(self) -> PerCorner[SwerveModuleState]:
         return self.modules.map_items(lambda module: module.desired_state)
 
@@ -276,6 +281,11 @@ class SimDrivetrain:
 
     TOP_SPEED = feet_per_second(19.2)
 
+    # TODO: Actually (rad/s)/rotation
+    ROT_ALIGN_PID = AngularPIDGains(
+        volts_per_radian(512), volts_per_radian_second(0), volt_seconds_per_radian(256)
+    )
+
     def __init__(self) -> None:
         self.io = Mk5nDrivetrainIOSim()
         self.kinematics = SwerveDrive4Kinematics(
@@ -284,12 +294,17 @@ class SimDrivetrain:
             self.BL_POS.to_translation2d(),
             self.BR_POS.to_translation2d(),
         )
+        self.rot_align_controller = self.ROT_ALIGN_PID.to_controller()
+        self.rot_align_controller.enableContinuousInput(-0.5, 0.5)
+
+    def periodic(self) -> None:
+        self.io.periodic()
 
     def drive(self, velocity: Vector2[LinearVelocity], omega: AngularVelocity) -> None:
         chassis_speeds = ChassisSpeeds(
             velocity.x.meters_per_second(),
             velocity.y.meters_per_second(),
-            omega.radians_per_second(),
+            -omega.radians_per_second(),
         )
         module_states = self.kinematics.toSwerveModuleStates(chassis_speeds)
         SwerveDrive4Kinematics.desaturateWheelSpeeds(
@@ -300,6 +315,19 @@ class SimDrivetrain:
             # module_states[i].optimize(module.steer_motor.angle.to_rotation2d())
             module.turn_to_angle(radians(module_states[i].angle.radians()))
             module.go_to_speed(meters_per_second(module_states[i].speed))
+
+    def drive_rot_align(
+        self, velocity: Vector2[LinearVelocity], target_omega: Angle
+    ) -> None:
+        print(self.io.angle.rotations(), target_omega.rotations())
+        self.drive(
+            velocity,
+            radians_per_second(
+                self.rot_align_controller.calculate(
+                    self.io.angle.rotations(), target_omega.rotations()
+                )
+            ),
+        )
 
 
 with launch_passive(model, data) as viewer:
@@ -314,9 +342,9 @@ with launch_passive(model, data) as viewer:
         # data.ctrl[0] = 0.0001
         # data.ctrl[1] = 0.001
 
-        drivetrain.drive(
-            Vector2(meters_per_second(sin(t)), meters_per_second(cos(t))),
-            degrees_per_second(0),
+        drivetrain.periodic()
+        drivetrain.drive_rot_align(
+            Vector2(meters_per_second(0), meters_per_second(0)), degrees(90)
         )
 
         mj_step(model, data)

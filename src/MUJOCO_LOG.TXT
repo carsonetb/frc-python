@@ -481,3 +481,6 @@ WARNING: OpenGL error 0x502 in or before mjr_makeContext
 Sun Mar 29 16:40:58 2026
 WARNING: OpenGL error 0x502 in or before mjr_makeContext
 
+Sun Mar 29 19:31:17 2026
+WARNING: Nan, Inf or huge value in QVEL at DOF 1. The simulation is unstable. Time = 1.3100.
+

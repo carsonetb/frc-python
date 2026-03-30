@@ -33,7 +33,6 @@ class Corner:
     magnet_offset: Angle
 
 
-@autolog
 @dataclass
 class PerCorner[T]:
     front_left: T
