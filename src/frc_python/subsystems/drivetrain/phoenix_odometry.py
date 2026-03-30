@@ -53,7 +53,7 @@ class PhoenixOdometryThread(Process):
                 queue.put(timestamp)
             self.odometry_lock.release()
 
-    def register_signal(self, signal: StatusSignal[float]) -> Queue[float]:
+    def register_signal(self, signal: StatusSignal[float]):
         queue = Queue[float](20)
 
         self.signals_lock.acquire()
@@ -67,7 +67,7 @@ class PhoenixOdometryThread(Process):
 
         return queue
 
-    def make_timestamp_queue(self) -> Queue[float]:
+    def make_timestamp_queue(self):
         queue = Queue[float](20)
 
         self.odometry_lock.acquire()

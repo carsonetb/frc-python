@@ -1,12 +1,15 @@
 import multiprocessing
 from enum import Enum, auto
+from math import cos, sin
 from multiprocessing import RLock
 from multiprocessing.synchronize import RLock as RLockType
 from pathlib import Path
+from time import sleep, time
 from typing import Final, override
 
 from commands2 import Command, cmd
 from commands2.commandscheduler import CommandScheduler
+from mujoco import mj_step
 from phoenix6.canbus import CANBus
 from phoenix6.signal_logger import SignalLogger
 from phoenix6.status_code import StatusCode
@@ -20,6 +23,10 @@ from wpilib import Alert, DriverStation, PowerDistribution, Preferences
 from frc_python.bindings import configure_bindings
 from frc_python.dashboard import Auto, Dashboard
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
+from frc_python.subsystems.drivetrain.sim.sim import SimDrivetrain, data, model, viewer
+from frc_python.units.angle import degrees
+from frc_python.units.velocity import meters_per_second
+from frc_python.utils.math import Vector2
 
 
 class Model(Enum):
@@ -47,7 +54,10 @@ class Robot(LoggedRobot):
 
         self.dashboard: Final = Dashboard()
 
+        self.start_time = time()
+
         if self.isSimulation():
+            self.drivetrain = SimDrivetrain()
             self.model = Model.SIMULATION
         else:
             key = Preferences.getString("Model", "competition")
@@ -89,8 +99,7 @@ class Robot(LoggedRobot):
 
     @override
     def robotPeriodic(self) -> None:
-        if (status := self.status_signals.refresh_all()) != StatusCode.OK:
-            self.logger.error(f"Failed to refresh status signals ({status.name})")
+        self.status_signals.refresh_all()
 
         CommandScheduler.getInstance().run()
 

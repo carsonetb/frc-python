@@ -46,11 +46,6 @@ from frc_python.utils.swerve import PerCorner
 
 TIMESTEP = seconds(0.005)
 
-model: MjModel = MjModel.from_xml_string(
-    read_text("frc_python.resources.subsystems.drivetrain", "swerve.xml")
-)
-data: MjData = MjData(model)
-
 
 @dataclass
 class DrivetrainInputs:
@@ -197,7 +192,7 @@ class SimMk5nSwerveModule:
     def state(self) -> SwerveModuleState:
         return SwerveModuleState(
             self.drive_motor.velocity.to_linear(self.WHEEL_RADIUS).meters_per_second(),
-            self.steer_motor.angle.to_rotation2d(),
+            (self.steer_motor.angle - self.STEER_OFFSET).to_rotation2d(),
         )
 
     @property
@@ -283,7 +278,7 @@ class SimDrivetrain:
 
     # TODO: Actually (rad/s)/rotation
     ROT_ALIGN_PID = AngularPIDGains(
-        volts_per_radian(512), volts_per_radian_second(0), volt_seconds_per_radian(256)
+        volts_per_radian(80), volts_per_radian_second(0), volt_seconds_per_radian(60)
     )
 
     def __init__(self) -> None:
@@ -312,14 +307,13 @@ class SimDrivetrain:
         )
 
         for i, module in enumerate(self.io.modules.to_list()):
-            # module_states[i].optimize(module.steer_motor.angle.to_rotation2d())
+            module_states[i].optimize(module.state.angle)
             module.turn_to_angle(radians(module_states[i].angle.radians()))
             module.go_to_speed(meters_per_second(module_states[i].speed))
 
     def drive_rot_align(
         self, velocity: Vector2[LinearVelocity], target_omega: Angle
     ) -> None:
-        print(self.io.angle.rotations(), target_omega.rotations())
         self.drive(
             velocity,
             radians_per_second(
@@ -328,29 +322,3 @@ class SimDrivetrain:
                 )
             ),
         )
-
-
-with launch_passive(model, data) as viewer:
-    start_time = time()
-
-    drivetrain = SimDrivetrain()
-
-    while viewer.is_running():
-        step_start = time()
-        t = time() - start_time
-
-        # data.ctrl[0] = 0.0001
-        # data.ctrl[1] = 0.001
-
-        drivetrain.periodic()
-        drivetrain.drive_rot_align(
-            Vector2(meters_per_second(0), meters_per_second(0)), degrees(90)
-        )
-
-        mj_step(model, data)
-
-        viewer.sync()
-
-        time_until_next_step = model.opt.timestep - (time() - step_start)
-        if time_until_next_step > 0:
-            sleep(time_until_next_step)
