@@ -1,15 +1,13 @@
 import multiprocessing
 from enum import Enum, auto
-from math import cos, sin
 from multiprocessing import RLock
 from multiprocessing.synchronize import RLock as RLockType
 from pathlib import Path
-from time import sleep, time
+from time import time
 from typing import Final, override
 
 from commands2 import Command, cmd
 from commands2.commandscheduler import CommandScheduler
-from mujoco import mj_step
 from phoenix6.canbus import CANBus
 from phoenix6.signal_logger import SignalLogger
 from phoenix6.status_code import StatusCode
@@ -22,11 +20,9 @@ from wpilib import Alert, DriverStation, PowerDistribution, Preferences
 
 from frc_python.bindings import configure_bindings
 from frc_python.dashboard import Auto, Dashboard
+from frc_python.sim import SimulationInfo
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
-from frc_python.subsystems.drivetrain.sim.sim import SimDrivetrain, data, model, viewer
-from frc_python.units.angle import degrees
-from frc_python.units.velocity import meters_per_second
-from frc_python.utils.math import Vector2
+from frc_python.subsystems.drivetrain.sim.sim import SimDrivetrain
 
 
 class Model(Enum):
@@ -38,7 +34,7 @@ class Robot(LoggedRobot):
     odometry_lock: RLockType = RLock()
     phoenix_thread: PhoenixOdometryThread = PhoenixOdometryThread(odometry_lock)
 
-    def __init__(self) -> None:
+    def __init__(self, info: SimulationInfo | None = None) -> None:
         multiprocessing.freeze_support()
 
         super().__init__()
@@ -57,7 +53,8 @@ class Robot(LoggedRobot):
         self.start_time = time()
 
         if self.isSimulation():
-            self.drivetrain = SimDrivetrain()
+            assert info is not None
+            self.drivetrain = SimDrivetrain(info)
             self.model = Model.SIMULATION
         else:
             key = Preferences.getString("Model", "competition")

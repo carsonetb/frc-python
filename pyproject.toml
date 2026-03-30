@@ -1,16 +1,20 @@
 [project]
 name = "frc-python"
 version = "2026.0.0"
+requires-python = ">=3.12"
 dependencies = [
     "robotpy[commands2]",
     "robotpy-pykit",
     "robotpy-pykit-watch",
     "phoenix6",
-    "mujoco"
+    "mujoco",
+    "pygame",
 ]
 
 [tool.pyright]
-stubPath = ".typings"
+stubPath = "typings"
+useLibraryCodeForTypes = true
+
 
 [tool.setuptools.packages.find]
 where = ["src"]

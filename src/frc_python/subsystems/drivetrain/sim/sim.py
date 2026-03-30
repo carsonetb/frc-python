@@ -1,13 +1,7 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from importlib.resources import read_text
-from math import cos, remainder, sin
-from random import randrange
-from time import sleep, time
 
-import mujoco
-from mujoco import MjData, MjModel, mj_name2id, mj_step, mjtObj
-from mujoco.viewer import launch_passive
+from mujoco import mj_name2id, mjtObj
 from wpimath.controller import PIDController, SimpleMotorFeedforwardMeters
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import (
@@ -17,6 +11,7 @@ from wpimath.kinematics import (
     SwerveModuleState,
 )
 
+from frc_python.sim import SimulationInfo
 from frc_python.units.angle import Angle, degrees, radians
 from frc_python.units.distance import Distance, inches
 from frc_python.units.force import Newtons, newtons
@@ -43,8 +38,6 @@ from frc_python.units.voltage import (
 from frc_python.utils.control import AngularPIDGains, LinearMotorFFGains, LinearPIDGains
 from frc_python.utils.math import Vector2
 from frc_python.utils.swerve import PerCorner
-
-TIMESTEP = seconds(0.005)
 
 
 @dataclass
@@ -105,18 +98,19 @@ class DriveModuleID(Enum):
 
 
 class SimGyro:
-    def __init__(self, name: str) -> None:
-        self.sensor_id: int = model.sensor_adr[
-            mj_name2id(model, mjtObj.mjOBJ_SENSOR, name)
+    def __init__(self, info: SimulationInfo, name: str) -> None:
+        self.info = info
+        self.sensor_id: int = self.info.model.sensor_adr[
+            mj_name2id(self.info.model, mjtObj.mjOBJ_SENSOR, name)
         ]
         self.yaw = radians(0)
 
     @property
     def yaw_velocity(self) -> AngularVelocity:
-        return radians_per_second(data.sensordata[self.sensor_id + 2])
+        return radians_per_second(self.info.data.sensordata[self.sensor_id + 2])
 
     def periodic(self) -> None:
-        self.yaw += self.yaw_velocity.muldim(TIMESTEP)
+        self.yaw += self.yaw_velocity.muldim(seconds(0.001))
 
     def zero(self) -> None:
         self.yaw = radians(0)
@@ -129,24 +123,29 @@ class SimKrakenX60:
     )  # Importantly, this is with the Phoenix Pro license. This might also be a lot less because of current limits.
     NOMINAL_VOLTAGE: Voltage = voltage(12)
 
-    def __init__(self, id: MotorID, gear_ratio: float) -> None:
-        self.joint_id: int = mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, id.joint_name)
-        self.motor_id: int = mj_name2id(
-            model, mujoco.mjtObj.mjOBJ_ACTUATOR, id.motor_name
+    def __init__(self, info: SimulationInfo, id: MotorID, gear_ratio: float) -> None:
+        self.info = info
+        self.joint_id: int = mj_name2id(
+            self.info.model, mjtObj.mjOBJ_JOINT, id.joint_name
         )
-        self.qpos_idx: int = model.jnt_qposadr[self.joint_id]
+        self.motor_id: int = mj_name2id(
+            self.info.model, mjtObj.mjOBJ_ACTUATOR, id.motor_name
+        )
+        self.qpos_idx: int = self.info.model.jnt_qposadr[self.joint_id]
         self.gear_ratio: float = gear_ratio
 
     @property
     def angle(self) -> Angle:
-        return radians(data.qpos[self.qpos_idx])
+        return radians(self.info.data.qpos[self.qpos_idx])
 
     @property
     def velocity(self) -> AngularVelocity:
-        return radians_per_second(data.qvel[self.joint_id])
+        return radians_per_second(self.info.data.qvel[self.joint_id])
 
     def apply_voltage(self, voltage: Voltage) -> None:
-        data.ctrl[self.motor_id] = self._voltage_to_torque(voltage, self.velocity)
+        self.info.data.ctrl[self.motor_id] = self._voltage_to_torque(
+            voltage, self.velocity
+        )
 
     # Returns a torque in newton meters, probably should be unit-ed in the future.
     def _voltage_to_torque(
@@ -179,9 +178,13 @@ class SimMk5nSwerveModule:
 
     WHEEL_RADIUS: Distance = inches(2)
 
-    def __init__(self, id: DriveModuleID) -> None:
-        self.steer_motor: SimKrakenX60 = SimKrakenX60(id.steer, self.STEER_GEAR_RATIO)
-        self.drive_motor: SimKrakenX60 = SimKrakenX60(id.drive, self.DRIVE_GEAR_RATIO)
+    def __init__(self, info: SimulationInfo, id: DriveModuleID) -> None:
+        self.steer_motor: SimKrakenX60 = SimKrakenX60(
+            info, id.steer, self.STEER_GEAR_RATIO
+        )
+        self.drive_motor: SimKrakenX60 = SimKrakenX60(
+            info, id.drive, self.DRIVE_GEAR_RATIO
+        )
         self.steer_pid: PIDController = self.STEER_GAINS.to_controller()
         self.steer_pid.enableContinuousInput(-0.5, 0.5)
         self.drive_pid: PIDController = self.DRIVE_PID.to_controller()
@@ -228,14 +231,14 @@ class SimMk5nSwerveModule:
 class Mk5nDrivetrainIOSim:
     GYRO_NAME = "chassis_gyro"
 
-    def __init__(self) -> None:
+    def __init__(self, info: SimulationInfo) -> None:
         self.modules = PerCorner(
-            front_left=SimMk5nSwerveModule(DriveModuleID.FRONT_LEFT),
-            front_right=SimMk5nSwerveModule(DriveModuleID.FRONT_RIGHT),
-            back_left=SimMk5nSwerveModule(DriveModuleID.BACK_LEFT),
-            back_right=SimMk5nSwerveModule(DriveModuleID.BACK_RIGHT),
+            front_left=SimMk5nSwerveModule(info, DriveModuleID.FRONT_LEFT),
+            front_right=SimMk5nSwerveModule(info, DriveModuleID.FRONT_RIGHT),
+            back_left=SimMk5nSwerveModule(info, DriveModuleID.BACK_LEFT),
+            back_right=SimMk5nSwerveModule(info, DriveModuleID.BACK_RIGHT),
         )
-        self.gyro = SimGyro(self.GYRO_NAME)
+        self.gyro = SimGyro(info, self.GYRO_NAME)
 
     @property
     def angle(self) -> Angle:
@@ -281,8 +284,8 @@ class SimDrivetrain:
         volts_per_radian(80), volts_per_radian_second(0), volt_seconds_per_radian(60)
     )
 
-    def __init__(self) -> None:
-        self.io = Mk5nDrivetrainIOSim()
+    def __init__(self, info: SimulationInfo) -> None:
+        self.io = Mk5nDrivetrainIOSim(info)
         self.kinematics = SwerveDrive4Kinematics(
             self.FL_POS.to_translation2d(),
             self.FR_POS.to_translation2d(),

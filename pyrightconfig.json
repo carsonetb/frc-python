@@ -1,12 +1,14 @@
 {
-  "include": ["src"],
-  "extraPaths": ["src"],
+  "include": ["**/*.py"],
+  "extraPaths": ["src", ".typings"],
   "executionEnvironments": [
     {
-      "root": "src"
-    }
+      "root": "src",
+    },
   ],
   "reportUnusedCallResult": "none",
   "reportMissingTypeStubs": "none",
-  "stubPath": ".typings"
+  "reportUnannotatedClassAttribute": "none",
+  "stubPath": ".typings",
+  "useLibraryCodeForTypes": true,
 }

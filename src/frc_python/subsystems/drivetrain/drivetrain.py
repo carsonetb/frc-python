@@ -1,8 +1,4 @@
 from commands2.subsystem import Subsystem
-from phoenix6.swerve import SwerveModuleConstantsFactory
-from wpimath.geometry import Pose2d, Translation2d
-
-from can import CTREDeviceID
 from subsystems.drivetrain.constants import (
     BL_ENCODER_OFFSET,
     BL_POS,
@@ -13,10 +9,19 @@ from subsystems.drivetrain.constants import (
     FR_ENCODER_OFFSET,
     FR_POS,
 )
-from subsystems.drivetrain.drivetrain_io import DrivetrainIO, DrivetrainIOReal
-from subsystems.drivetrain.module import DrivingTalon, Mk5nSwerveModule, TurningTalon
-from subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
-from utils.swerve import Corner, PerCorner
+
+from frc_python.can import CTREDeviceID
+from frc_python.subsystems.drivetrain.drivetrain_io import (
+    DrivetrainIO,
+    DrivetrainIOReal,
+)
+from frc_python.subsystems.drivetrain.module import (
+    DrivingTalon,
+    Mk5nSwerveModule,
+    TurningTalon,
+)
+from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
+from frc_python.utils.swerve import Corner, PerCorner
 
 
 class Drivetrain(Subsystem):
@@ -53,6 +58,8 @@ class Drivetrain(Subsystem):
     )
 
     def __init__(self, odometry_thread: PhoenixOdometryThread) -> None:
+        super().__init__()
+
         def corner_ids_to_swerve(
             items: tuple[Corner, tuple[CTREDeviceID, CTREDeviceID, CTREDeviceID]],
         ) -> Mk5nSwerveModule:
