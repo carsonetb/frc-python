@@ -195,7 +195,7 @@ class Mk5nDrivetrainIOSim(DrivetrainIO):
     @override
     def goto_chassis_speeds(self, speeds: ChassisSpeeds) -> None:
         module_states = self.kinematics.toSwerveModuleStates(speeds)
-        SwerveDrive4Kinematics.desaturateWheelSpeeds(
+        module_states = SwerveDrive4Kinematics.desaturateWheelSpeeds(
             module_states, self.TOP_SPEED.meters_per_second()
         )
 

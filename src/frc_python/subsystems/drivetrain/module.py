@@ -522,16 +522,22 @@ class SimMk5nSwerveModule(SwerveModule):
         volt_seconds_squared_per_meter(0.07864),
     )
 
-    STEER_OFFSET = degrees(90)
+    STEER_OFFSET = degrees(0)
 
     WHEEL_RADIUS: Distance = inches(2)
 
-    def __init__(self, info: SimulationInfo, id: DriveModuleID) -> None:
+    def __init__(
+        self,
+        info: SimulationInfo,
+        id: DriveModuleID,
+        drive_reversed=False,
+        steer_reversed=False,
+    ) -> None:
         self.steer_motor: SimKrakenX60 = SimKrakenX60(
-            info, id.steer, self.STEER_GEAR_RATIO
+            info, id.steer, self.STEER_GEAR_RATIO, steer_reversed
         )
         self.drive_motor: SimKrakenX60 = SimKrakenX60(
-            info, id.drive, self.DRIVE_GEAR_RATIO
+            info, id.drive, self.DRIVE_GEAR_RATIO, drive_reversed
         )
         self.steer_pid: PIDController = self.STEER_GAINS.to_controller()
         self.steer_pid.enableContinuousInput(-0.5, 0.5)

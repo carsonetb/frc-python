@@ -64,11 +64,18 @@ class DriveModuleID(Enum):
 class SimKrakenX60:
     FREE_SPEED: AngularVelocity = rotations_per_minute(6000)
     STALL_TORQUE: Newtons = newtons(
-        1.8
+        9.2
     )  # Importantly, this is with the Phoenix Pro license. This might also be a lot less because of current limits.
     NOMINAL_VOLTAGE: Voltage = voltage(12)
 
-    def __init__(self, info: SimulationInfo, id: MotorID, gear_ratio: float) -> None:
+    def __init__(
+        self,
+        info: SimulationInfo,
+        id: MotorID,
+        gear_ratio: float,
+        reversed: bool = False,
+    ) -> None:
+        self.direction = -1 if reversed else 1
         self.info = info
         self.joint_id: int = mj_name2id(
             self.info.model, mjtObj.mjOBJ_JOINT, id.joint_name
@@ -81,15 +88,15 @@ class SimKrakenX60:
 
     @property
     def angle(self) -> Angle:
-        return radians(self.info.data.qpos[self.qpos_idx])
+        return radians(self.info.data.qpos[self.qpos_idx] * self.direction)
 
     @property
     def velocity(self) -> AngularVelocity:
-        return radians_per_second(self.info.data.qvel[self.joint_id])
+        return radians_per_second(self.info.data.qvel[self.joint_id] * self.direction)
 
     def apply_voltage(self, voltage: Voltage) -> None:
-        self.info.data.ctrl[self.motor_id] = self._voltage_to_torque(
-            voltage, self.velocity
+        self.info.data.ctrl[self.motor_id] = (
+            self._voltage_to_torque(voltage, self.velocity) * self.direction
         )
 
     # Returns a torque in newton meters, probably should be unit-ed in the future.
