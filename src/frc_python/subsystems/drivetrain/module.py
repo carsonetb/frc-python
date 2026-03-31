@@ -608,8 +608,8 @@ class SimMk5nSwerveModule(SwerveModule):
         self.steer_motor.apply_voltage(
             voltage(
                 self.steer_pid.calculate(
-                    self.steer_motor.angle.rotations(),
-                    (angle + self.STEER_OFFSET).rotations(),
+                    self.angular_drive_position.rotations(),
+                    angle.rotations(),
                 )
             )
         )

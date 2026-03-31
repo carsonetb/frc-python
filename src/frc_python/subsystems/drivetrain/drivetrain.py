@@ -71,7 +71,7 @@ class Drivetrain(Subsystem):
         )
     )
 
-    JOYSTICK_DEADBAND = 0.075
+    JOYSTICK_DEADBAND = 0.2
     INPUT_EXP = 1.7
 
     def __init__(
@@ -148,7 +148,7 @@ class Drivetrain(Subsystem):
                 * DrivetrainIO.TOP_SPEED.meters_per_second(),
                 self._calculate_input_curve(translation.y)
                 * DrivetrainIO.TOP_SPEED.meters_per_second(),
-                rotation.y * tau,
+                rotation.x * tau,
                 self.io.gyro.yaw.to_rotation2d(),
             )
 
@@ -167,7 +167,7 @@ class Drivetrain(Subsystem):
         return cmd.run(
             lambda: self._drive(
                 Translation2d(-controller.getLeftY(), -controller.getLeftX()),
-                Translation2d(-controller.getRightX(), -controller.getRightY()),
+                Translation2d(-controller.getRightY(), 0),
             ),
             self,
         )

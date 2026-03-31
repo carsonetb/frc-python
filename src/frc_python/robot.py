@@ -75,7 +75,6 @@ class Robot(LoggedRobot):
         configure_bindings()
 
     def configure_subsystems(self) -> None:
-        self.drivetrain.register()
         self.drivetrain.setDefaultCommand(
             self.drivetrain.drive_with_controller(self.driver_controller.getHID())
         )
