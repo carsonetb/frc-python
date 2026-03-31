@@ -3,9 +3,8 @@ from __future__ import annotations
 from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import Enum
-from typing import Callable
+from typing import Callable, Generic, TypeVar
 
-from numpy._core import right_shift
 from pykit.autolog import autolog
 from wpimath.geometry import Pose2d, Translation2d
 from wpimath.kinematics import ChassisSpeeds, SwerveDrive4Kinematics, SwerveModuleState

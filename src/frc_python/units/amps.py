@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import override
 
-from units.base import Unit
+from frc_python.units.base import Unit
 
 
 class Amps(Unit):

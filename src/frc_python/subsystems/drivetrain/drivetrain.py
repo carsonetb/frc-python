@@ -1,5 +1,15 @@
+from math import tau
+from typing import override
+
+from commands2 import Command, cmd
 from commands2.subsystem import Subsystem
-from subsystems.drivetrain.constants import (
+from pykit.logger import Logger
+from wpilib import Joystick, XboxController
+from wpimath.geometry import Translation2d
+from wpimath.kinematics import ChassisSpeeds
+
+from frc_python.can import CTREDeviceID
+from frc_python.subsystems.drivetrain.constants import (
     BL_ENCODER_OFFSET,
     BL_POS,
     BR_ENCODER_OFFSET,
@@ -9,11 +19,11 @@ from subsystems.drivetrain.constants import (
     FR_ENCODER_OFFSET,
     FR_POS,
 )
-
-from frc_python.can import CTREDeviceID
 from frc_python.subsystems.drivetrain.drivetrain_io import (
+    DrivetrainInputs,
     DrivetrainIO,
     DrivetrainIOReal,
+    Mk5nDrivetrainIOSim,
 )
 from frc_python.subsystems.drivetrain.module import (
     DrivingTalon,
@@ -21,6 +31,10 @@ from frc_python.subsystems.drivetrain.module import (
     TurningTalon,
 )
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
+from frc_python.units.time import Time
+from frc_python.utils.math import sign
+from frc_python.utils.misc import Model
+from frc_python.utils.sim import SimulationInfo
 from frc_python.utils.swerve import Corner, PerCorner
 
 
@@ -57,8 +71,19 @@ class Drivetrain(Subsystem):
         )
     )
 
-    def __init__(self, odometry_thread: PhoenixOdometryThread) -> None:
+    JOYSTICK_DEADBAND = 0.075
+    INPUT_EXP = 1.7
+
+    def __init__(
+        self,
+        odometry_thread: PhoenixOdometryThread,
+        info: SimulationInfo | None,
+        model: Model,
+        period: Time,
+    ) -> None:
         super().__init__()
+
+        self.period = period
 
         def corner_ids_to_swerve(
             items: tuple[Corner, tuple[CTREDeviceID, CTREDeviceID, CTREDeviceID]],
@@ -73,9 +98,76 @@ class Drivetrain(Subsystem):
                 odometry_thread,
             )
 
-        self.io: DrivetrainIO = DrivetrainIOReal(
-            self.MODULE_POSITIONS.zip_with(self.MODULE_CAN_IDS).map_items(
-                corner_ids_to_swerve
+        self.inputs = DrivetrainInputs()
+        match model:
+            case Model.COMPETITION:
+                self.io = DrivetrainIOReal(
+                    self.MODULE_POSITIONS.zip_with(self.MODULE_CAN_IDS).map_items(
+                        corner_ids_to_swerve
+                    ),
+                    odometry_thread,
+                )
+            case Model.SIMULATION:
+                assert info is not None
+                self.io = Mk5nDrivetrainIOSim(info)
+        self._desired_speeds = ChassisSpeeds(0, 0, 0)
+
+    @property
+    def desired_speeds(self) -> ChassisSpeeds:
+        return self._desired_speeds
+
+    @desired_speeds.setter
+    def desired_speeds(self, val: ChassisSpeeds) -> None:
+        self._desired_speeds = ChassisSpeeds.discretize(val, self.period.seconds())
+
+    @override
+    def periodic(self) -> None:
+        if isinstance(self.io, DrivetrainIOReal):
+            pass
+        else:
+            self.io.update_inputs(self.inputs)
+            self.io.goto_chassis_speeds(self.desired_speeds)
+
+        Logger.processInputs("Drivetrain", self.inputs)  # pyright: ignore[reportUnknownMemberType]
+
+    def _calculate_input_curve(self, input: float) -> float:
+        return sign(input) * pow(abs(input), self.INPUT_EXP)  # pyright: ignore[reportAny]
+
+    def _is_in_deadzone(self, translation: Translation2d) -> bool:
+        return (
+            abs(translation.x) < self.JOYSTICK_DEADBAND
+            and abs(translation.y) < self.JOYSTICK_DEADBAND
+        )
+
+    def _drive(self, translation: Translation2d, rotation: Translation2d) -> None:
+        if self._is_in_deadzone(translation) and self._is_in_deadzone(rotation):
+            self.desired_speeds = ChassisSpeeds(0, 0, 0)
+        else:
+            self.desired_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                self._calculate_input_curve(translation.x)
+                * DrivetrainIO.TOP_SPEED.meters_per_second(),
+                self._calculate_input_curve(translation.y)
+                * DrivetrainIO.TOP_SPEED.meters_per_second(),
+                rotation.y * tau,
+                self.io.gyro.yaw.to_rotation2d(),
+            )
+
+    def drive_with_joysticks(
+        self, translation: Joystick, rotation: Joystick
+    ) -> Command:
+        return cmd.run(
+            lambda: self._drive(
+                Translation2d(-translation.getX(), -translation.getX()),
+                Translation2d(-rotation.getY(), -rotation.getX()),
             ),
-            odometry_thread,
+            self,
+        )  # TODO: Alliance relative
+
+    def drive_with_controller(self, controller: XboxController) -> Command:
+        return cmd.run(
+            lambda: self._drive(
+                Translation2d(-controller.getLeftY(), -controller.getLeftX()),
+                Translation2d(-controller.getRightX(), -controller.getRightY()),
+            ),
+            self,
         )

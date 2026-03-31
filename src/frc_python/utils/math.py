@@ -2,11 +2,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from math import cos, sin, sqrt
-from typing import override
 
 from wpimath.geometry import Pose2d, Rotation2d, Translation2d
 
 from frc_python.units.base import Unit
+
+
+def sign(x: float) -> int:
+    if x > 0:
+        return 1
+    if x < 0:
+        return -1
+    else:
+        return 0
 
 
 def t2d_from_polar(magnitude: float, angle: float) -> Translation2d:

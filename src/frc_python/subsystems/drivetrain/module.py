@@ -18,24 +18,34 @@ from phoenix6.configs import (
 from phoenix6.controls import PositionVoltage, VelocityVoltage, VoltageOut
 from phoenix6.hardware import TalonFX
 from phoenix6.signals import FeedbackSensorSourceValue, NeutralModeValue
+from wpimath.controller import PIDController, SimpleMotorFeedforwardMeters
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 
-from can import CTREDeviceID
-from subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
-from units.amps import Amps, amps
-from units.angle import Angle, radians, rotations
-from units.distance import Distance, inches
-from units.temperature import Temperature, celsius
-from units.velocity import (
+from frc_python.can import CTREDeviceID
+from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
+from frc_python.units.amps import Amps, amps
+from frc_python.units.angle import Angle, degrees, radians, rotations
+from frc_python.units.distance import Distance, inches
+from frc_python.units.temperature import Temperature, celsius
+from frc_python.units.velocity import (
     AngularVelocity,
     LinearVelocity,
     meters_per_second,
     rotations_per_second,
 )
-from units.voltage import Voltage, volts_per_radian
-from utils.control import AngularPIDGains
-from utils.swerve import SwerveModuleTemp
+from frc_python.units.voltage import (
+    Voltage,
+    volt_seconds_per_meter,
+    volt_seconds_per_radian,
+    volt_seconds_squared_per_meter,
+    voltage,
+    volts_per_meter,
+    volts_per_radian,
+    volts_per_radian_second,
+)
+from frc_python.utils.control import AngularPIDGains, LinearMotorFFGains, LinearPIDGains
+from frc_python.utils.sim import DriveModuleID, SimKrakenX60, SimulationInfo
 
 
 class SwerveModule(ABC):
@@ -494,3 +504,120 @@ class TurningTalon(SwerveTurningMotor):
         self._odometry_turn_positions = []
         while not self.position_queue.empty():
             self._odometry_turn_positions.append(rotations(self.position_queue.get()))
+
+
+class SimMk5nSwerveModule(SwerveModule):
+    DRIVE_GEAR_RATIO: float = 5.27
+    STEER_GEAR_RATIO: float = 26.09
+    STEER_GAINS: AngularPIDGains = AngularPIDGains(
+        volts_per_radian(125),
+        volts_per_radian_second(0),
+        volt_seconds_per_radian(10),
+    )
+
+    DRIVE_PID: LinearPIDGains = LinearPIDGains(volts_per_meter(0.7433))
+    DRIVE_FF: LinearMotorFFGains = LinearMotorFFGains(
+        voltage(0.19991),
+        volt_seconds_per_meter(0.64508),
+        volt_seconds_squared_per_meter(0.07864),
+    )
+
+    STEER_OFFSET = degrees(90)
+
+    WHEEL_RADIUS: Distance = inches(2)
+
+    def __init__(self, info: SimulationInfo, id: DriveModuleID) -> None:
+        self.steer_motor: SimKrakenX60 = SimKrakenX60(
+            info, id.steer, self.STEER_GEAR_RATIO
+        )
+        self.drive_motor: SimKrakenX60 = SimKrakenX60(
+            info, id.drive, self.DRIVE_GEAR_RATIO
+        )
+        self.steer_pid: PIDController = self.STEER_GAINS.to_controller()
+        self.steer_pid.enableContinuousInput(-0.5, 0.5)
+        self.drive_pid: PIDController = self.DRIVE_PID.to_controller()
+        self.drive_ff: SimpleMotorFeedforwardMeters = self.DRIVE_FF.to_feedforward()
+        self._desired_state = SwerveModuleState(0, Rotation2d())
+
+    @property
+    @override
+    def desired_state(self) -> SwerveModuleState:
+        return self._desired_state
+
+    @desired_state.setter
+    @override
+    def desired_state(self, val: SwerveModuleState) -> None:
+        self._desired_state = val
+
+    @property
+    @override
+    def angular_drive_position(self) -> Angle:
+        return self.steer_motor.angle - self.STEER_OFFSET
+
+    @property
+    @override
+    def odometry_timestamps(self) -> list[float]:
+        return []
+
+    @property
+    @override
+    def odometry_turn_positions(self) -> list[Angle]:
+        return []
+
+    @property
+    @override
+    def odometry_drive_positions(self) -> list[float]:
+        return []
+
+    @property
+    @override
+    def odometry_positions(self) -> list[SwerveModulePosition]:
+        return []
+
+    @property
+    @override
+    def valid_timestamps(self) -> int:
+        return 0
+
+    @override
+    def characterize(self, voltage: Voltage, turning_angle: Angle | None) -> None:
+        print("Tried to run characterize in simulation!")
+
+    @property
+    @override
+    def state(self) -> SwerveModuleState:
+        return SwerveModuleState(
+            self.drive_motor.velocity.to_linear(self.WHEEL_RADIUS).meters_per_second(),
+            self.angular_drive_position.to_rotation2d(),
+        )
+
+    @property
+    @override
+    def position(self) -> SwerveModulePosition:
+        return SwerveModulePosition(
+            self.drive_motor.angle.to_linear(self.WHEEL_RADIUS).meters(),
+            self.angular_drive_position.to_rotation2d(),
+        )
+
+    @override
+    def periodic(self) -> None:
+        self._turn_to_angle(radians(self.desired_state.angle.radians()))
+        self._go_to_speed(meters_per_second(self.desired_state.speed))
+
+    def _turn_to_angle(self, angle: Angle) -> None:
+        self.steer_motor.apply_voltage(
+            voltage(
+                self.steer_pid.calculate(
+                    self.steer_motor.angle.rotations(),
+                    (angle + self.STEER_OFFSET).rotations(),
+                )
+            )
+        )
+
+    def _go_to_speed(self, speed: LinearVelocity) -> None:
+        self.drive_motor.apply_voltage(
+            voltage(
+                self.drive_ff.calculate(speed.meters_per_second())
+                + self.drive_pid.calculate(self.state.speed, speed.meters_per_second())
+            )
+        )

@@ -50,7 +50,7 @@
         <body name="fl_swerve_module_wheel" pos="0 0 0.0508">
           <joint name="fl_swerve_module_wheel_hinge" type="hinge" axis="0 1 0" pos="0 0 0" armature="0.05" damping="0.1"/>
           <geom mesh="fl_swerve_module_wheel" pos="0.066675 0.066675 -0.0508" class="visual" material="white"/>
-          <geom name="fl_swerve_module_wheel_collision" type="cylinder" size="0.0508 0.0280" class="collision" material="black" axisangle="1 0 0 1.5708" friction="1.2 0.1 0.01"/>
+          <geom name="fl_swerve_module_wheel_collision" type="cylinder" size="0.0508 0.0280" class="collision" material="black" axisangle="1 0 0 1.5708" friction="1.2 0.1 0.01" solimp="0.95 0.99 0.001" solref="0.01 1"/>
         </body>
       </body>
 

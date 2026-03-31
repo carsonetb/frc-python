@@ -7,9 +7,10 @@ from importlib_resources import read_text
 from mujoco import MjData, MjModel, mj_step
 from mujoco.viewer import launch_passive
 from pygame.joystick import JoystickType
-from wpilib.simulation import DriverStationSim
+from wpilib.simulation import DriverStationSim, XboxControllerSim
 
 from frc_python.units.time import seconds
+from frc_python.utils.sim import SimulationInfo
 
 hal.initialize(500, 0)
 from frc_python.robot import Robot
@@ -27,7 +28,7 @@ def main():
         joystick.init()
     else:
         print("No controller found, please plug one in.")
-        # return
+        return
 
     model: MjModel = MjModel.from_xml_string(
         read_text("frc_python.resources.subsystems.drivetrain", "swerve.xml")
@@ -35,11 +36,12 @@ def main():
     data: MjData = MjData(model)
     model.opt.timestep = 0.001
 
-    robot = Robot()
+    robot = Robot(SimulationInfo(model, data))
     robot.robotInit()
     robot.teleopInit()
 
     ds = DriverStationSim()
+    controller = XboxControllerSim(0)
 
     with launch_passive(model, data) as viewer:
         start_time = time()
@@ -49,10 +51,12 @@ def main():
             t = time() - start_time
 
             pygame.event.pump()
-            # axes = [joystick.get_axis(i) for i in range(joystick.get_numaxes())]
 
-            # for i, axis in enumerate(axes):
-            #     ds.setJoystickAxis(0, i, axis)
+            controller.setLeftX(joystick.get_axis(0))
+            controller.setLeftY(-joystick.get_axis(1))
+            controller.setRightX(joystick.get_axis(2))
+            controller.setRightY(-joystick.get_axis(3))
+
             ds.setDsAttached(True)
             ds.setEnabled(True)
             ds.setAutonomous(False)

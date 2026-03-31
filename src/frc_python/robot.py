@@ -7,27 +7,25 @@ from time import time
 from typing import Final, override
 
 from commands2 import Command, cmd
+from commands2.button.commandjoystick import CommandJoystick
+from commands2.button.commandxboxcontroller import CommandXboxController
 from commands2.commandscheduler import CommandScheduler
 from phoenix6.canbus import CANBus
 from phoenix6.signal_logger import SignalLogger
 from phoenix6.status_code import StatusCode
 from phoenix6.status_signal_collection import StatusSignalCollection
-from pykit.loggedrobot import LoggedRobot
-from pykit.logger import Logger
+from pykit.loggedrobot import LoggedRobot, Logger
 from pykit.networktables.nt4Publisher import NT4Publisher
 from pykit.wpilog.wpilogwriter import WPILOGWriter
 from wpilib import Alert, DriverStation, PowerDistribution, Preferences
 
 from frc_python.bindings import configure_bindings
 from frc_python.dashboard import Auto, Dashboard
-from frc_python.sim import SimulationInfo
+from frc_python.subsystems.drivetrain.drivetrain import Drivetrain
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
-from frc_python.subsystems.drivetrain.sim.sim import SimDrivetrain
-
-
-class Model(Enum):
-    SIMULATION = auto()
-    COMPETITION = auto()
+from frc_python.units.time import seconds
+from frc_python.utils.misc import Model
+from frc_python.utils.sim import SimulationInfo
 
 
 class Robot(LoggedRobot):
@@ -54,7 +52,6 @@ class Robot(LoggedRobot):
 
         if self.isSimulation():
             assert info is not None
-            self.drivetrain = SimDrivetrain(info)
             self.model = Model.SIMULATION
         else:
             key = Preferences.getString("Model", "competition")
@@ -63,16 +60,25 @@ class Robot(LoggedRobot):
             else:
                 raise RuntimeError(f"Invalid model found in preferences: {key}")
 
+        self.drivetrain = Drivetrain(
+            self.phoenix_thread, info, self.model, seconds(0.001)
+        )
+
         if (status := SignalLogger.enable_auto_logging(False)) != StatusCode.OK:
             self.logger.warning(f"Failed to disable auto logging ({status.name})")
 
         DriverStation.silenceJoystickConnectionWarning(self.model != Model.COMPETITION)
 
+        self.driver_controller = CommandXboxController(0)
+
         self.configure_subsystems()
         configure_bindings()
 
     def configure_subsystems(self) -> None:
-        pass
+        self.drivetrain.register()
+        self.drivetrain.setDefaultCommand(
+            self.drivetrain.drive_with_controller(self.driver_controller.getHID())
+        )
 
     def configure_pykit(self) -> None:
         Logger.recordMetadata("Model", self.model.name)
