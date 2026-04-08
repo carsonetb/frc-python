@@ -1,6 +1,6 @@
 <mujoco model="mk5n_swerve">
   <compiler angle="radian" coordinate="local"/>
-  <option timestep="0.005" integrator="RK4"/>
+  <option timestep="0.001" integrator="RK4" cone="elliptic"/>
 
   <default>
     <default class="visual">
@@ -30,7 +30,7 @@
     <geom name="floor" size="0 0 0.05" type="plane" material="groundplane" friction="1.2 0.1 0.01"/>
     <body name="drive_train_frame">
       <freejoint name="root"/>
-      <inertial pos="0 0 0" mass="1" diaginertia="5 5 5"/>
+      <inertial pos="0 0 0" mass="30" diaginertia="5 5 5"/>
       <geom type="box" pos="-0.3302 0 0.06985" size="0.0125 0.235 0.0255" class="collision" material="white" mass="1.5"/>
       <geom type="box" pos="0 -0.3302 0.06985" size="0.235 0.0125 0.0255" class="collision" material="white" mass="1.5"/>
       <geom type="box" pos="0.3302 0 0.06985" size="0.0125 0.235 0.0255" class="collision" material="white" mass="1.5"/>
@@ -45,53 +45,57 @@
 
       <body name="fl_swerve_module_turret" pos="0.276225 0.276225 0">
         <inertial pos="0 0 0" mass="1.5" diaginertia="0.02 0.02 0.02"/>
-        <joint name="fl_swerve_module_turret_hinge" type="hinge" axis="0 0 1" pos="0 0 0" armature="0.0009" damping="0.2" frictionloss="0.8"/>
+        <joint name="fl_swerve_module_suspension" type="slide" axis="0 0 1" stiffness="50000" damping="1000" pos="0 0 0" springref="0"/>
+        <joint name="fl_swerve_module_turret_hinge" type="hinge" axis="0 0 1" pos="0 0 0" armature="0.0015" damping="3.2"/>
         <geom mesh="fl_swerve_module_turret" pos="0.066675 0.066675 0" class="visual" material="white"/>
 
         <body name="fl_swerve_module_wheel" pos="0 0 0.0508">
           <inertial pos="0 0 0" mass="0.4" diaginertia="0.001 0.001 0.001"/>
-          <joint name="fl_swerve_module_wheel_hinge" type="hinge" axis="0 1 0" pos="0 0 0" armature="0.05" damping="0.1"/>
+          <joint name="fl_swerve_module_wheel_hinge" type="hinge" axis="0 1 0" pos="0 0 0" armature="0.002" damping="0.66"/>
           <geom mesh="fl_swerve_module_wheel" pos="0.066675 0.066675 -0.0508" class="visual" material="white"/>
-          <geom name="fl_swerve_module_wheel_collision" type="cylinder" size="0.0508 0.0280" class="collision" material="black" axisangle="1 0 0 1.5708" friction="1.2 0.1 0.01" solimp="0.95 0.99 0.001" solref="0.01 1"/>
+          <geom name="fl_swerve_module_wheel_collision" type="sphere" size="0.0508" class="collision" material="black" friction="2.4 0.001 0.01"/>
         </body>
       </body>
 
       <body name="fr_swerve_module_turret" pos="0.276225 -0.276225 0">
         <inertial pos="0 0 0" mass="1.5" diaginertia="0.02 0.02 0.02"/>
-        <joint name="fr_swerve_module_turret_hinge" type="hinge" axis="0 0 1" pos="0 0 0" armature="0.0009" damping="0.2" frictionloss="0.8"/>
+        <joint name="fr_swerve_module_suspension" type="slide" axis="0 0 1" stiffness="50000" damping="1000" pos="0 0 0" springref="0"/>
+        <joint name="fr_swerve_module_turret_hinge" type="hinge" axis="0 0 1" pos="0 0 0" armature="0.0015" damping="0.2"/>
         <geom mesh="fl_swerve_module_turret" pos="0.066675 0.066675 0" class="visual" material="white"/>
 
         <body name="fr_swerve_module_wheel" pos="0 0 0.0508">
           <inertial pos="0 0 0" mass="0.4" diaginertia="0.001 0.001 0.001"/>
-          <joint name="fr_swerve_module_wheel_hinge" type="hinge" axis="0 1 0" pos="0 0 0" armature="0.05" damping="0.1"/>
+          <joint name="fr_swerve_module_wheel_hinge" type="hinge" axis="0 1 0" pos="0 0 0" armature="0.002" damping="0.66"/>
           <geom mesh="fl_swerve_module_wheel" pos="0.066675 0.066675 -0.0508" class="visual" material="white"/>
-          <geom name="fr_swerve_module_wheel_collision" type="cylinder" size="0.0508 0.0280" class="collision" material="black" axisangle="1 0 0 1.5708" friction="1.2 0.1 0.01" solimp="0.95 0.99 0.001" solref="0.01 1"/>
+          <geom name="fr_swerve_module_wheel_collision" type="sphere" size="0.0508" class="collision" material="black" friction="2.4 0.001 0.01"/>
         </body>
       </body>
 
       <body name="bl_swerve_module_turret" pos="-0.276225 0.276225 0">
         <inertial pos="0 0 0" mass="1.5" diaginertia="0.02 0.02 0.02"/>
-        <joint name="bl_swerve_module_turret_hinge" type="hinge" axis="0 0 1" pos="0 0 0" armature="0.0009" damping="0.2" frictionloss="0.8"/>
+        <joint name="bl_swerve_module_suspension" type="slide" axis="0 0 1" stiffness="50000" damping="1000" pos="0 0 0" springref="0"/>
+        <joint name="bl_swerve_module_turret_hinge" type="hinge" axis="0 0 1" pos="0 0 0" armature="0.0015" damping="0.2"/>
         <geom mesh="fl_swerve_module_turret" pos="0.066675 0.066675 0" class="visual" material="white"/>
 
         <body name="bl_swerve_module_wheel" pos="0 0 0.0508">
           <inertial pos="0 0 0" mass="0.4" diaginertia="0.001 0.001 0.001"/>
-          <joint name="bl_swerve_module_wheel_hinge" type="hinge" axis="0 1 0" pos="0 0 0" armature="0.05" damping="0.1"/>
+          <joint name="bl_swerve_module_wheel_hinge" type="hinge" axis="0 1 0" pos="0 0 0" armature="0.002" damping="0.66"/>
           <geom mesh="fl_swerve_module_wheel" pos="0.066675 0.066675 -0.0508" class="visual" material="white"/>
-          <geom name="bl_swerve_module_wheel_collision" type="cylinder" size="0.0508 0.0280" class="collision" material="black" axisangle="1 0 0 1.5708" friction="1.2 0.1 0.01" solimp="0.95 0.99 0.001" solref="0.01 1"/>
+          <geom name="bl_swerve_module_wheel_collision" type="sphere" size="0.0508" class="collision" material="black" friction="2.4 0.001 0.01"/>
         </body>
       </body>
 
       <body name="br_swerve_module_turret" pos="-0.276225 -0.276225 0">
         <inertial pos="0 0 0" mass="1.5" diaginertia="0.02 0.02 0.02"/>
-        <joint name="br_swerve_module_turret_hinge" type="hinge" axis="0 0 1" pos="0 0 0" armature="0.0009" damping="0.2" frictionloss="0.8"/>
+        <joint name="br_swerve_module_suspension" type="slide" axis="0 0 1" stiffness="50000" damping="1000" pos="0 0 0" springref="0"/>
+        <joint name="br_swerve_module_turret_hinge" type="hinge" axis="0 0 1" pos="0 0 0" armature="0.0015" damping="0.2"/>
         <geom mesh="fl_swerve_module_turret" pos="0.066675 0.066675 0" class="visual" material="white"/>
 
         <body name="br_swerve_module_wheel" pos="0 0 0.0508">
           <inertial pos="0 0 0" mass="0.4" diaginertia="0.001 0.001 0.001"/>
-          <joint name="br_swerve_module_wheel_hinge" type="hinge" axis="0 1 0" pos="0 0 0" armature="0.05" damping="0.1"/>
+          <joint name="br_swerve_module_wheel_hinge" type="hinge" axis="0 1 0" pos="0 0 0" armature="0.002" damping="0.66"/>
           <geom mesh="fl_swerve_module_wheel" pos="0.066675 0.066675 -0.0508" class="visual" material="white"/>
-          <geom name="br_swerve_module_wheel_collision" type="cylinder" size="0.0508 0.0280" class="collision" material="black" axisangle="1 0 0 1.5708" friction="1.2 0.1 0.01" solimp="0.95 0.99 0.001" solref="0.01 1"/>
+          <geom name="br_swerve_module_wheel_collision" type="sphere" size="0.0508" class="collision" material="black" friction="2.4 0.001 0.01"/>
         </body>
       </body>
     </body>
@@ -104,6 +108,8 @@
     <motor name="fr_swerve_module_wheel_motor" joint="fr_swerve_module_wheel_hinge" gear="1"/>
     <motor name="bl_swerve_module_turret_motor" joint="bl_swerve_module_turret_hinge" gear="1"/>
     <motor name="bl_swerve_module_wheel_motor" joint="bl_swerve_module_wheel_hinge" gear="1"/>
+    <motor name="br_swerve_module_turret_motor" joint="br_swerve_module_turret_hinge" gear="1"/>
+    <motor name="br_swerve_module_wheel_motor" joint="br_swerve_module_wheel_hinge" gear="1"/>
   </actuator>
 
   <sensor>

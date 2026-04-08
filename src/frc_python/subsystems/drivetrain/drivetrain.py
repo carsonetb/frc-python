@@ -32,6 +32,7 @@ from frc_python.subsystems.drivetrain.module import (
 )
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
 from frc_python.units.time import Time
+from frc_python.units.voltage import voltage
 from frc_python.utils.math import sign
 from frc_python.utils.misc import Model
 from frc_python.utils.sim import SimulationInfo
@@ -122,6 +123,11 @@ class Drivetrain(Subsystem):
 
     @override
     def periodic(self) -> None:
+        # seems to break drivetrain, probably obvious why
+        # self.io.periodic()
+        self.io.gyro.periodic()
+        print(self.io.gyro.yaw.to_rotation2d())
+
         if isinstance(self.io, DrivetrainIOReal):
             pass
         else:
@@ -148,7 +154,7 @@ class Drivetrain(Subsystem):
                 * DrivetrainIO.TOP_SPEED.meters_per_second(),
                 self._calculate_input_curve(translation.y)
                 * DrivetrainIO.TOP_SPEED.meters_per_second(),
-                rotation.x * tau,
+                rotation.x * 16,
                 self.io.gyro.yaw.to_rotation2d(),
             )
 
@@ -166,8 +172,8 @@ class Drivetrain(Subsystem):
     def drive_with_controller(self, controller: XboxController) -> Command:
         return cmd.run(
             lambda: self._drive(
-                Translation2d(-controller.getLeftY(), -controller.getLeftX()),
-                Translation2d(-controller.getRightY(), 0),
+                Translation2d(controller.getLeftX(), controller.getLeftY()),
+                Translation2d(controller.getRightY(), 0),
             ),
             self,
         )

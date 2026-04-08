@@ -84,6 +84,7 @@ class SimKrakenX60:
             self.info.model, mjtObj.mjOBJ_ACTUATOR, id.motor_name
         )
         self.qpos_idx: int = self.info.model.jnt_qposadr[self.joint_id]
+        self.qvel_idx: int = self.info.model.jnt_dofadr[self.joint_id]
         self.gear_ratio: float = gear_ratio
 
     @property
@@ -92,7 +93,7 @@ class SimKrakenX60:
 
     @property
     def velocity(self) -> AngularVelocity:
-        return radians_per_second(self.info.data.qvel[self.joint_id] * self.direction)
+        return radians_per_second(self.info.data.qvel[self.qvel_idx] * self.direction)
 
     def apply_voltage(self, voltage: Voltage) -> None:
         self.info.data.ctrl[self.motor_id] = (
@@ -104,11 +105,9 @@ class SimKrakenX60:
         self, voltage: Voltage, joint_speed: AngularVelocity
     ) -> float:
         voltage = voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE)
-        shaft_speed = joint_speed.mulratio(self.gear_ratio)
         motor_torque = (
-            (voltage / self.NOMINAL_VOLTAGE).voltage()
-            - (shaft_speed.radians_per_second() / self.FREE_SPEED.radians_per_second())
-        ) * self.STALL_TORQUE.raw
+            voltage / self.NOMINAL_VOLTAGE
+        ).voltage() * self.STALL_TORQUE.raw
         return motor_torque * self.gear_ratio
 
 

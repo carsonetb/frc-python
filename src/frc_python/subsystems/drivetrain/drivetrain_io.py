@@ -115,6 +115,9 @@ class DrivetrainIO(ABC):
     def goto_chassis_speeds(self, speeds: ChassisSpeeds) -> None:
         pass
 
+    def periodic(self) -> None:
+        pass
+
     def for_each_corner(
         self, inputs: DrivetrainInputs, i: int, module: SwerveModule
     ) -> None:
@@ -203,6 +206,7 @@ class Mk5nDrivetrainIOSim(DrivetrainIO):
             module_states[i].optimize(module.state.angle)
             module.desired_state = module_states[i]
 
+    @override
     def periodic(self) -> None:
         for module in self.modules:
             module.periodic()

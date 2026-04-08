@@ -52,6 +52,9 @@ class AngularVelocity(UnitPerUnit[Angle, Time]):
     def rotations_per_second(self) -> float:
         return self.raw / (2.0 * pi)
 
+    def rpm(self) -> float:
+        return self.rotations_per_second() * 60
+
 
 def meters_per_second(val: float) -> LinearVelocity:
     return LinearVelocity(meters(val), seconds(1))

@@ -518,7 +518,7 @@ class SimMk5nSwerveModule(SwerveModule):
     DRIVE_PID: LinearPIDGains = LinearPIDGains(volts_per_meter(0.7433))
     DRIVE_FF: LinearMotorFFGains = LinearMotorFFGains(
         voltage(0.19991),
-        volt_seconds_per_meter(0.64508),
+        volt_seconds_per_meter(1.5210084 * 1.62105718),
         volt_seconds_squared_per_meter(0.07864),
     )
 
