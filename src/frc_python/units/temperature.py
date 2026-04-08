@@ -7,12 +7,14 @@ from frc_python.units.base import Unit
 
 class Temperature(Unit):
     """
-    Stored raw in units of fahrenheit.
+    Stored raw in units of kelvin.
     """
 
     @override
     def in_current(self) -> float:
         match self.unit:
+            case "kelvin":
+                return self.kelvin()
             case "celsius":
                 return self.celsius()
             case "fahrenheit":
@@ -24,15 +26,22 @@ class Temperature(Unit):
     def withval(self, new: float) -> Temperature:
         return Temperature(new, self.unit)
 
+    def kelvin(self) -> float:
+        return self.raw
+
     def celsius(self) -> float:
-        return self
+        return self.raw - 273.15
 
     def fahrenheit(self) -> float:
-        return (self * (9.0 / 5.0)) + 32.0
+        return (self.celsius() * (9.0 / 5.0)) + 32.0
+
+
+def kelvin(val: float) -> Temperature:
+    return Temperature(val, "kelvin")
 
 
 def celsius(val: float) -> Temperature:
-    return Temperature(val, "celsius")
+    return Temperature(val + 273.15, "celsius")
 
 
 def fahrenheit(val: float) -> Temperature:

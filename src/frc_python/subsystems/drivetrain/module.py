@@ -24,7 +24,7 @@ from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 
 from frc_python.can import CTREDeviceID
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
-from frc_python.units.amps import Amps, amps
+from frc_python.units.amps import Current, amps
 from frc_python.units.angle import Angle, degrees, radians, rotations
 from frc_python.units.distance import Distance, inches
 from frc_python.units.temperature import Temperature, celsius
@@ -291,7 +291,7 @@ class DrivingTalon(SwerveDrivingMotor):
         .with_k_v(0.63508)
         .with_k_a(0.07864)
     )
-    CURRENT_LIMIT: Amps = amps(80)
+    CURRENT_LIMIT: Current = amps(80)
     GEAR_RATIO: float = 5.27
     WHEEL_RADIUS: Distance = inches(1.9225)
 

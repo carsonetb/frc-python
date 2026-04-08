@@ -50,7 +50,7 @@ def main():
             step_start = time()
             t = time() - start_time
 
-            pygame.event.pump()
+            pygame.event.get()
 
             controller.setLeftX(joystick.get_axis(0))
             controller.setLeftY(-joystick.get_axis(1))

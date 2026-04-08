@@ -5,7 +5,7 @@ from typing import override
 from frc_python.units.base import Unit
 
 
-class Amps(Unit):
+class Current(Unit):
     """
     Basic unit of amperage, can only be stored in amps.
     """
@@ -15,12 +15,12 @@ class Amps(Unit):
         return self.raw
 
     @override
-    def withval(self, new: float) -> Amps:
-        return Amps(new, self.unit)
+    def withval(self, new: float) -> Current:
+        return Current(new, self.unit)
 
     def amps(self) -> float:
         return self.raw
 
 
-def amps(val: float) -> Amps:
-    return Amps(val, "amps")
+def amps(val: float) -> Current:
+    return Current(val, "amps")
