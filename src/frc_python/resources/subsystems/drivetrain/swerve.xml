@@ -23,13 +23,18 @@
     <mesh name="fl_swerve_module_wheel" file="frc_python/resources/subsystems/drivetrain/FLSwerveModuleWheel.stl"/>
     <mesh name="fr_swerve_module" file="frc_python/resources/subsystems/drivetrain/FRSwerveModule.stl"/>
     <mesh name="drive_train_frame" file="frc_python/resources/subsystems/drivetrain/DriveTrainFrame.stl"/>
-    <mesh name="field_ramps" file="frc_python/resources/subsystems/drivetrain/FieldRamps.stl"/>
+    <mesh name="field_ramps" file="frc_python/resources/FieldRamps.stl"/>
+    <mesh name="field_walls" file="frc_python/resources/FieldWalls.stl"/>
   </asset>
 
   <worldbody>
     <light pos="1 -1 1.5" dir="-1 1 -1" diffuse="0.5 0.5 0.5" directional="true"/>
     <geom name="floor" size="0 0 0.05" type="plane" material="groundplane" friction="1.5 0.1 0.01"/>
+
     <geom mesh="field_ramps" class="visual" material="white"/>
+    <geom mesh="field_walls" class="visual" material="white"/>
+    <geom type="box" pos="0 0 0" size="1 1 1" class="visual" material="white"/>
+
     <body name="drive_train_frame">
       <freejoint name="root"/>
       <inertial pos="0 0 0" mass="30" diaginertia="5 5 5"/>
@@ -37,6 +42,7 @@
       <geom type="box" pos="0 -0.3302 0.06985" size="0.235 0.0125 0.0255" class="collision" material="white" mass="1.5"/>
       <geom type="box" pos="0.3302 0 0.06985" size="0.0125 0.235 0.0255" class="collision" material="white" mass="1.5"/>
       <geom type="box" pos="0 0.3302 0.06985" size="0.235 0.0125 0.0255" class="collision" material="white" mass="1.5"/>
+
       <geom mesh="drive_train_frame" class="visual" material="white"/>
       <geom mesh="fl_swerve_module" class="visual" material="white"/>
       <geom mesh="fr_swerve_module" class="visual" material="white"/>
