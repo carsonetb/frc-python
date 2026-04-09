@@ -45,7 +45,12 @@ from frc_python.units.voltage import (
     volts_per_radian_second,
 )
 from frc_python.utils.control import AngularPIDGains, LinearMotorFFGains, LinearPIDGains
-from frc_python.utils.sim import DriveModuleID, SimKrakenX60, SimulationInfo
+from frc_python.utils.sim import (
+    DriveModuleID,
+    SimKrakenX44,
+    SimKrakenX60,
+    SimulationInfo,
+)
 
 
 class SwerveModule(ABC):
@@ -533,10 +538,10 @@ class SimMk5nSwerveModule(SwerveModule):
         drive_reversed=False,
         steer_reversed=False,
     ) -> None:
-        self.steer_motor: SimKrakenX60 = SimKrakenX60(
+        self.steer_motor = SimKrakenX44(
             info, id.steer, self.STEER_GEAR_RATIO, steer_reversed
         )
-        self.drive_motor: SimKrakenX60 = SimKrakenX60(
+        self.drive_motor = SimKrakenX60(
             info, id.drive, self.DRIVE_GEAR_RATIO, drive_reversed
         )
         self.steer_pid: PIDController = self.STEER_GAINS.to_controller()

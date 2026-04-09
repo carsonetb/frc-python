@@ -1,3 +1,4 @@
+from abc import ABC
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import override
@@ -61,13 +62,7 @@ class DriveModuleID(Enum):
         return self.value[1]
 
 
-class SimKrakenX60:
-    FREE_SPEED: AngularVelocity = rotations_per_minute(6000)
-    STALL_TORQUE: Newtons = newtons(
-        9.2
-    )  # Importantly, this is with the Phoenix Pro license. This might also be a lot less because of current limits.
-    NOMINAL_VOLTAGE: Voltage = voltage(12)
-
+class SimMotor(ABC):
     def __init__(
         self,
         info: SimulationInfo,
@@ -77,9 +72,7 @@ class SimKrakenX60:
     ) -> None:
         self.direction = -1 if reversed else 1
         self.info = info
-        self.joint_id: int = mj_name2id(
-            self.info.model, mjtObj.mjOBJ_JOINT, id.joint_name
-        )
+        self.joint_id = mj_name2id(self.info.model, mjtObj.mjOBJ_JOINT, id.joint_name)
         self.motor_id: int = mj_name2id(
             self.info.model, mjtObj.mjOBJ_ACTUATOR, id.motor_name
         )
@@ -94,6 +87,37 @@ class SimKrakenX60:
     @property
     def velocity(self) -> AngularVelocity:
         return radians_per_second(self.info.data.qvel[self.qvel_idx] * self.direction)
+
+
+class SimKrakenX60(SimMotor):
+    FREE_SPEED: AngularVelocity = rotations_per_minute(6000)
+    STALL_TORQUE: Newtons = newtons(
+        9.2
+    )  # Importantly, this is with the Phoenix Pro license. This might also be a lot less because of current limits.
+    NOMINAL_VOLTAGE: Voltage = voltage(12)
+
+    def apply_voltage(self, voltage: Voltage) -> None:
+        self.info.data.ctrl[self.motor_id] = (
+            self._voltage_to_torque(voltage, self.velocity) * self.direction
+        )
+
+    # Returns a torque in newton meters, probably should be unit-ed in the future.
+    def _voltage_to_torque(
+        self, voltage: Voltage, joint_speed: AngularVelocity
+    ) -> float:
+        voltage = voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE)
+        motor_torque = (
+            voltage / self.NOMINAL_VOLTAGE
+        ).voltage() * self.STALL_TORQUE.raw
+        return motor_torque * self.gear_ratio
+
+
+class SimKrakenX44(SimMotor):
+    FREE_SPEED: AngularVelocity = rotations_per_minute(7368)
+    STALL_TORQUE: Newtons = newtons(
+        5.01
+    )  # Importantly, this is with the Phoenix Pro license. This might also be a lot less because of current limits.
+    NOMINAL_VOLTAGE: Voltage = voltage(12)
 
     def apply_voltage(self, voltage: Voltage) -> None:
         self.info.data.ctrl[self.motor_id] = (

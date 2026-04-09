@@ -197,10 +197,19 @@ class Mk5nDrivetrainIOSim(DrivetrainIO):
 
     @override
     def goto_chassis_speeds(self, speeds: ChassisSpeeds) -> None:
-        module_states = self.kinematics.toSwerveModuleStates(speeds)
-        module_states = SwerveDrive4Kinematics.desaturateWheelSpeeds(
-            module_states, self.TOP_SPEED.meters_per_second()
-        )
+        # TODO: Thsi is sped
+        if abs(speeds.vx) > 0.1 or abs(speeds.vy) > 0.1 or abs(speeds.omega) > 0.1:
+            module_states = self.kinematics.toSwerveModuleStates(speeds)
+            module_states = SwerveDrive4Kinematics.desaturateWheelSpeeds(
+                module_states, self.TOP_SPEED.meters_per_second()
+            )
+        else:
+            module_states = (
+                SwerveModuleState(0, Rotation2d.fromDegrees(45)),
+                SwerveModuleState(0, Rotation2d.fromDegrees(90 + 45)),
+                SwerveModuleState(0, Rotation2d.fromDegrees(180 - 45)),
+                SwerveModuleState(0, Rotation2d.fromDegrees(270 - 45)),
+            )
 
         for i, module in enumerate(self.modules.to_list()):
             module_states[i].optimize(module.state.angle)
