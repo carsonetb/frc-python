@@ -1,5 +1,4 @@
 from frc_python.units.base import UnitPerUnit
-from frc_python.units.distance import meters
 from frc_python.units.time import Time, seconds
 from frc_python.units.velocity import LinearVelocity, meters_per_second
 

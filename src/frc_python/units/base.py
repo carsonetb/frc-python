@@ -3,13 +3,19 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from functools import singledispatchmethod
-from typing import Self, override
+from typing import Self, cast, override
 
 from pykit.autolog import autolog_output, autologgable_output
 
 
 @autologgable_output
 class Unit(ABC):
+    """
+    Base class for a unit. A unit stores it's raw value, which is
+    either in or derived from standard international base units,
+    and the actual unit it would be printed in as a string.
+    """
+
     def __init__(self, value: float, unit: str) -> None:
         self.raw: float = value
         self.unit: str = unit
@@ -37,6 +43,27 @@ class Unit(ABC):
         """
 
         pass
+
+    @abstractmethod
+    def in_base(self) -> Self:
+        pass
+
+    def muldim[U: Unit](self, other: U) -> UnitUnit[Self, U]:
+        """
+        Multiplies the units, preserving their types. For example,
+        kilograms times meters per second would become kg * (m/s),
+        or, Mass times Velocity would become UnitUnit[Mass, Velocity].
+        """
+
+        return UnitUnit(self, other)
+
+    def divdim[U: Unit](self, other: U) -> UnitPerUnit[Self, U]:
+        """
+        Divides the units, preserving their types. For example, meters
+        divided by seconds would become m/s, or, Distance divided by
+        Time would become UnitPerUnit[Distance, Time]
+        """
+        return UnitPerUnit(self, other)
 
     def __float__(self) -> float:
         return self.raw
@@ -98,6 +125,12 @@ class Unit(ABC):
 
 
 class UnitPerUnit[L: Unit, R: Unit](Unit):
+    """
+    Represents a unit divided by another unit. For example, a very simple
+    example of this is meters per second (m/s). If you travel 10 meters in
+    2 seconds, then you are traveling at 5 m/s.
+    """
+
     def __init__(self, value: L, per: R) -> None:
         super().__init__(value.raw / per.raw, f"({value.unit} / {per.unit})")
         self.value: L = value
@@ -111,8 +144,21 @@ class UnitPerUnit[L: Unit, R: Unit](Unit):
     def withval(self, new: float) -> UnitPerUnit[L, R]:
         return UnitPerUnit(self.value.withval(new), self.per.withval(1))
 
-    def muldim(self, other: R) -> L:
-        return self.value.withval(self.raw * other.raw)
+    @override
+    def in_base(self) -> UnitPerUnit[L, R]:
+        return UnitPerUnit(self.value.in_base(), self.per.in_base())
+
+    def mulr(self, other: R) -> L:
+        """
+        Helpful for a typed multiplication of the right-hand unit, this
+        function is helpful for dimensional analysis. With the default `muldim`
+        function if you multiply (m/s) by seconds, you will get (m/s)*s. Using
+        this will yield only meters.
+
+        Note that this converts the displayed unit to the SI base unit.
+        """
+
+        return self.value.withval(self.raw * other.raw).in_base()
 
 
 class UnitUnit[L: Unit, R: Unit](Unit):
@@ -129,49 +175,70 @@ class UnitUnit[L: Unit, R: Unit](Unit):
     def withval(self, new: float) -> UnitUnit[L, R]:
         return UnitUnit(self.value.withval(new), self.times.withval(1))
 
-    # TODO: This function doesn't use the raw unit, it conserves
-    # the old string even though the units have changed to raw.
-    def div_leftdim(self, other: L) -> R:
-        return self.times.withval(self.raw / other.raw)
-
-    def div_rightdim(self, other: R) -> L:
-        return self.value.withval(self.raw / other.raw)
-
-
-class PackedUnitUnit[L: Unit, R: Unit](Unit):
-    """
-    Represents a unit that is not necessarily constructed from two
-    other terms, but can be unpacked into one term given the other.
-
-    For example, a motor might be able to apply only so many newtons,
-    that force is not determined by multiplying mass and acceleration,
-    although you can derive acceleration from the mass of the object
-    the motor is pushing.
-    """
-
-    def __init__(self, raw: float, unit: str) -> None:
-        super().__init__(raw, unit)
-
     @override
-    def in_current(self) -> float:
-        return self.raw
+    def in_base(self) -> UnitUnit[L, R]:
+        return UnitUnit(self.value.in_base(), self.times.in_base())
 
-    @override
-    def withval(self, new: float) -> PackedUnitUnit[L, R]:
-        return PackedUnitUnit(new, self.unit)
+    def divl(self, other: L) -> R:
+        """See `UnitPerUnit.mulr` for a similar explanation."""
+        return self.times.withval(self.raw / other.raw).in_base()
 
-    # TODO: Unpacking
+    def divr(self, other: R) -> L:
+        """See `UnitPerUnit.mulr` for a similar explanation."""
+        return self.value.withval(self.raw / other.raw).in_base()
 
 
-class UnitSquared[U: Unit](Unit):
-    def __init__(self, value: U) -> None:
-        super().__init__(value.raw, f"{value.unit}^2")
-        self.value: U = value
+class UnitExp[U: Unit](Unit):
+    def __init__(self, value: U, exp: int) -> None:
+        self.value = value
+        self.exp = exp
+        super().__init__(value.raw, f"{value.unit}^{exp}")
 
     @override
     def in_current(self) -> float:
         return self.value.in_current()
 
     @override
-    def withval(self, new: float) -> UnitSquared[U]:
-        return UnitSquared(self.value.withval(new))
+    def withval(self, new: float) -> UnitExp[U]:
+        return UnitExp(self.value.withval(new), self.exp)
+
+    @override
+    def in_base(self) -> UnitExp[U]:
+        return UnitExp(self.value.in_base(), self.exp)
+
+    def div(self, other: UnitExp[U]) -> UnitExp[U]:
+        """
+        Divides the values and subtracts the exponents.
+        """
+        return UnitExp(self.value / other.value, self.exp - other.exp)
+
+    def mul(self, other: UnitExp[U]) -> UnitExp[U]:
+        """
+        Multiplies the values and adds the exponents.
+        """
+        return UnitExp(self.value * other.value, self.exp + other.exp)
+
+
+class UnitSquared[U: Unit](UnitExp[U]):
+    def __init__(self, value: U) -> None:
+        super().__init__(value, 2)
+
+
+class UnitCubed[U: Unit](UnitExp[U]):
+    def __init__(self, value: U) -> None:
+        super().__init__(value, 3)
+
+
+class InverseUnit[U: Unit](UnitExp[U]):
+    def __init__(self, value: U) -> None:
+        super().__init__(value, -1)
+
+
+class InverseUnitSquared[U: Unit](UnitExp[U]):
+    def __init__(self, value: U) -> None:
+        super().__init__(value, -2)
+
+
+class InverseUnitCubed[U: Unit](UnitExp[U]):
+    def __init__(self, value: U) -> None:
+        super().__init__(value, -3)

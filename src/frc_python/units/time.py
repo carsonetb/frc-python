@@ -15,12 +15,18 @@ class Time(Unit):
         match self.unit:
             case "seconds":
                 return self.seconds()
+            case "minutes":
+                return self.minutes()
             case _:
                 assert False
 
     @override
     def withval(self, new: float) -> Time:
         return Time(new, self.unit)
+
+    @override
+    def in_base(self) -> Time:
+        return Time(self.seconds(), "seconds")
 
     def seconds(self) -> float:
         return self.raw

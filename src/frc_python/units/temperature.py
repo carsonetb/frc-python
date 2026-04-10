@@ -7,7 +7,7 @@ from frc_python.units.base import Unit
 
 class Temperature(Unit):
     """
-    Stored raw in units of kelvin.
+    Basic unit of thermodynamic temperature, stored raw in units of kelvin.
     """
 
     @override
@@ -25,6 +25,10 @@ class Temperature(Unit):
     @override
     def withval(self, new: float) -> Temperature:
         return Temperature(new, self.unit)
+
+    @override
+    def in_base(self) -> Temperature:
+        return Temperature(self.kelvin(), "kelvin")
 
     def kelvin(self) -> float:
         return self.raw

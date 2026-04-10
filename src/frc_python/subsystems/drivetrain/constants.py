@@ -13,8 +13,8 @@ from phoenix6.swerve import (
 )
 
 from frc_python.can import CTREDeviceID
-from frc_python.units.amps import amps
 from frc_python.units.angle import rotations
+from frc_python.units.current import amps
 from frc_python.units.distance import inches
 from frc_python.units.mass import kilogram_meters_squared
 from frc_python.units.velocity import (

@@ -23,6 +23,10 @@ class Mass(Unit):
     def withval(self, new: float) -> Mass:
         return Mass(new, self.unit)
 
+    @override
+    def in_base(self) -> Mass:
+        return Mass(self.kilograms, "kilograms")
+
     @property
     def kilograms(self) -> float:
         return self.raw

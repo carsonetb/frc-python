@@ -27,6 +27,10 @@ class Distance(Unit):
     def withval(self, new: float) -> Distance:
         return Distance(new, self.unit)
 
+    @override
+    def in_base(self) -> Distance:
+        return Distance(self.meters(), "meters")
+
     def meters(self) -> float:
         return self.raw
 

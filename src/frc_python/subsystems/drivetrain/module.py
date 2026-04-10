@@ -24,8 +24,8 @@ from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 
 from frc_python.can import CTREDeviceID
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
-from frc_python.units.amps import Current, amps
 from frc_python.units.angle import Angle, degrees, radians, rotations
+from frc_python.units.current import Current, amps
 from frc_python.units.distance import Distance, inches
 from frc_python.units.temperature import Temperature, celsius
 from frc_python.units.velocity import (
