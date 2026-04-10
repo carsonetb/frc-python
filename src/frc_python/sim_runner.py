@@ -15,26 +15,36 @@ from frc_python.utils.sim import SimulationInfo
 hal.initialize(500, 0)
 from frc_python.robot import Robot
 
-TIMESTEP = seconds(0.001)
+TIMESTEP = seconds(0.002)
+
+FLIGHT_STICKS = False
 
 
 def main():
     pygame.init()
     pygame.joystick.init()
 
-    joystick: JoystickType | None = None
-    if pygame.joystick.get_count() > 0:
-        joystick = pygame.joystick.Joystick(0)
-        joystick.init()
+    if FLIGHT_STICKS:
+        joystick_left: JoystickType | None = None
+        joystick_right: JoystickType | None = None
+        if pygame.joystick.get_count() >= 2:
+            joystick_left = pygame.joystick.Joystick(0)
+            joystick_right = pygame.joystick.Joystick(1)
+        else:
+            print("Not all joysticks connected, please plug them in.")
     else:
-        print("No controller found, please plug one in.")
-        return
+        joystick: JoystickType | None = None
+        if pygame.joystick.get_count() >= 1:
+            joystick = pygame.joystick.Joystick(0)
+            joystick.init()
+        else:
+            print("No controller found, please plug one in.")
+            return
 
     model: MjModel = MjModel.from_xml_string(
         read_text("frc_python.resources.subsystems.drivetrain", "swerve.xml")
     )
     data: MjData = MjData(model)
-    model.opt.timestep = 0.001
 
     robot = Robot(SimulationInfo(model, data))
     robot.robotInit()
@@ -43,19 +53,27 @@ def main():
     ds = DriverStationSim()
     controller = XboxControllerSim(0)
 
+    tick = 0
     with launch_passive(model, data) as viewer:
         start_time = time()
 
         while viewer.is_running():
+            tick += 1
             step_start = time()
             t = time() - start_time
 
             pygame.event.get()
 
-            controller.setLeftX(joystick.get_axis(0))
-            controller.setLeftY(-joystick.get_axis(1))
-            controller.setRightX(joystick.get_axis(2))
-            controller.setRightY(-joystick.get_axis(3))
+            if FLIGHT_STICKS:
+                controller.setLeftX(joystick_left.get_axis(0))
+                controller.setLeftY(-joystick_left.get_axis(1))
+                controller.setRightX(joystick_right.get_axis(1))
+                controller.setRightY(-joystick_right.get_axis(0))
+            else:
+                controller.setLeftX(joystick.get_axis(0))
+                controller.setLeftY(-joystick.get_axis(1))
+                controller.setRightX(joystick.get_axis(2))
+                controller.setRightY(-joystick.get_axis(3))
 
             ds.setDsAttached(True)
             ds.setEnabled(True)
@@ -77,13 +95,13 @@ def main():
             #     degrees(sin(t / 1.5) * 70),
             # )
 
-            steps = int(TIMESTEP.seconds() / model.opt.timestep)
-            for _ in range(steps):
-                mj_step(model, data)
+            mj_step(model, data)
 
-            viewer.sync()
+            if tick % 10 == 0:
+                viewer.sync()
 
             time_until_next_step = model.opt.timestep - (time() - step_start)
+            print(time() - step_start)
             if time_until_next_step > 0:
                 sleep(time_until_next_step)
 
