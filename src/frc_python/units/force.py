@@ -4,7 +4,7 @@ from frc_python.units.mass import Mass, kilograms
 
 
 class Force(UnitUnit[Mass, LinearAcceleration]):
-    """Basic unit of force, units are kg*(m/s^2)"""
+    """SI derived unit of force, units newtons, or, kg*(m/s^2)"""
 
     def __init__(self, value: Mass, times: LinearAcceleration) -> None:
         super().__init__(value, times)

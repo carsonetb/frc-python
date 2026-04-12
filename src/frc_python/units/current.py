@@ -7,7 +7,7 @@ from frc_python.units.base import Unit
 
 class Current(Unit):
     """
-    Basic unit of current, can only be stored in amps.
+    Basic unit of current, stored raw in amperes.
     """
 
     @override

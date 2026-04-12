@@ -8,6 +8,12 @@ from frc_python.units.time import Time, seconds
 
 class Distance(Unit):
     """
+    Basic unit of distance, can be stored in:
+
+    - Meters
+    - Inches
+    - Feet
+
     Stored raw in meters.
     """
 

@@ -38,6 +38,15 @@ class Unit(ABC):
         - Inductance
         - Magnetic Flux
         - Temperature
+
+    Other derived units:
+
+        - Linear Velocity
+        - Angular Velocity
+        - Linear Acceleration
+        - Angular Acceleration
+        - Linear Jerk
+        - Angular Jerk
     """
 
     def __init__(self, value: float, unit: str) -> None:

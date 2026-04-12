@@ -7,7 +7,13 @@ from frc_python.units.base import Unit
 
 class Temperature(Unit):
     """
-    Basic unit of thermodynamic temperature, stored raw in units of kelvin.
+    Basic unit of thermodynamic temperature, can be stored in:
+
+    - Kelvin
+    - Celsius
+    - Fahrenheit
+
+    Stored raw in units of kelvin.
     """
 
     @override
