@@ -14,6 +14,30 @@ class Unit(ABC):
     Base class for a unit. A unit stores it's raw value, which is
     either in or derived from standard international base units,
     and the actual unit it would be printed in as a string.
+
+    Included SI units:
+
+        - Time
+        - Distance (length)
+        - Mass
+        - (electric) Current
+        - (thermodynamic) Temperature
+
+    Included SI derived units:
+
+        - (plane) Angle
+        - Frequency
+        - Force
+        - Energy (work, amount of heat)
+        - Power
+        - (electric) Charge
+        - Voltage (electric potential difference) (with many other voltage-derived units)
+        - (electrical) Resistance
+        - (electrical) Conductance
+        - Capacitance
+        - Inductance
+        - Magnetic Flux
+        - Temperature
     """
 
     def __init__(self, value: float, unit: str) -> None:
@@ -74,7 +98,7 @@ class Unit(ABC):
 
     @override
     def __repr__(self) -> str:
-        return f"{self.in_current()} {self.unit}"
+        return f"Unit<current={self.in_current()}, unit={self.unit}>"
 
     def clamp(self, minimum: Self, maximum: Self) -> Self:
         return self.withval(
@@ -150,7 +174,7 @@ class UnitPerUnit[L: Unit, R: Unit](Unit):
 
     def mulr(self, other: R) -> L:
         """
-        Helpful for a typed multiplication of the right-hand unit, this
+        Used for a typed multiplication of the right-hand unit, this
         function is helpful for dimensional analysis. With the default `muldim`
         function if you multiply (m/s) by seconds, you will get (m/s)*s. Using
         this will yield only meters.
@@ -162,6 +186,10 @@ class UnitPerUnit[L: Unit, R: Unit](Unit):
 
 
 class UnitUnit[L: Unit, R: Unit](Unit):
+    """
+    Represents the left unit multiplied by the right unit.
+    """
+
     def __init__(self, value: L, times: R) -> None:
         super().__init__(value.raw * times.raw, f"({value.unit} * {times.unit})")
         self.value: L = value
@@ -189,6 +217,11 @@ class UnitUnit[L: Unit, R: Unit](Unit):
 
 
 class UnitExp[U: Unit](Unit):
+    """
+    Represents whatever unit is stored inside, raised to some
+    exponent.
+    """
+
     def __init__(self, value: U, exp: int) -> None:
         self.value = value
         self.exp = exp
@@ -220,25 +253,45 @@ class UnitExp[U: Unit](Unit):
 
 
 class UnitSquared[U: Unit](UnitExp[U]):
+    """
+    Represents whatever unit is stored inside of it, squared.
+    """
+
     def __init__(self, value: U) -> None:
         super().__init__(value, 2)
 
 
 class UnitCubed[U: Unit](UnitExp[U]):
+    """
+    Represents whatever unit is stored inside of it, cubed.
+    """
+
     def __init__(self, value: U) -> None:
         super().__init__(value, 3)
 
 
 class InverseUnit[U: Unit](UnitExp[U]):
+    """
+    Represents one divided by whatever unit is stored inside.
+    """
+
     def __init__(self, value: U) -> None:
         super().__init__(value, -1)
 
 
 class InverseUnitSquared[U: Unit](UnitExp[U]):
+    """
+    Represents one divided by the square of whatever unit is stored inside.
+    """
+
     def __init__(self, value: U) -> None:
         super().__init__(value, -2)
 
 
 class InverseUnitCubed[U: Unit](UnitExp[U]):
+    """
+    Represents one divided by the cube of whatever unit is stored inside.
+    """
+
     def __init__(self, value: U) -> None:
         super().__init__(value, -3)

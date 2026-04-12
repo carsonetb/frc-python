@@ -22,6 +22,7 @@ class Current(Unit):
     def in_base(self) -> Current:
         return self
 
+    @property
     def amps(self) -> float:
         return self.raw
 

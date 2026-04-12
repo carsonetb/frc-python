@@ -14,11 +14,11 @@ class Temperature(Unit):
     def in_current(self) -> float:
         match self.unit:
             case "kelvin":
-                return self.kelvin()
+                return self.kelvin
             case "celsius":
-                return self.celsius()
+                return self.celsius
             case "fahrenheit":
-                return self.fahrenheit()
+                return self.fahrenheit
             case _:
                 assert False
 
@@ -28,16 +28,19 @@ class Temperature(Unit):
 
     @override
     def in_base(self) -> Temperature:
-        return Temperature(self.kelvin(), "kelvin")
+        return Temperature(self.kelvin, "kelvin")
 
+    @property
     def kelvin(self) -> float:
         return self.raw
 
+    @property
     def celsius(self) -> float:
         return self.raw - 273.15
 
+    @property
     def fahrenheit(self) -> float:
-        return (self.celsius() * (9.0 / 5.0)) + 32.0
+        return (self.celsius * (9.0 / 5.0)) + 32.0
 
 
 def kelvin(val: float) -> Temperature:

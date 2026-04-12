@@ -15,11 +15,11 @@ class Distance(Unit):
     def in_current(self) -> float:
         match self.unit:
             case "meters":
-                return self.meters()
+                return self.meters
             case "inches":
-                return self.inches()
+                return self.inches
             case "feet":
-                return self.feet()
+                return self.feet
             case _:
                 assert False
 
@@ -29,14 +29,17 @@ class Distance(Unit):
 
     @override
     def in_base(self) -> Distance:
-        return Distance(self.meters(), "meters")
+        return Distance(self.meters, "meters")
 
+    @property
     def meters(self) -> float:
         return self.raw
 
+    @property
     def inches(self) -> float:
         return self.raw * 39.3701
 
+    @property
     def feet(self) -> float:
         return self.raw / 0.3048
 

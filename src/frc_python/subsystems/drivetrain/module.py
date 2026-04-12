@@ -34,7 +34,7 @@ from frc_python.units.velocity import (
     meters_per_second,
     rotations_per_second,
 )
-from frc_python.units.voltage import (
+from frc_python.units.voltage_ext import (
     Voltage,
     volt_seconds_per_meter,
     volt_seconds_per_radian,
@@ -159,7 +159,7 @@ class Mk5nSwerveModule(SwerveModule):
     @override
     def state(self) -> SwerveModuleState:
         return SwerveModuleState(
-            self.drive.velocity.meters_per_second(),
+            self.drive.velocity.meters_per_second,
             self.turn.position.to_rotation2d() + self.chassis_angle,  # ?
         )
 
@@ -167,7 +167,7 @@ class Mk5nSwerveModule(SwerveModule):
     @override
     def position(self) -> SwerveModulePosition:
         return SwerveModulePosition(
-            self.drive.position.meters(),
+            self.drive.position.meters,
             self.turn.position.to_rotation2d() + self.chassis_angle,
         )
 
@@ -237,7 +237,7 @@ class Mk5nSwerveModule(SwerveModule):
             angle = self.odometry_turn_positions[i].to_rotation2d() + self.chassis_angle
             pos = self.odometry_positions[i]
 
-            pos.distance = distance.meters()
+            pos.distance = distance.meters
             pos.angle = angle
 
 
@@ -309,13 +309,13 @@ class DrivingTalon(SwerveDrivingMotor):
             .with_slot0(self.CONFIG)
             .with_current_limits(
                 CurrentLimitsConfigs()
-                .with_stator_current_limit(self.CURRENT_LIMIT.amps())
+                .with_stator_current_limit(self.CURRENT_LIMIT.amps)
                 .with_stator_current_limit_enable(True)
             )
             .with_torque_current(
                 TorqueCurrentConfigs()
-                .with_peak_forward_torque_current(self.CURRENT_LIMIT.amps())
-                .with_peak_reverse_torque_current(-self.CURRENT_LIMIT.amps())
+                .with_peak_forward_torque_current(self.CURRENT_LIMIT.amps)
+                .with_peak_reverse_torque_current(-self.CURRENT_LIMIT.amps)
             )
             .with_feedback(
                 FeedbackConfigs().with_sensor_to_mechanism_ratio(self.GEAR_RATIO)
@@ -362,7 +362,7 @@ class DrivingTalon(SwerveDrivingMotor):
     def velocity(self, val: LinearVelocity) -> None:
         self.motor.set_control(
             self.velocity_control.with_velocity(
-                val.to_angular(self.WHEEL_RADIUS).rotations_per_second()
+                val.to_angular(self.WHEEL_RADIUS).rotations_per_second
             )
         )
 
@@ -383,7 +383,7 @@ class DrivingTalon(SwerveDrivingMotor):
 
     @override
     def set_voltage(self, voltage: Voltage) -> None:
-        self.motor.set_control(self.voltage_control.with_output(voltage.voltage()))
+        self.motor.set_control(self.voltage_control.with_output(voltage.voltage))
 
     @override
     def periodic(self) -> None:
@@ -452,7 +452,7 @@ class TurningTalon(SwerveTurningMotor):
         self.motor.configurator.apply(motor_config)
 
         encoder_config = CANcoderConfiguration()
-        encoder_config.magnet_sensor.magnet_offset = magnet_offset.rotations()
+        encoder_config.magnet_sensor.magnet_offset = magnet_offset.rotations
         encoder_id.to_cancoder().configurator.apply(encoder_config)
 
         self.position_control: PositionVoltage = PositionVoltage(0.0).with_enable_foc(
@@ -482,7 +482,7 @@ class TurningTalon(SwerveTurningMotor):
     @position.setter
     @override
     def position(self, val: Angle) -> None:
-        self.motor.set_control(self.position_control.with_position(val.rotations()))
+        self.motor.set_control(self.position_control.with_position(val.rotations))
 
     @property
     @override
@@ -598,7 +598,7 @@ class SimMk5nSwerveModule(SwerveModule):
     @override
     def state(self) -> SwerveModuleState:
         return SwerveModuleState(
-            self.drive_motor.velocity.to_linear(self.WHEEL_RADIUS).meters_per_second(),
+            self.drive_motor.velocity.to_linear(self.WHEEL_RADIUS).meters_per_second,
             self.angular_drive_position.to_rotation2d(),
         )
 
@@ -606,7 +606,7 @@ class SimMk5nSwerveModule(SwerveModule):
     @override
     def position(self) -> SwerveModulePosition:
         return SwerveModulePosition(
-            self.drive_motor.angle.to_linear(self.WHEEL_RADIUS).meters(),
+            self.drive_motor.angle.to_linear(self.WHEEL_RADIUS).meters,
             self.angular_drive_position.to_rotation2d(),
         )
 
@@ -619,8 +619,8 @@ class SimMk5nSwerveModule(SwerveModule):
         self.steer_motor.apply_voltage(
             voltage(
                 self.steer_pid.calculate(
-                    self.angular_drive_position.rotations(),
-                    angle.rotations(),
+                    self.angular_drive_position.rotations,
+                    angle.rotations,
                 )
             )
         )
@@ -628,7 +628,7 @@ class SimMk5nSwerveModule(SwerveModule):
     def _go_to_speed(self, speed: LinearVelocity) -> None:
         self.drive_motor.apply_voltage(
             voltage(
-                self.drive_ff.calculate(speed.meters_per_second())
-                + self.drive_pid.calculate(self.state.speed, speed.meters_per_second())
+                self.drive_ff.calculate(speed.meters_per_second)
+                + self.drive_pid.calculate(self.state.speed, speed.meters_per_second)
             )
         )

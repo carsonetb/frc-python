@@ -14,19 +14,24 @@ class LinearVelocity(UnitPerUnit[Distance, Time]):
     Linear velocity, stored raw in meters / second.
     """
 
+    @property
+    def per_second(self) -> Distance:
+        return self.mulr(seconds(1))
+
     def get_vertical_component(self, angle: Angle) -> LinearVelocity:
         return LinearVelocity(
-            meters(self.meters_per_second() * sin(angle.radians())), seconds(1)
+            meters(self.meters_per_second * sin(angle.radians)), seconds(1)
         )
 
     def get_horizontal_component(self, angle: Angle) -> LinearVelocity:
         return LinearVelocity(
-            meters(self.meters_per_second() * cos(angle.radians())), seconds(1)
+            meters(self.meters_per_second * cos(angle.radians)), seconds(1)
         )
 
     def to_angular(self, radius: Distance) -> AngularVelocity:
         return radians_per_second(self.raw / radius.raw)
 
+    @property
     def meters_per_second(self) -> float:
         return self.raw
 
@@ -36,6 +41,10 @@ class AngularVelocity(UnitPerUnit[Angle, Time]):
     Angular velocity, stored raw in radians / second
     """
 
+    @property
+    def per_second(self) -> Angle:
+        return self.mulr(seconds(1))
+
     @override
     def withval(self, new: float) -> AngularVelocity:
         return AngularVelocity(self.value.withval(new), self.per.withval(1))
@@ -43,17 +52,21 @@ class AngularVelocity(UnitPerUnit[Angle, Time]):
     def to_linear(self, radius: Distance) -> LinearVelocity:
         return meters_per_second(self.raw * radius.raw)
 
+    @property
     def radians_per_second(self) -> float:
         return self.raw
 
+    @property
     def degrees_per_second(self) -> float:
         return self.raw * (180.0 / pi)
 
+    @property
     def rotations_per_second(self) -> float:
         return self.raw / (2.0 * pi)
 
+    @property
     def rpm(self) -> float:
-        return self.rotations_per_second() * 60
+        return self.rotations_per_second * 60
 
 
 def meters_per_second(val: float) -> LinearVelocity:

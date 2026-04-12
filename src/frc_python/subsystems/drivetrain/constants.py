@@ -20,7 +20,7 @@ from frc_python.units.mass import kilogram_meters_squared
 from frc_python.units.velocity import (
     feet_per_second,
 )
-from frc_python.units.voltage import (
+from frc_python.units.voltage_ext import (
     volt_seconds_per_meter,
     volt_seconds_squared_per_meter,
     voltage,

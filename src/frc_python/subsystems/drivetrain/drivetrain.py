@@ -32,7 +32,7 @@ from frc_python.subsystems.drivetrain.module import (
 )
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
 from frc_python.units.time import Time
-from frc_python.units.voltage import voltage
+from frc_python.units.voltage_ext import voltage
 from frc_python.utils.math import sign
 from frc_python.utils.misc import Model
 from frc_python.utils.sim import SimulationInfo
@@ -119,7 +119,7 @@ class Drivetrain(Subsystem):
 
     @desired_speeds.setter
     def desired_speeds(self, val: ChassisSpeeds) -> None:
-        self._desired_speeds = ChassisSpeeds.discretize(val, self.period.seconds())
+        self._desired_speeds = ChassisSpeeds.discretize(val, self.period.seconds)
 
     @override
     def periodic(self) -> None:
@@ -151,9 +151,9 @@ class Drivetrain(Subsystem):
         else:
             self.desired_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                 self._calculate_input_curve(translation.x)
-                * DrivetrainIO.TOP_SPEED.meters_per_second(),
+                * DrivetrainIO.TOP_SPEED.meters_per_second,
                 self._calculate_input_curve(translation.y)
-                * DrivetrainIO.TOP_SPEED.meters_per_second(),
+                * DrivetrainIO.TOP_SPEED.meters_per_second,
                 rotation.x * 16,
                 self.io.gyro.yaw.to_rotation2d(),
             )

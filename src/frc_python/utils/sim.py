@@ -11,13 +11,13 @@ from wpimath.kinematics import (
 )
 
 from frc_python.units.angle import Angle, radians
-from frc_python.units.force import Newtons, newtons
+from frc_python.units.force import Force, newtons
 from frc_python.units.velocity import (
     AngularVelocity,
     radians_per_second,
     rotations_per_minute,
 )
-from frc_python.units.voltage import (
+from frc_python.units.voltage_ext import (
     Voltage,
     voltage,
 )
@@ -91,7 +91,7 @@ class SimMotor(ABC):
 
 class SimKrakenX60(SimMotor):
     FREE_SPEED: AngularVelocity = rotations_per_minute(6000)
-    STALL_TORQUE: Newtons = newtons(
+    STALL_TORQUE: Force = newtons(
         9.2
     )  # Importantly, this is with the Phoenix Pro license. This might also be a lot less because of current limits.
     NOMINAL_VOLTAGE: Voltage = voltage(12)
@@ -106,15 +106,13 @@ class SimKrakenX60(SimMotor):
         self, voltage: Voltage, joint_speed: AngularVelocity
     ) -> float:
         voltage = voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE)
-        motor_torque = (
-            voltage / self.NOMINAL_VOLTAGE
-        ).voltage() * self.STALL_TORQUE.raw
+        motor_torque = (voltage / self.NOMINAL_VOLTAGE).voltage * self.STALL_TORQUE.raw
         return motor_torque * self.gear_ratio
 
 
 class SimKrakenX44(SimMotor):
     FREE_SPEED: AngularVelocity = rotations_per_minute(7368)
-    STALL_TORQUE: Newtons = newtons(
+    STALL_TORQUE: Force = newtons(
         5.01
     )  # Importantly, this is with the Phoenix Pro license. This might also be a lot less because of current limits.
     NOMINAL_VOLTAGE: Voltage = voltage(12)
@@ -129,9 +127,7 @@ class SimKrakenX44(SimMotor):
         self, voltage: Voltage, joint_speed: AngularVelocity
     ) -> float:
         voltage = voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE)
-        motor_torque = (
-            voltage / self.NOMINAL_VOLTAGE
-        ).voltage() * self.STALL_TORQUE.raw
+        motor_torque = (voltage / self.NOMINAL_VOLTAGE).voltage * self.STALL_TORQUE.raw
         return motor_torque * self.gear_ratio
 
 

@@ -1,10 +1,19 @@
-from frc_python.units.acceleration import LinearAcceleration
-from frc_python.units.base import PackedUnitUnit
-from frc_python.units.mass import Mass
-
-Newtons = PackedUnitUnit[Mass, LinearAcceleration]
-"""Basic unit of force, units are kg*(m/s^2)"""
+from frc_python.units.acceleration import LinearAcceleration, meters_per_second_squared
+from frc_python.units.base import UnitUnit
+from frc_python.units.mass import Mass, kilograms
 
 
-def newtons(val: float) -> Newtons:
-    return Newtons(val, "newtons")
+class Force(UnitUnit[Mass, LinearAcceleration]):
+    """Basic unit of force, units are kg*(m/s^2)"""
+
+    def __init__(self, value: Mass, times: LinearAcceleration) -> None:
+        super().__init__(value, times)
+        self.unit = "newtons"
+
+    @property
+    def newtons(self) -> float:
+        return self.raw
+
+
+def newtons(val: float) -> Force:
+    return Force(kilograms(1), meters_per_second_squared(val))

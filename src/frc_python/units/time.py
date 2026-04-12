@@ -14,9 +14,9 @@ class Time(Unit):
     def in_current(self) -> float:
         match self.unit:
             case "seconds":
-                return self.seconds()
+                return self.seconds
             case "minutes":
-                return self.minutes()
+                return self.minutes
             case _:
                 assert False
 
@@ -26,11 +26,21 @@ class Time(Unit):
 
     @override
     def in_base(self) -> Time:
-        return Time(self.seconds(), "seconds")
+        return Time(self.seconds, "seconds")
 
+    @property
+    def microseconds(self) -> float:
+        return self.raw * 1000000.0
+
+    @property
+    def milliseconds(self) -> float:
+        return self.raw * 1000.0
+
+    @property
     def seconds(self) -> float:
         return self.raw
 
+    @property
     def minutes(self) -> float:
         return self.raw / 60.0
 

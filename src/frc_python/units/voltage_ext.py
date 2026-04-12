@@ -4,41 +4,12 @@ from typing import override
 
 from frc_python.units.angle import Angle, AngleTime, radian_seconds, radians
 from frc_python.units.base import (
-    InverseUnit,
-    InverseUnitCubed,
-    Unit,
     UnitPerUnit,
-    UnitSquared,
     UnitUnit,
 )
-from frc_python.units.current import Current, amps
 from frc_python.units.distance import Distance, DistanceTime, meter_seconds, meters
-from frc_python.units.mass import Mass
-from frc_python.units.misc import Power, power
+from frc_python.units.electrical import Voltage, voltage
 from frc_python.units.time import Time, TimeSquared, seconds
-
-
-class Voltage(UnitPerUnit[Power, Current]):
-    """
-    Basic unit of voltage, can only be stored in voltage.
-    Stored in units of power per current.
-    """
-
-    def __init__(self, value: Power, per: Current) -> None:
-        super().__init__(value, per)
-        self.unit = "voltage"
-
-    @override
-    def in_current(self) -> float:
-        return self.raw
-
-    def voltage(self) -> float:
-        return self.raw
-
-
-def voltage(val: float) -> Voltage:
-    return Voltage(power(val), amps(1))
-
 
 VoltagePerDistance = UnitPerUnit[Voltage, Distance]
 """Stored raw in units of v/m"""

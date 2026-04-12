@@ -201,7 +201,7 @@ class Mk5nDrivetrainIOSim(DrivetrainIO):
         if abs(speeds.vx) > 0.1 or abs(speeds.vy) > 0.1 or abs(speeds.omega) > 0.1:
             module_states = self.kinematics.toSwerveModuleStates(speeds)
             module_states = SwerveDrive4Kinematics.desaturateWheelSpeeds(
-                module_states, self.TOP_SPEED.meters_per_second()
+                module_states, self.TOP_SPEED.meters_per_second
             )
         else:
             module_states = (

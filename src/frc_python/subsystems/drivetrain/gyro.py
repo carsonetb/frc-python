@@ -165,7 +165,7 @@ class SimGyro(Gyro):
 
     @override
     def periodic(self) -> None:
-        self._yaw += self.yaw_velocity.muldim(seconds(0.001))
+        self._yaw += self.yaw_velocity.mulr(seconds(0.001))
 
     @override
     def zero(self) -> None:

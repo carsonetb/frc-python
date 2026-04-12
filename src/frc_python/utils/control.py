@@ -11,7 +11,7 @@ from wpimath.controller import (
 )
 from wpimath.trajectory import TrapezoidProfile
 
-from frc_python.units.voltage import (
+from frc_python.units.voltage_ext import (
     Voltage,
     VoltagePerAngle,
     VoltagePerAngleTime,
