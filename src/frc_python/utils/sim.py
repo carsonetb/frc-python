@@ -1,25 +1,16 @@
 from abc import ABC
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import override
 
 from mujoco import MjData, MjModel, mj_name2id, mjtObj
-from wpimath.geometry import Rotation2d
-from wpimath.kinematics import (
-    SwerveModulePosition,
-    SwerveModuleState,
-)
 
 from frc_python.units.angle import Angle, radians
+from frc_python.units.electrical import Voltage, voltage
 from frc_python.units.force import Force, newtons
 from frc_python.units.velocity import (
     AngularVelocity,
     radians_per_second,
     rotations_per_minute,
-)
-from frc_python.units.voltage_ext import (
-    Voltage,
-    voltage,
 )
 
 
@@ -98,13 +89,11 @@ class SimKrakenX60(SimMotor):
 
     def apply_voltage(self, voltage: Voltage) -> None:
         self.info.data.ctrl[self.motor_id] = (
-            self._voltage_to_torque(voltage, self.velocity) * self.direction
+            self._voltage_to_torque(voltage) * self.direction
         )
 
     # Returns a torque in newton meters, probably should be unit-ed in the future.
-    def _voltage_to_torque(
-        self, voltage: Voltage, joint_speed: AngularVelocity
-    ) -> float:
+    def _voltage_to_torque(self, voltage: Voltage) -> float:
         voltage = voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE)
         motor_torque = (voltage / self.NOMINAL_VOLTAGE).voltage * self.STALL_TORQUE.raw
         return motor_torque * self.gear_ratio
@@ -119,13 +108,11 @@ class SimKrakenX44(SimMotor):
 
     def apply_voltage(self, voltage: Voltage) -> None:
         self.info.data.ctrl[self.motor_id] = (
-            self._voltage_to_torque(voltage, self.velocity) * self.direction
+            self._voltage_to_torque(voltage) * self.direction
         )
 
     # Returns a torque in newton meters, probably should be unit-ed in the future.
-    def _voltage_to_torque(
-        self, voltage: Voltage, joint_speed: AngularVelocity
-    ) -> float:
+    def _voltage_to_torque(self, voltage: Voltage) -> float:
         voltage = voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE)
         motor_torque = (voltage / self.NOMINAL_VOLTAGE).voltage * self.STALL_TORQUE.raw
         return motor_torque * self.gear_ratio
@@ -165,3 +152,4 @@ class SimKrakenX44(SimMotor):
 #                 )
 #             ),
 #         )
+# dism image:C:\ /remove-package /package-name:nameofthething

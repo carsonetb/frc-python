@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import override
-
 from frc_python.units.angle import Angle, AngleTime, radian_seconds, radians
 from frc_python.units.base import (
     UnitPerUnit,

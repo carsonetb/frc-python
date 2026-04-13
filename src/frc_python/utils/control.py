@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from phoenix6.configs import Slot0Configs, SlotConfigs
+from phoenix6.configs import Slot0Configs
 from wpimath.controller import (
     PIDController,
     ProfiledPIDController,
@@ -11,8 +11,8 @@ from wpimath.controller import (
 )
 from wpimath.trajectory import TrapezoidProfile
 
+from frc_python.units.electrical import Voltage, voltage
 from frc_python.units.voltage_ext import (
-    Voltage,
     VoltagePerAngle,
     VoltagePerAngleTime,
     VoltagePerDistance,
@@ -25,7 +25,6 @@ from frc_python.units.voltage_ext import (
     volt_seconds_per_radian,
     volt_seconds_squared_per_meter,
     volt_seconds_squared_per_radian,
-    voltage,
     volts_per_meter,
     volts_per_meter_second,
     volts_per_radian,
