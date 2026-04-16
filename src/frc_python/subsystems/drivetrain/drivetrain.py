@@ -126,7 +126,6 @@ class Drivetrain(Subsystem):
         # seems to break drivetrain, probably obvious why
         # self.io.periodic()
         self.io.gyro.periodic()
-        print(self.io.gyro.yaw.to_rotation2d())
 
         if isinstance(self.io, DrivetrainIOReal):
             pass
