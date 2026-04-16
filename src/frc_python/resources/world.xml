@@ -12,17 +12,7 @@
   </default>
 
   <asset>
-    <texture
-      name="groundplane"
-      type="2d"
-      builtin="checker"
-      rgb1=".2 .3 .4"
-      rgb2=".1 .1 .1"
-      width="100"
-      height="100"
-      mark="cross"
-      markrgb=".8 .8 .8"
-    />
+    <texture name="groundplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 .1 .1" width="100" height="100" mark="cross" markrgb=".8 .8 .8" />
 
     <material name="groundplane" texture="groundplane" texrepeat="5 5" texuniform="true" />
     <material name="white" rgba="0.8 0.8 0.8 1" />
@@ -39,9 +29,20 @@
     <mesh name="red_alliance_driver_station" file="frc_python/resources/RedAllianceDriverStation.stl" />
     <mesh name="blue_alliance_driver_station" file="frc_python/resources/BlueAllianceDriverStation.stl" />
     <mesh name="red_speaker" file="frc_python/resources/RedSpeaker.stl" />
-    <mesh name="blue_speaker" file="frc_python/resources/BlueSpeaker.stl" />
     <mesh name="red_source" file="frc_python/resources/RedSource.stl" />
+    <mesh name="red_amp" file="frc_python/resources/RedAmp.stl" />
+    <mesh name="red_stage" file="frc_python/resources/RedStage.stl" />
+    <mesh name="blue_speaker" file="frc_python/resources/BlueSpeaker.stl" />
     <mesh name="blue_source" file="frc_python/resources/BlueSource.stl" />
+    <mesh name="blue_amp" file="frc_python/resources/BlueAmp.stl" />
+    <mesh name="blue_stage" file="frc_python/resources/BlueStage.stl" />
+
+    <mesh name="red_speaker_lower_left_wall_collision" file="frc_python/resources/collisions/RedSpeakerLowerLeftWall.stl" />
+    <mesh name="red_speaker_lower_right_wall_collision" file="frc_python/resources/collisions/RedSpeakerLowerRightWall.stl" />
+    <mesh name="red_source_wall_collision" file="frc_python/resources/collisions/RedSourceWall.stl" />
+    <mesh name="blue_speaker_lower_left_wall_collision" file="frc_python/resources/collisions/BlueSpeakerLowerLeftWall.stl" />
+    <mesh name="blue_speaker_lower_right_wall_collision" file="frc_python/resources/collisions/BlueSpeakerLowerRightWall.stl" />
+    <mesh name="blue_source_wall_collision" file="frc_python/resources/collisions/BlueSourceWall.stl" />
   </asset>
 
   <worldbody>
@@ -54,16 +55,30 @@
     <geom mesh="red_alliance_driver_station" class="visual" material="white" />
     <geom mesh="red_speaker" class="visual" material="white" />
     <geom mesh="red_source" class="visual" material="white" />
+    <geom mesh="red_amp" class="visual" material="white" />
+    <geom mesh="red_stage" class="visual" material="white" />
     <geom mesh="blue_alliance_driver_station" class="visual" material="white" />
     <geom mesh="blue_speaker" class="visual" material="white" />
     <geom mesh="blue_source" class="visual" material="white" />
+    <geom mesh="blue_amp" class="visual" material="white" />
+    <geom mesh="blue_stage" class="visual" material="white" />
 
     <geom name="audience_side_field_wall_collision" type="box" pos="0 -4.206 0.2615" size="8.268 0.1 0.241" class="collision" material="white" friction="0.3 0.005 0.0001" />
     <geom name="scoring_side_field_wall_collision" type="box" pos="0 4.206 0.2615" size="8.268 0.1 0.241" class="collision" material="white" friction="0.3 0.005 0.0001" />
     <geom name="red_alliance_driver_station_collision_large" type="box" pos="8.2955 1.163 0.9955" size="0.0245 1.84 1.981" class="collision" material="white" friction="0.3 0.005 0.0001" />
     <geom name="red_alliance_driver_station_collision_small" type="box" pos="8.2975 -3.144 0.995" size="0.0225 0.9375 0.99" class="collision" material="white" friction="0.3 0.005 0.0001" />
-    <geom name="blue_alliance_driver_station_collision_large" type="box" pos="-8.2955 0.9375 0.9955" size="0.0245 1.84 1.981" class="collision" material="white" friction="0.3 0.005 0.0001" />
-    <geom name="blue_alliance_driver_station_collision_small" type="box" pos="-8.2975 -3.144 0.995" size="0.0225 0.9375 0.99" class="collision" material="white" friction="0.3 0.005 0.0001" />
+    <geom name="blu_alliance_driver_station_collision_large" type="box" pos="-8.2955 0.9375 0.9955" size="0.0245 1.84 1.981" class="collision" material="white" friction="0.3 0.005 0.0001" />
+    <geom name="blu_alliance_driver_station_collision_small" type="box" pos="-8.2975 -3.144 0.995" size="0.0225 0.9375 0.99" class="collision" material="white" friction="0.3 0.005 0.0001" />
+
+    <!-- Untested changes, visual for now but need to be changed to collision -->
+    <geom name="red_alliance_speaker_low_wall_flat" type="box" pos="-7.355 -1.442 0.111" size="0.003 0.521 0.1" class="visual" material="white" friction="0.3 0.005 0.0001" />
+    <geom name="blu_alliance_speaker_low_wall_flat" type="box" pos= "7.355 -1.442 0.111" size="0.003 0.521 0.1" class="visual" material="white" friction="0.3 0.005 0.0001" />
+    <geom mesh="red_speaker_lower_left_wall_collision" class="visual" material="black" friction="0.3 0.005 0.0001" />
+    <geom mesh="red_speaker_lower_right_wall_collision" class="visual" material="black" friction="0.3 0.005 0.0001" />
+    <geom mesh="red_source_wall_collision" material="black" class="visual" friction="0.3 0.005 0.0001" />
+    <geom mesh="blue_speaker_lower_left_wall_collision" class="visual" material="black" friction="0.3 0.005 0.0001" />
+    <geom mesh="blue_speaker_lower_right_wall_collision" class="visual" material="black" friction="0.3 0.005 0.0001" />
+    <geom mesh="blue_source_wall_collision" material="black" class="visual" friction="0.3 0.005 0.0001" />
 
     <body name="drive_train_frame">
       <freejoint name="root" />
@@ -97,15 +112,7 @@
 
       <body name="fr_swerve_module_turret" pos="0.276225 -0.276225 0">
         <inertial pos="0 0 0" mass="1.5" diaginertia="0.02 0.02 0.02" />
-        <joint
-          name="fr_swerve_module_suspension"
-          type="slide"
-          axis="0 0 1"
-          stiffness="50000"
-          damping="1000"
-          pos="0 0 0"
-          springref="0"
-        />
+        <joint name="fr_swerve_module_suspension" type="slide" axis="0 0 1" stiffness="50000" damping="1000" pos="0 0 0" springref="0" />
         <joint name="fr_swerve_module_turret_hinge" type="hinge" axis="0 0 1" pos="0 0 0" armature="0.0015" damping="0.2" />
         <geom mesh="fl_swerve_module_turret" pos="0.066675 0.066675 0" class="visual" material="white" />
 
@@ -113,28 +120,13 @@
           <inertial pos="0 0 0" mass="0.4" diaginertia="0.001 0.001 0.001" />
           <joint name="fr_swerve_module_wheel_hinge" type="hinge" axis="0 1 0" pos="0 0 0" armature="0.002" damping="0.66" />
           <geom mesh="fl_swerve_module_wheel" pos="0.066675 0.066675 -0.0508" class="visual" material="white" />
-          <geom
-            name="fr_swerve_module_wheel_collision"
-            type="sphere"
-            size="0.0508"
-            class="collision"
-            material="black"
-            friction="2.4 0.001 0.01"
-          />
+          <geom name="fr_swerve_module_wheel_collision" type="sphere" size="0.0508" class="collision" material="black" friction="2.4 0.001 0.01" />
         </body>
       </body>
 
       <body name="bl_swerve_module_turret" pos="-0.276225 0.276225 0">
         <inertial pos="0 0 0" mass="1.5" diaginertia="0.02 0.02 0.02" />
-        <joint
-          name="bl_swerve_module_suspension"
-          type="slide"
-          axis="0 0 1"
-          stiffness="50000"
-          damping="1000"
-          pos="0 0 0"
-          springref="0"
-        />
+        <joint name="bl_swerve_module_suspension" type="slide" axis="0 0 1" stiffness="50000" damping="1000" pos="0 0 0" springref="0" />
         <joint name="bl_swerve_module_turret_hinge" type="hinge" axis="0 0 1" pos="0 0 0" armature="0.0015" damping="0.2" />
         <geom mesh="fl_swerve_module_turret" pos="0.066675 0.066675 0" class="visual" material="white" />
 
@@ -142,28 +134,13 @@
           <inertial pos="0 0 0" mass="0.4" diaginertia="0.001 0.001 0.001" />
           <joint name="bl_swerve_module_wheel_hinge" type="hinge" axis="0 1 0" pos="0 0 0" armature="0.002" damping="0.66" />
           <geom mesh="fl_swerve_module_wheel" pos="0.066675 0.066675 -0.0508" class="visual" material="white" />
-          <geom
-            name="bl_swerve_module_wheel_collision"
-            type="sphere"
-            size="0.0508"
-            class="collision"
-            material="black"
-            friction="2.4 0.001 0.01"
-          />
+          <geom name="bl_swerve_module_wheel_collision" type="sphere" size="0.0508" class="collision" material="black" friction="2.4 0.001 0.01" />
         </body>
       </body>
 
       <body name="br_swerve_module_turret" pos="-0.276225 -0.276225 0">
         <inertial pos="0 0 0" mass="1.5" diaginertia="0.02 0.02 0.02" />
-        <joint
-          name="br_swerve_module_suspension"
-          type="slide"
-          axis="0 0 1"
-          stiffness="50000"
-          damping="1000"
-          pos="0 0 0"
-          springref="0"
-        />
+        <joint name="br_swerve_module_suspension" type="slide" axis="0 0 1" stiffness="50000" damping="1000" pos="0 0 0" springref="0" />
         <joint name="br_swerve_module_turret_hinge" type="hinge" axis="0 0 1" pos="0 0 0" armature="0.0015" damping="0.2" />
         <geom mesh="fl_swerve_module_turret" pos="0.066675 0.066675 0" class="visual" material="white" />
 
@@ -171,14 +148,7 @@
           <inertial pos="0 0 0" mass="0.4" diaginertia="0.001 0.001 0.001" />
           <joint name="br_swerve_module_wheel_hinge" type="hinge" axis="0 1 0" pos="0 0 0" armature="0.002" damping="0.66" />
           <geom mesh="fl_swerve_module_wheel" pos="0.066675 0.066675 -0.0508" class="visual" material="white" />
-          <geom
-            name="br_swerve_module_wheel_collision"
-            type="sphere"
-            size="0.0508"
-            class="collision"
-            material="black"
-            friction="2.4 0.001 0.01"
-          />
+          <geom name="br_swerve_module_wheel_collision" type="sphere" size="0.0508" class="collision" material="black" friction="2.4 0.001 0.01" />
         </body>
       </body>
     </body>

@@ -9,6 +9,7 @@ dependencies = [
     "phoenix6",
     "mujoco",
     "pygame",
+    "matplotlib",
 ]
 
 [tool.pyright]

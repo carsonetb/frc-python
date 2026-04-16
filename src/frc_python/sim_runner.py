@@ -42,7 +42,7 @@ def main():
             return
 
     model: MjModel = MjModel.from_xml_string(
-        read_text("frc_python.resources.subsystems.drivetrain", "swerve.xml")
+        read_text("frc_python.resources", "world.xml")
     )
     data: MjData = MjData(model)
 
