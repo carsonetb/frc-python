@@ -535,15 +535,11 @@ class SimMk5nSwerveModule(SwerveModule):
         self,
         info: SimulationInfo,
         id: DriveModuleID,
-        drive_reversed=False,
-        steer_reversed=False,
+        drive_reversed: bool = False,
+        steer_reversed: bool = False,
     ) -> None:
-        self.steer_motor = SimKrakenX44(
-            info, id.steer, self.STEER_GEAR_RATIO, steer_reversed
-        )
-        self.drive_motor = SimKrakenX60(
-            info, id.drive, self.DRIVE_GEAR_RATIO, drive_reversed
-        )
+        self.steer_motor = SimKrakenX44(info, id.steer, steer_reversed)
+        self.drive_motor = SimKrakenX60(info, id.drive, drive_reversed)
         self.steer_pid: PIDController = self.STEER_GAINS.to_controller()
         self.steer_pid.enableContinuousInput(-0.5, 0.5)
         self.drive_pid: PIDController = self.DRIVE_PID.to_controller()

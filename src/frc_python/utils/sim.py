@@ -67,7 +67,6 @@ class SimMotor(ABC):
         self,
         info: SimulationInfo,
         id: MotorID,
-        gear_ratio: float,
         reversed: bool = False,
     ) -> None:
         self.direction = -1 if reversed else 1
@@ -78,7 +77,6 @@ class SimMotor(ABC):
         )
         self.qpos_idx: int = self.info.model.jnt_qposadr[self.joint_id]
         self.qvel_idx: int = self.info.model.jnt_dofadr[self.joint_id]
-        self.gear_ratio: float = gear_ratio
 
     @property
     def angle(self) -> Angle:
@@ -98,18 +96,16 @@ class SimKrakenX60(SimMotor):
 
     def apply_voltage(self, voltage: Voltage) -> None:
         self.info.data.ctrl[self.motor_id] = (
-            self._voltage_to_torque(voltage, self.velocity) * self.direction
+            self._voltage_to_torque(voltage) * self.direction
         )
 
     # Returns a torque in newton meters, probably should be unit-ed in the future.
-    def _voltage_to_torque(
-        self, voltage: Voltage, joint_speed: AngularVelocity
-    ) -> float:
+    def _voltage_to_torque(self, voltage: Voltage) -> float:
         voltage = voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE)
         motor_torque = (
             voltage / self.NOMINAL_VOLTAGE
         ).voltage() * self.STALL_TORQUE.raw
-        return motor_torque * self.gear_ratio
+        return motor_torque
 
 
 class SimKrakenX44(SimMotor):
@@ -121,18 +117,16 @@ class SimKrakenX44(SimMotor):
 
     def apply_voltage(self, voltage: Voltage) -> None:
         self.info.data.ctrl[self.motor_id] = (
-            self._voltage_to_torque(voltage, self.velocity) * self.direction
+            self._voltage_to_torque(voltage) * self.direction
         )
 
     # Returns a torque in newton meters, probably should be unit-ed in the future.
-    def _voltage_to_torque(
-        self, voltage: Voltage, joint_speed: AngularVelocity
-    ) -> float:
+    def _voltage_to_torque(self, voltage: Voltage) -> float:
         voltage = voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE)
         motor_torque = (
             voltage / self.NOMINAL_VOLTAGE
         ).voltage() * self.STALL_TORQUE.raw
-        return motor_torque * self.gear_ratio
+        return motor_torque
 
 
 # class SimDrivetrain:
