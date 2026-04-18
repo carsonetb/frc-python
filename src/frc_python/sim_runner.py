@@ -100,9 +100,9 @@ def main():
             if tick % 10 == 0:
                 viewer.sync()
 
-            time_until_next_step = model.opt.timestep - (time() - step_start)
-            if time_until_next_step > 0:
-                sleep(time_until_next_step)
+            # time_until_next_step = model.opt.timestep - (time() - step_start)
+            # if time_until_next_step > 0:
+            #     sleep(time_until_next_step)
 
 
 if __name__ == "__main__":

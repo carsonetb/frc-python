@@ -214,7 +214,7 @@ class Mk5nDrivetrainIOSim(DrivetrainIO):
         for i, module in enumerate(self.modules.to_list()):
             module_states[i].optimize(module.state.angle)
             module.desired_state = module_states[i]
-        print(self.modules[0].state.speed, module_states[0].speed)
+        # print(self.modules[0].state.speed, module_states[0].speed)
 
     @override
     def periodic(self) -> None:
