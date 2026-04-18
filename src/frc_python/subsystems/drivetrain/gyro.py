@@ -17,6 +17,7 @@ from frc_python.units.velocity import (
     degrees_per_second,
     radians_per_second,
 )
+from frc_python.utils.misc import TIMESTEP
 from frc_python.utils.sim import SimulationInfo
 
 
@@ -165,7 +166,7 @@ class SimGyro(Gyro):
 
     @override
     def periodic(self) -> None:
-        self._yaw += self.yaw_velocity.muldim(seconds(0.001))
+        self._yaw += self.yaw_velocity.muldim(TIMESTEP)
 
     @override
     def zero(self) -> None:

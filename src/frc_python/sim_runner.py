@@ -10,12 +10,11 @@ from pygame.joystick import JoystickType
 from wpilib.simulation import DriverStationSim, XboxControllerSim
 
 from frc_python.units.time import seconds
+from frc_python.utils.misc import TIMESTEP
 from frc_python.utils.sim import SimulationInfo
 
 hal.initialize(500, 0)
 from frc_python.robot import Robot
-
-TIMESTEP = seconds(0.002)
 
 FLIGHT_STICKS = False
 
@@ -45,6 +44,8 @@ def main():
         read_text("frc_python.resources", "world.xml")
     )
     data: MjData = MjData(model)
+
+    model.opt.timestep = TIMESTEP.seconds()
 
     robot = Robot(SimulationInfo(model, data))
     robot.robotInit()
@@ -97,12 +98,8 @@ def main():
 
             mj_step(model, data)
 
-            if tick % 10 == 0:
+            if tick % 16 == 0:
                 viewer.sync()
-
-            # time_until_next_step = model.opt.timestep - (time() - step_start)
-            # if time_until_next_step > 0:
-            #     sleep(time_until_next_step)
 
 
 if __name__ == "__main__":
