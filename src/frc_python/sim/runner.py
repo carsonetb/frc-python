@@ -27,7 +27,8 @@ def main():
     build_misc(xml_model)
     build_field(xml_model)
     build_drivetrain(xml_model)
-    print(xml_model.build())
+    xml = xml_model.build()
+    open("temp.xml", "w").write(xml)
 
     pygame.init()
     pygame.joystick.init()
@@ -49,9 +50,7 @@ def main():
             print("No controller found, please plug one in.")
             return
 
-    model: MjModel = MjModel.from_xml_string(
-        read_text("frc_python.resources", "world.xml")
-    )
+    model: MjModel = MjModel.from_xml_string(xml)
     data: MjData = MjData(model)
 
     model.opt.timestep = TIMESTEP.seconds()

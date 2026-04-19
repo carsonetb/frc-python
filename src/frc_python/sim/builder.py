@@ -60,48 +60,48 @@ def build_field(model: Model) -> None:
 
     red_speaker_ll_wall_collision = MeshAsset(
         "red_speaker_lower_left_wall_collision",
-        "frc_python/resources/RedSpeakerLowerLeftWall.stl",
+        "frc_python/resources/collisions/RedSpeakerLowerLeftWall.stl",
     )
     red_speaker_lr_wall_collision = MeshAsset(
         "red_speaker_lower_right_wall_collision",
-        "frc_python/resources/RedSource.stl",
+        "frc_python/resources/collisions/RedSpeakerLowerRightWall.stl",
     )
     red_source_wall_collision = MeshAsset(
         "red_source_wall_collision",
-        "frc_python/resources/RedSpeakerLowerLeftWall.stl",
+        "frc_python/resources/collisions/RedSourceWall.stl",
     )
     red_stage_collision_1 = MeshAsset(
-        "red_stage_collision_1", "frc_python/resources/RedStage1.stl"
+        "red_stage_collision_1", "frc_python/resources/collisions/RedStage1.stl"
     )
     red_stage_collision_2 = MeshAsset(
-        "red_stage_collision_2", "frc_python/resources/RedStage2.stl"
+        "red_stage_collision_2", "frc_python/resources/collisions/RedStage2.stl"
     )
     red_stage_collision_3 = MeshAsset(
-        "red_stage_collision_3", "frc_python/resources/RedStage2.stl"
+        "red_stage_collision_3", "frc_python/resources/collisions/RedStage2.stl"
     )
     blue_speaker_ll_wall_collision = MeshAsset(
         "blue_speaker_lower_left_wall_collision",
-        "frc_python/resources/BlueSpeakerLowerLeftWall.stl",
+        "frc_python/resources/collisions/BlueSpeakerLowerLeftWall.stl",
     )
     blue_speaker_lr_wall_collision = MeshAsset(
         "blue_speaker_lower_right_wall_collision",
-        "frc_python/resources/BlueSpeakerLowerRightWall.stl",
+        "frc_python/resources/collisions/BlueSpeakerLowerRightWall.stl",
     )
     blue_source_wall_collision = MeshAsset(
         "blue_source_wall_collision",
-        "frc_python/resources/BlueSourceWall.stl",
+        "frc_python/resources/collisions/BlueSourceWall.stl",
     )
     blue_stage_collision_1 = MeshAsset(
         "blue_stage_collision_1",
-        "frc_python/resources/BlueStage1.stl",
+        "frc_python/resources/collisions/BlueStage1.stl",
     )
     blue_stage_collision_2 = MeshAsset(
         "blue_stage_collision_2",
-        "frc_python/resources/BlueStage2.stl",
+        "frc_python/resources/collisions/BlueStage2.stl",
     )
     blue_stage_collision_3 = MeshAsset(
         "blue_stage_collision_3",
-        "frc_python/resources/BlueStage3.stl",
+        "frc_python/resources/collisions/BlueStage3.stl",
     )
 
     carpet = MeshAsset("carpet", "frc_python/resources/Carpet.stl")
@@ -256,7 +256,7 @@ def build_drivetrain(model: Model) -> None:
     )
     swerve_module_wheel = MeshAsset(
         "swerve_module_wheel",
-        prefix + "FLSwerveModuleTurret.stl",
+        prefix + "FLSwerveModuleWheel.stl",
     )
     drivetrain_frame = MeshAsset("drivetrain_frame", prefix + "DriveTrainFrame.stl")
     bumpers = MeshAsset("bumpers", prefix + "Bumpers.stl")
@@ -272,16 +272,40 @@ def build_drivetrain(model: Model) -> None:
     frame.inertials.append(Inertial(kilograms(50), diaginertia="5 5 5"))
 
     frame.geoms.append(
-        Box("0 -0.3935 0.086", "0.422 0.0255 0.057", friction="0.2 0.005 0.0001")
+        Box(
+            "0 -0.3935 0.086",
+            "0.422 0.0255 0.057",
+            friction="0.6 0.1 0.01",
+            solimp="0.8 0.95 0.01",
+            solref="0.02 1.5",
+        )
     )
     frame.geoms.append(
-        Box("0 0.3935 0.086", "0.422 0.0255 0.057", friction="0.2 0.005 0.0001")
+        Box(
+            "0 0.3935 0.086",
+            "0.422 0.0255 0.057",
+            friction="0.6 0.1 0.01",
+            solimp="0.8 0.95 0.01",
+            solref="0.02 1.5",
+        )
     )
     frame.geoms.append(
-        Box("0.3965 0.0 0.086", "0.0255 0.368 0.057", friction="0.2 0.005 0.0001")
+        Box(
+            "0.3965 0.0 0.086",
+            "0.0255 0.368 0.057",
+            friction="0.6 0.1 0.01",
+            solimp="0.8 0.95 0.01",
+            solref="0.02 1.5",
+        )
     )
     frame.geoms.append(
-        Box("-0.3965 0.0 0.086", "0.0255 0.368 0.057", friction="0.2 0.005 0.0001")
+        Box(
+            "-0.3965 0.0 0.086",
+            "0.0255 0.368 0.057",
+            friction="0.6 0.1 0.01",
+            solimp="0.8 0.95 0.01",
+            solref="0.02 1.5",
+        )
     )
 
     frame.geoms.append(Mesh(bumpers, "bumper_blue"))
@@ -297,24 +321,42 @@ def build_drivetrain(model: Model) -> None:
 
     frame.bodies.append(
         _build_module(
-            model, "fl", "0.276225 0.276225 0", fl_swerve_module, swerve_module_wheel
+            model,
+            "fl",
+            "0.276225 0.276225 0",
+            swerve_module_turret,
+            swerve_module_wheel,
         )
     )
     frame.bodies.append(
         _build_module(
-            model, "fr", "0.276225 -0.276225 0", fr_swerve_module, swerve_module_wheel
+            model,
+            "fr",
+            "0.276225 -0.276225 0",
+            swerve_module_turret,
+            swerve_module_wheel,
         )
     )
     frame.bodies.append(
         _build_module(
-            model, "bl", "-0.276225 0.276225 0", fl_swerve_module, swerve_module_wheel
+            model,
+            "bl",
+            "-0.276225 0.276225 0",
+            swerve_module_turret,
+            swerve_module_wheel,
         )
     )
     frame.bodies.append(
         _build_module(
-            model, "br", "-0.276225 -0.276225 0", fr_swerve_module, swerve_module_wheel
+            model,
+            "br",
+            "-0.276225 -0.276225 0",
+            swerve_module_turret,
+            swerve_module_wheel,
         )
     )
+
+    model.world.bodies.append(frame)
 
 
 def _build_module(
@@ -341,11 +383,7 @@ def _build_module(
         damping=0.8,
     )
     module.joints.append(turret_hinge)
-    module.geoms.append(
-        Mesh(
-            turret_mesh,
-        )
-    )
+    module.geoms.append(Mesh(turret_mesh, pos="0.066675 0.066675 0"))
 
     wheel = Body(f"{side}_swerve_module_wheel", pos="0 0 0.0508")
     module.bodies.append(wheel)

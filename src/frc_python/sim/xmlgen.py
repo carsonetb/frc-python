@@ -49,7 +49,7 @@ class LabelBuilder(Buildable):
         self.children += children
 
     def with_optional(self, name: str, value: Stringable | None) -> LabelBuilder:
-        self.add_option(name, value)
+        self.add_optional(name, value)
         return self
 
     def with_optionals(
@@ -152,6 +152,7 @@ class Asset(Buildable):
             .with_child(
                 LabelBuilder("material").with_options(
                     [
+                        ("name", "groundplane"),
                         ("texture", "groundplane"),
                         ("texrepeat", "5 5"),
                         ("texuniform", "true"),
@@ -210,12 +211,16 @@ class Box(Geom):
         friction: str | None = None,
         material: str = "white",
         type: Geom.Type = Geom.Type.COLLISION,
+        solimp: str | None = None,
+        solref: str | None = None,
     ) -> None:
         super().__init__(material, type)
         self.name = name
         self.pos = pos
         self.size = size
         self.friction = friction
+        self.solimp = solimp
+        self.solref = solref
 
     @override
     def build(self, indentation: int = 0) -> str:
@@ -230,6 +235,8 @@ class Box(Geom):
                     ("class", self.type.value),
                     ("material", self.material),
                     ("friction", self.friction),
+                    ("solimp", self.solimp),
+                    ("solref", self.solref),
                 ]
             )
             .build(indentation)
@@ -396,6 +403,7 @@ class Body(Buildable):
 class World(Buildable):
     def __init__(self) -> None:
         self.geoms: list[Geom] = []
+        self.bodies: list[Body] = []
 
     @override
     def build(self, indentation: int = 0) -> str:
@@ -423,6 +431,7 @@ class World(Buildable):
                 )
             )
             .with_children(self.geoms)
+            .with_children(self.bodies)
             .build(indentation)
         )
 
