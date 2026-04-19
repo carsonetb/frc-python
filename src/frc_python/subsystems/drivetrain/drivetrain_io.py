@@ -13,6 +13,7 @@ from wpimath.kinematics import (
 )
 
 from frc_python.can import CTREDeviceID
+from frc_python.sim.common import DriveModuleID, SimulationInfo
 from frc_python.subsystems.drivetrain.gyro import Gyro, GyroPigeon, SimGyro
 from frc_python.subsystems.drivetrain.module import SimMk5nSwerveModule, SwerveModule
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
@@ -24,7 +25,6 @@ from frc_python.units.velocity import (
     radians_per_second,
 )
 from frc_python.utils.math import Vector2
-from frc_python.utils.sim import DriveModuleID, SimulationInfo
 from frc_python.utils.swerve import DrivetrainCorner, PerCorner
 
 
@@ -214,7 +214,6 @@ class Mk5nDrivetrainIOSim(DrivetrainIO):
         for i, module in enumerate(self.modules.to_list()):
             module_states[i].optimize(module.state.angle)
             module.desired_state = module_states[i]
-        # print(self.modules[0].state.speed, module_states[0].speed)
 
     @override
     def periodic(self) -> None:

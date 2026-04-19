@@ -21,10 +21,10 @@ from wpilib import Alert, DriverStation, PowerDistribution, Preferences
 
 from frc_python.bindings import configure_bindings
 from frc_python.dashboard import Auto, Dashboard
+from frc_python.sim.common import SimulationInfo
 from frc_python.subsystems.drivetrain.drivetrain import Drivetrain
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
 from frc_python.utils.misc import TIMESTEP, Model
-from frc_python.utils.sim import SimulationInfo
 
 
 class Robot(LoggedRobot):

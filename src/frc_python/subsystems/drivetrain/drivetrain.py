@@ -9,6 +9,7 @@ from wpimath.geometry import Translation2d
 from wpimath.kinematics import ChassisSpeeds
 
 from frc_python.can import CTREDeviceID
+from frc_python.sim.common import SimulationInfo
 from frc_python.subsystems.drivetrain.constants import (
     BL_ENCODER_OFFSET,
     BL_POS,
@@ -35,7 +36,6 @@ from frc_python.units.time import Time
 from frc_python.units.voltage import voltage
 from frc_python.utils.math import sign
 from frc_python.utils.misc import Model
-from frc_python.utils.sim import SimulationInfo
 from frc_python.utils.swerve import Corner, PerCorner
 
 

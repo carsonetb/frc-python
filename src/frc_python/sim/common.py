@@ -94,18 +94,28 @@ class SimKrakenX60(SimMotor):
     )  # Importantly, this is with the Phoenix Pro license. This might also be a lot less because of current limits.
     NOMINAL_VOLTAGE: Voltage = voltage(12)
 
+    STATOR_LIMIT_AMPS = 60.0
+    KRAKEN_STALL_AMPS = 414.0
+    MAX_TORQUE = STALL_TORQUE.raw * (STATOR_LIMIT_AMPS / KRAKEN_STALL_AMPS)
+
     def apply_voltage(self, voltage: Voltage) -> None:
         self.info.data.ctrl[self.motor_id] = (
-            self._voltage_to_torque(voltage) * self.direction
+            self._voltage_to_torque(voltage, self.velocity) * self.direction
         )
 
     # Returns a torque in newton meters, probably should be unit-ed in the future.
-    def _voltage_to_torque(self, voltage: Voltage) -> float:
-        voltage = voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE)
-        motor_torque = (
-            voltage / self.NOMINAL_VOLTAGE
-        ).voltage() * self.STALL_TORQUE.raw
-        return motor_torque
+    def _voltage_to_torque(self, voltage: Voltage, velocity: AngularVelocity) -> float:
+        v_norm = (
+            voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE).voltage()
+            / self.NOMINAL_VOLTAGE.voltage()
+        )
+        omega_norm = (
+            velocity.radians_per_second() / self.FREE_SPEED.radians_per_second()
+        )
+
+        torque = (v_norm - omega_norm) * self.STALL_TORQUE.raw
+
+        return max(-self.MAX_TORQUE, min(self.MAX_TORQUE, torque))
 
 
 class SimKrakenX44(SimMotor):
@@ -115,18 +125,28 @@ class SimKrakenX44(SimMotor):
     )  # Importantly, this is with the Phoenix Pro license. This might also be a lot less because of current limits.
     NOMINAL_VOLTAGE: Voltage = voltage(12)
 
+    STATOR_LIMIT_AMPS = 60.0
+    KRAKEN_STALL_AMPS = 414.0
+    MAX_TORQUE = STALL_TORQUE.raw * (STATOR_LIMIT_AMPS / KRAKEN_STALL_AMPS)
+
     def apply_voltage(self, voltage: Voltage) -> None:
         self.info.data.ctrl[self.motor_id] = (
-            self._voltage_to_torque(voltage) * self.direction
+            self._voltage_to_torque(voltage, self.velocity) * self.direction
         )
 
     # Returns a torque in newton meters, probably should be unit-ed in the future.
-    def _voltage_to_torque(self, voltage: Voltage) -> float:
-        voltage = voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE)
-        motor_torque = (
-            voltage / self.NOMINAL_VOLTAGE
-        ).voltage() * self.STALL_TORQUE.raw
-        return motor_torque
+    def _voltage_to_torque(self, voltage: Voltage, velocity: AngularVelocity) -> float:
+        v_norm = (
+            voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE).voltage()
+            / self.NOMINAL_VOLTAGE.voltage()
+        )
+        omega_norm = (
+            velocity.radians_per_second() / self.FREE_SPEED.radians_per_second()
+        )
+
+        torque = (v_norm - omega_norm) * self.STALL_TORQUE.raw
+
+        return max(-self.MAX_TORQUE, min(self.MAX_TORQUE, torque))
 
 
 # class SimDrivetrain:

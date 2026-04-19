@@ -23,6 +23,12 @@ from wpimath.geometry import Rotation2d
 from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 
 from frc_python.can import CTREDeviceID
+from frc_python.sim.common import (
+    DriveModuleID,
+    SimKrakenX44,
+    SimKrakenX60,
+    SimulationInfo,
+)
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
 from frc_python.units.amps import Current, amps
 from frc_python.units.angle import Angle, degrees, radians, rotations
@@ -45,12 +51,6 @@ from frc_python.units.voltage import (
     volts_per_radian_second,
 )
 from frc_python.utils.control import AngularPIDGains, LinearMotorFFGains, LinearPIDGains
-from frc_python.utils.sim import (
-    DriveModuleID,
-    SimKrakenX44,
-    SimKrakenX60,
-    SimulationInfo,
-)
 
 
 class SwerveModule(ABC):

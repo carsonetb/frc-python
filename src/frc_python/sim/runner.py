@@ -9,9 +9,11 @@ from mujoco.viewer import launch_passive
 from pygame.joystick import JoystickType
 from wpilib.simulation import DriverStationSim, XboxControllerSim
 
-from frc_python.units.time import seconds
+from frc_python.sim.builder import build_drivetrain, build_field, build_misc
+from frc_python.sim.common import SimulationInfo
+from frc_python.sim.xmlgen import Body, Inertial, Model
+from frc_python.units.mass import kilograms
 from frc_python.utils.misc import TIMESTEP
-from frc_python.utils.sim import SimulationInfo
 
 hal.initialize(500, 0)
 from frc_python.robot import Robot
@@ -20,6 +22,13 @@ FLIGHT_STICKS = False
 
 
 def main():
+
+    xml_model = Model("field")
+    build_misc(xml_model)
+    build_field(xml_model)
+    build_drivetrain(xml_model)
+    print(xml_model.build())
+
     pygame.init()
     pygame.joystick.init()
 

@@ -9,6 +9,7 @@ from phoenix6.hardware import Pigeon2
 from phoenix6.status_signal import StatusSignal
 from phoenix6.units import degree
 
+from frc_python.sim.common import SimulationInfo
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
 from frc_python.units.angle import Angle, degrees, radians
 from frc_python.units.time import seconds
@@ -18,7 +19,6 @@ from frc_python.units.velocity import (
     radians_per_second,
 )
 from frc_python.utils.misc import TIMESTEP
-from frc_python.utils.sim import SimulationInfo
 
 
 class Gyro(ABC):
