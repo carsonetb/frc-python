@@ -8,6 +8,7 @@ from frc_python.sim.xmlgen import (
     Material,
     Mesh,
     MeshAsset,
+    MeshDeformable,
     Model,
     Motor,
     Site,
@@ -243,6 +244,8 @@ def build_field(model: Model) -> None:
     geoms.append(Mesh(blue_stage_collision_2, type=Geom.Type.COLLISION))
     geoms.append(Mesh(blue_stage_collision_3, type=Geom.Type.COLLISION))
 
+    model.world.deformables.append(_build_note("note", "0 0 0"))
+
 
 def build_drivetrain(model: Model) -> None:
     prefix = "frc_python/resources/subsystems/drivetrain/"
@@ -411,3 +414,15 @@ def _build_module(
     model.motors.append(Motor(f"{side}_swerve_module_wheel_motor", wheel_hinge, 5.27))
 
     return module
+
+
+def _build_note(name: str, pos: str) -> MeshDeformable:
+    return MeshDeformable(
+        name,
+        kilograms(0.235301),
+        "frc_python/resources/collisions/Note.stl",
+        pos,
+        young=1e6,  # Best guess, NEEDS to be calculated correctly
+        poisson=0.4,  # Estimate
+        damping=0.3,  # Best guess
+    )

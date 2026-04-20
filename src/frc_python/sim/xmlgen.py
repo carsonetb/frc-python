@@ -276,6 +276,68 @@ class Sphere(Geom):
         )
 
 
+class MeshDeformable(Buildable):
+    class DegOF(Enum):
+        FULL = "full"
+        RADIAL = "radial"
+        TRILINEAR = "trilinear"
+        QUADRATIC = "quadratic"
+
+    def __init__(
+        self,
+        name: str,
+        mass: Mass,
+        file: str,
+        pos: str | None = None,
+        dof: DegOF = DegOF.TRILINEAR,
+        friction: str | None = None,
+        young: float | None = None,
+        poisson: float | None = None,
+        damping: float | None = None,
+        thickness: float | None = None,
+    ) -> None:
+        self.name = name
+        self.file = file
+        self.mass = mass.kilograms
+        self.pos = pos
+        self.dof = dof
+        self.friction = friction
+        self.young = young
+        self.poisson = poisson
+        self.damping = damping
+        self.thickness = thickness
+
+    @override
+    def build(self, indentation: int = 0) -> str:
+        return (
+            LabelBuilder("flexcomp")
+            .with_option("type", "mesh")
+            .with_optionals(
+                [
+                    ("name", self.name),
+                    ("mass", self.mass),
+                    ("dof", self.dof.value),
+                    ("pos", self.pos),
+                    ("file", self.file),
+                ]
+            )
+            .with_child(
+                LabelBuilder("contact").with_optional("friction", self.friction)
+            )
+            .with_child(
+                LabelBuilder("elasticity").with_optionals(
+                    [
+                        ("young", self.young),
+                        ("poisson", self.poisson),
+                        ("damping", self.damping),
+                        ("thickness", self.thickness),
+                    ]
+                )
+            )
+            .build(indentation)
+        )
+
+
 class Inertial(Buildable):
     def __init__(
         self,
@@ -404,6 +466,7 @@ class World(Buildable):
     def __init__(self) -> None:
         self.geoms: list[Geom] = []
         self.bodies: list[Body] = []
+        self.deformables: list[MeshDeformable] = []
 
     @override
     def build(self, indentation: int = 0) -> str:
@@ -432,6 +495,7 @@ class World(Buildable):
             )
             .with_children(self.geoms)
             .with_children(self.bodies)
+            .with_children(self.deformables)
             .build(indentation)
         )
 

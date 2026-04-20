@@ -156,6 +156,10 @@
       <geom mesh="fl_swerve_module" class="visual" material="white" axisangle="0 0 1 3.1416" />
       <geom mesh="fr_swerve_module" class="visual" material="white" axisangle="0 0 1 3.1416" />
     </body>
+    <flexcomp type="mesh" name="note" mass="0.235301" dof="trilinear" pos="0 0 0" file="frc_python/resources/collisions/Note.stl" >
+      <contact />
+      <elasticity young="2000000.0" poisson="0.4" damping="0.3" />
+    </flexcomp>
   </worldbody>
   <actuator >
     <motor name="fl_swerve_module_turret_motor" joint="fl_swerve_module_turret_hinge" gear="26.09" />
