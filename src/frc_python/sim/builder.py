@@ -1,3 +1,5 @@
+from random import randint, random, randrange, uniform
+
 from frc_python.sim.xmlgen import (
     Body,
     Box,
@@ -11,6 +13,7 @@ from frc_python.sim.xmlgen import (
     MeshDeformable,
     Model,
     Motor,
+    Plugin,
     Site,
     Sphere,
     World,
@@ -30,6 +33,7 @@ def build_misc(model: Model) -> None:
     materials.append(Material("red", 0.9, 0, 0))
     materials.append(Material("blue", 0, 0, 0.9))
     materials.append(Material("bumper_blue", 0.2, 0.2, 0.8))
+    materials.append(Material("orange", 1, 0.5, 0))
 
 
 def build_field(model: Model) -> None:
@@ -104,6 +108,7 @@ def build_field(model: Model) -> None:
         "blue_stage_collision_3",
         "frc_python/resources/collisions/BlueStage3.stl",
     )
+    note = MeshAsset("note", "frc_python/resources/collisions/Note.stl")
 
     carpet = MeshAsset("carpet", "frc_python/resources/Carpet.stl")
     red_tape = MeshAsset("red_tape", "frc_python/resources/RedTape.stl")
@@ -140,6 +145,7 @@ def build_field(model: Model) -> None:
     meshes.append(red_tape)
     meshes.append(blue_tape)
     meshes.append(white_tape)
+    meshes.append(note)
 
     geoms.append(Mesh(audience_side_field_wall))
     geoms.append(Mesh(scoring_side_field_wall))
@@ -244,7 +250,14 @@ def build_field(model: Model) -> None:
     geoms.append(Mesh(blue_stage_collision_2, type=Geom.Type.COLLISION))
     geoms.append(Mesh(blue_stage_collision_3, type=Geom.Type.COLLISION))
 
-    model.world.deformables.append(_build_note("note", "0 0 0"))
+    for _ in range(30):
+        model.world.bodies.append(
+            _build_note(
+                f"{uniform(0, 1000)}",
+                f"{uniform(-4, 4)} {uniform(-4, 4)} {uniform(5, 10)}",
+                note,
+            )
+        )
 
 
 def build_drivetrain(model: Model) -> None:
@@ -416,13 +429,16 @@ def _build_module(
     return module
 
 
-def _build_note(name: str, pos: str) -> MeshDeformable:
-    return MeshDeformable(
-        name,
-        kilograms(0.235301),
-        "frc_python/resources/collisions/Note.stl",
-        pos,
-        young=1e6,  # Best guess, NEEDS to be calculated correctly
-        poisson=0.4,  # Estimate
-        damping=0.3,  # Best guess
+def _build_note(name: str, pos: str, mesh: MeshAsset) -> Body:
+    col = Mesh(
+        mesh,
+        type=Geom.Type.COLLISION,
+        friction="1.2 0.005 0.0001",
+        solref="0.04 1",
+        solimp="0.8 0.99 0.001",
     )
+    vis = Mesh(mesh, "orange", Geom.Type.VISUAL)
+    out = Body(name, True, pos)
+    out.geoms.append(col)
+    out.geoms.append(vis)
+    return out

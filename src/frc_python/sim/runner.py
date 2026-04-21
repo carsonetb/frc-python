@@ -29,6 +29,7 @@ def main():
     build_drivetrain(xml_model)
     xml = xml_model.build()
     open("temp.xml", "w").write(xml)
+    # xml = open("temp.xml", "r").read()
 
     pygame.init()
     pygame.joystick.init()

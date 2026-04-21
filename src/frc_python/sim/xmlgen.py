@@ -183,11 +183,17 @@ class Mesh(Geom):
         type: Geom.Type = Geom.Type.VISUAL,
         axisangle: str | None = None,
         pos: str | None = None,
+        friction: str | None = None,
+        solref: str | None = None,
+        solimp: str | None = None,
     ) -> None:
         super().__init__(material, type)
         self.mesh = mesh.name
         self.axisangle = axisangle
         self.pos = pos
+        self.friction = friction
+        self.solref = solref
+        self.solimp = solimp
 
     @override
     def build(self, indentation: int = 0) -> str:
@@ -198,6 +204,13 @@ class Mesh(Geom):
             .with_option("material", self.material)
             .with_optional("axisangle", self.axisangle)
             .with_optional("pos", self.pos)
+            .with_optionals(
+                [
+                    ("friction", self.friction),
+                    ("solref", self.solref),
+                    ("solimp", self.solimp),
+                ]
+            )
             .build(indentation)
         )
 
@@ -291,10 +304,15 @@ class MeshDeformable(Buildable):
         pos: str | None = None,
         dof: DegOF = DegOF.TRILINEAR,
         friction: str | None = None,
+        radius: float | None = None,
         young: float | None = None,
         poisson: float | None = None,
         damping: float | None = None,
         thickness: float | None = None,
+        solref: str | None = None,
+        solimp: str | None = None,
+        contype: int | None = None,
+        conaffinity: int | None = None,
     ) -> None:
         self.name = name
         self.file = file
@@ -302,16 +320,21 @@ class MeshDeformable(Buildable):
         self.pos = pos
         self.dof = dof
         self.friction = friction
+        self.radius = radius
         self.young = young
         self.poisson = poisson
         self.damping = damping
         self.thickness = thickness
+        self.solref = solref
+        self.solimp = solimp
+        self.contype = contype
+        self.conaffinity = conaffinity
 
     @override
     def build(self, indentation: int = 0) -> str:
         return (
             LabelBuilder("flexcomp")
-            .with_option("type", "mesh")
+            .with_option("type", "gmsh")
             .with_optionals(
                 [
                     ("name", self.name),
@@ -319,10 +342,22 @@ class MeshDeformable(Buildable):
                     ("dof", self.dof.value),
                     ("pos", self.pos),
                     ("file", self.file),
+                    ("radius", self.radius),
                 ]
             )
             .with_child(
-                LabelBuilder("contact").with_optional("friction", self.friction)
+                LabelBuilder("contact")
+                .with_optionals(
+                    [
+                        ("friction", self.friction),
+                        ("solref", self.solref),
+                        ("solimp", self.solimp),
+                        ("contype", self.contype),
+                        ("conaffinity", self.conaffinity),
+                    ]
+                )
+                .with_option("selfcollide", "none")
+                .with_option("internal", "false")
             )
             .with_child(
                 LabelBuilder("elasticity").with_optionals(
@@ -333,6 +368,11 @@ class MeshDeformable(Buildable):
                         ("thickness", self.thickness),
                     ]
                 )
+            )
+            .with_child(
+                LabelBuilder("edge")
+                .with_option("equality", "true")
+                .with_optional("damping", self.damping)
             )
             .build(indentation)
         )
@@ -451,7 +491,7 @@ class Body(Buildable):
             .with_optional("pos", self.pos)
         )
         if self.free:
-            out.add_child(LabelBuilder("freejoint").with_option("name", "root"))
+            out.add_child(LabelBuilder("freejoint"))
         return (
             out.with_children(self.inertials)
             .with_children(self.sites)
@@ -536,6 +576,17 @@ class Gyro(Buildable):
         )
 
 
+class Plugin(Buildable):
+    def __init__(self, plugin: str) -> None:
+        self.plugin = plugin
+
+    @override
+    def build(self, indentation: int = 0) -> str:
+        return (
+            LabelBuilder("plugin").with_option("plugin", self.plugin).build(indentation)
+        )
+
+
 class Model(Buildable):
     class Integrator(Enum):
         EULER = "euler"
@@ -558,6 +609,7 @@ class Model(Buildable):
         self.sdf_iterations: int | None = None
         self.sdf_initpoints: int | None = None
 
+        self.plugins: list[Plugin] = []
         self.asset = Asset()
         self.world = World()
         self.motors: list[Motor] = []
@@ -568,6 +620,7 @@ class Model(Buildable):
         return (
             LabelBuilder("mujoco")
             .with_option("model", self.name)
+            .with_child(LabelBuilder("extension").with_children(self.plugins))
             .with_child(
                 LabelBuilder("compiler")
                 .with_option("angle", "radian")
@@ -585,6 +638,11 @@ class Model(Buildable):
                         ("sdf_initpoints", self.sdf_initpoints),
                     ]
                 )
+            )
+            .with_child(
+                LabelBuilder("size")
+                .with_option("njmax", 20000)
+                .with_option("nconmax", 10000)
             )
             .with_child(
                 LabelBuilder("default").with_children(
@@ -605,7 +663,12 @@ class Model(Buildable):
                         .with_option("class", "collision")
                         .with_child(
                             LabelBuilder("geom").with_options(
-                                [("type", "mesh"), ("group", 3)]
+                                [
+                                    ("type", "mesh"),
+                                    ("group", 3),
+                                    ("contype", 1),
+                                    ("conaffinity", 1),
+                                ]
                             )
                         ),
                     ]
