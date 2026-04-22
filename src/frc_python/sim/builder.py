@@ -21,9 +21,11 @@ from frc_python.sim.xmlgen import (
 from frc_python.units.distance import meters
 from frc_python.units.mass import kilograms
 from frc_python.utils.math import Vector3
+from frc_python.utils.misc import TIMESTEP
 
 
 def build_misc(model: Model) -> None:
+    model.timestep = TIMESTEP.seconds()
     materials = model.asset.materials
 
     materials.append(Material("grey", 0.4, 0.4, 0.4))

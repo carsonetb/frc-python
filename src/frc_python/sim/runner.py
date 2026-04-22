@@ -107,8 +107,12 @@ def main():
 
             mj_step(model, data)
 
-            if tick % 16 == 0:
-                viewer.sync()
+            if tick % 4 == 0:
+                viewer.sync(True)
+
+            wait = TIMESTEP.seconds() - (time() - step_start)
+            if wait > 0:
+                sleep(wait)
 
 
 if __name__ == "__main__":

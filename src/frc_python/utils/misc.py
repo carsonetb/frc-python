@@ -2,7 +2,7 @@ from enum import Enum, auto
 
 from frc_python.units.time import seconds
 
-TIMESTEP = seconds(0.001)
+TIMESTEP = seconds(0.003)
 
 
 class Model(Enum):
