@@ -1,32 +1,13 @@
-from phoenix6.configs import (
-    CANcoderConfiguration,
-    CurrentLimitsConfigs,
-    Slot0Configs,
-    TalonFXConfiguration,
-)
-from phoenix6.swerve import (
-    ClosedLoopOutputType,
-    DriveMotorArrangement,
-    SteerFeedbackType,
-    SteerMotorArrangement,
-    SwerveModuleConstantsFactory,
-)
+from phoenix6.configs import CANcoderConfiguration, CurrentLimitsConfigs, Slot0Configs, TalonFXConfiguration
+from phoenix6.swerve import ClosedLoopOutputType, DriveMotorArrangement, SteerFeedbackType, SteerMotorArrangement, SwerveModuleConstantsFactory
 
 from frc_python.can import CTREDeviceID
 from frc_python.units.amps import amps
 from frc_python.units.angle import rotations
 from frc_python.units.distance import inches
 from frc_python.units.mass import kilogram_meters_squared
-from frc_python.units.velocity import (
-    feet_per_second,
-)
-from frc_python.units.voltage import (
-    volt_seconds_per_meter,
-    volt_seconds_squared_per_meter,
-    voltage,
-    volts_per_meter,
-    volts_per_radian,
-)
+from frc_python.units.velocity import feet_per_second
+from frc_python.units.voltage import volt_seconds_per_meter, volt_seconds_squared_per_meter, voltage, volts_per_meter, volts_per_radian
 from frc_python.utils.control import AngularPIDGains, LinearMotorFFGains, LinearPIDGains
 from frc_python.utils.math import Vector2
 
@@ -38,11 +19,7 @@ STEER_FEEDBACK_TYPE = SteerFeedbackType.FUSED_CANCODER
 
 STEER_GAINS = AngularPIDGains(volts_per_radian(125))
 DRIVE_PID = LinearPIDGains(volts_per_meter(0.7433))
-DRIVE_FF = LinearMotorFFGains(
-    voltage(0.19991),
-    volt_seconds_per_meter(0.64508),
-    volt_seconds_squared_per_meter(0.07864),
-)
+DRIVE_FF = LinearMotorFFGains(voltage(0.19991), volt_seconds_per_meter(0.64508), volt_seconds_squared_per_meter(0.07864))
 
 SLIP_CURRENT = amps(80)
 STEER_CURRENT_LIMIT = amps(60)
@@ -65,16 +42,12 @@ DRIVE_FRICTION_VOLTAGE = voltage(0.2)
 
 DRIVE_INITIAL_CONFIGS = TalonFXConfiguration()
 STEER_INITIAL_CONFIGS = TalonFXConfiguration().with_current_limits(
-    CurrentLimitsConfigs()
-    .with_stator_current_limit(STEER_CURRENT_LIMIT.amps())
-    .with_stator_current_limit_enable(True)
+    CurrentLimitsConfigs().with_stator_current_limit(STEER_CURRENT_LIMIT.amps()).with_stator_current_limit_enable(True)
 )
 ENCODER_INITIAL_CONFIGS = CANcoderConfiguration()
 
 constant_creator = (
-    SwerveModuleConstantsFactory[
-        TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration
-    ]()
+    SwerveModuleConstantsFactory[TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration]()
     .with_drive_motor_gear_ratio(DRIVE_GEAR_RATIO)
     .with_steer_motor_gear_ratio(STEER_GEAR_RATIO)
     .with_coupling_gear_ratio(COUPLE_GEAR_RATIO)

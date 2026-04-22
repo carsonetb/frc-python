@@ -48,9 +48,7 @@ class Unit(ABC):
         return f"{self.in_current()} {self.unit}"
 
     def clamp(self, minimum: Self, maximum: Self) -> Self:
-        return self.withval(
-            max(minimum.in_current(), min(self.in_current(), maximum.in_current()))
-        )
+        return self.withval(max(minimum.in_current(), min(self.in_current(), maximum.in_current())))
 
     def __neg__(self) -> Self:
         return self.withval(-self.in_current())

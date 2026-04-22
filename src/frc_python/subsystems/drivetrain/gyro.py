@@ -13,11 +13,7 @@ from frc_python.sim.common import SimulationInfo
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
 from frc_python.units.angle import Angle, degrees, radians
 from frc_python.units.time import seconds
-from frc_python.units.velocity import (
-    AngularVelocity,
-    degrees_per_second,
-    radians_per_second,
-)
+from frc_python.units.velocity import AngularVelocity, degrees_per_second, radians_per_second
 from frc_python.utils.misc import TIMESTEP
 
 
@@ -67,20 +63,14 @@ class GyroPigeon(Gyro):
         self.yaw_signal: StatusSignal[degree] = pigeon.get_yaw()
         self.pitch_signal: StatusSignal[degree] = pigeon.get_pitch()
         self.roll_signal: StatusSignal[degree] = pigeon.get_roll()
-        self.angular_velocity_signal: StatusSignal[float] = (
-            pigeon.get_angular_velocity_z_world()
-        )
+        self.angular_velocity_signal: StatusSignal[float] = pigeon.get_angular_velocity_z_world()
         self.yaw_timestamp_queue: Queue[float] = odometry_thread.make_timestamp_queue()
-        self.yaw_position_queue: Queue[float] = odometry_thread.register_signal(
-            self.yaw_signal
-        )
+        self.yaw_position_queue: Queue[float] = odometry_thread.register_signal(self.yaw_signal)
         self._odometry_yaw_timestamps: list[float] = []
         self._odometry_yaw_positions: list[float] = []
 
         _ = BaseStatusSignal.set_update_frequency_for_all(250.0, self.yaw_signal)
-        _ = BaseStatusSignal.set_update_frequency_for_all(
-            100.0, self.pitch_signal, self.roll_signal, self.angular_velocity_signal
-        )
+        _ = BaseStatusSignal.set_update_frequency_for_all(100.0, self.pitch_signal, self.roll_signal, self.angular_velocity_signal)
 
     @property
     @override
@@ -110,12 +100,7 @@ class GyroPigeon(Gyro):
     @property
     @override
     def signals(self) -> list[BaseStatusSignal]:
-        return [
-            self.yaw_signal,
-            self.pitch_signal,
-            self.roll_signal,
-            self.angular_velocity_signal,
-        ]
+        return [self.yaw_signal, self.pitch_signal, self.roll_signal, self.angular_velocity_signal]
 
     @override
     def periodic(self) -> None:
@@ -134,9 +119,7 @@ class GyroPigeon(Gyro):
 class SimGyro(Gyro):
     def __init__(self, info: SimulationInfo, name: str) -> None:
         self.info = info
-        self.sensor_id: int = self.info.model.sensor_adr[
-            mj_name2id(self.info.model, mjtObj.mjOBJ_SENSOR, name)
-        ]
+        self.sensor_id: int = self.info.model.sensor_adr[mj_name2id(self.info.model, mjtObj.mjOBJ_SENSOR, name)]
         self._yaw = radians(0)
 
     @property

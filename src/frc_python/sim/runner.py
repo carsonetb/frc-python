@@ -13,7 +13,9 @@ from wpilib.simulation import DriverStationSim, XboxControllerSim
 
 from frc_python.sim.builder import build_drivetrain, build_field, build_misc
 from frc_python.sim.common import SimulatableRobot, SimulatableSubsystem, SimulationInfo
+from frc_python.sim.field import CrescendoField, SimField
 from frc_python.sim.xmlgen import Body, Inertial, Model
+from frc_python.subsystems.drivetrain.drivetrain import Drivetrain
 from frc_python.units.mass import kilograms
 from frc_python.utils.misc import TIMESTEP
 
@@ -24,15 +26,25 @@ FLIGHT_STICKS = False
 
 
 class Simulator:
-    buildables: list[SimulatableSubsystem] = []
+    Field: type[SimField] | None = None
+    buildables: list[type[SimulatableSubsystem]] = []
     xml: str | None = None
 
     @classmethod
     def build(cls, save: str | None = None) -> str:
+
+        if cls.Field is None:
+            print("Must set Simulator.Field.")
+            return ""
+
         model = Model("FRC")
 
-        for subsystem in cls.buildables:
-            subsystem.build(model)
+        robot = Body("robot", True)
+        field = cls.Field()
+        field.build(model)
+
+        for Subsystem in cls.buildables:
+            Subsystem.build(model, robot)
 
         xml = model.build()
         if save is not None:
@@ -43,10 +55,14 @@ class Simulator:
         return xml
 
     @classmethod
-    def simulate(
-        cls, RobotClass: type[SimulatableRobot], flight_sticks: bool = False
-    ) -> int:
-        print("-- General Simulator for FRC --")
+    def simulate(cls, RobotClass: type[SimulatableRobot], flight_sticks: bool = False) -> int:
+        print("-- General Simulator for FRC (pre-beta version) --")
+
+        if cls.Field is None:
+            print("Must set Simulator.Field.")
+            return 1
+
+        print(f"Field is {cls.Field.NAME}")
 
         if cls.xml is None:
             print("Must call `build` before `simulate`.")
@@ -60,10 +76,7 @@ class Simulator:
                 print("Not all joysticks connected, please plug them in.")
                 return 1
             else:
-                physical_controller = (
-                    pygame.joystick.Joystick(0),
-                    pygame.joystick.Joystick(1),
-                )
+                physical_controller = (pygame.joystick.Joystick(0), pygame.joystick.Joystick(1))
         else:
             if pygame.joystick.get_count() < 1:
                 print("No controller found, please plug one in.")
@@ -138,15 +151,17 @@ class Simulator:
 
 def main():
 
-    xml_model = Model("field")
-    build_misc(xml_model)
-    build_field(xml_model)
-    build_drivetrain(xml_model)
-    xml = xml_model.build()
-    open("temp.xml", "w").write(xml)
-    # xml = open("temp.xml", "r").read()
+    # xml_model = Model("field")
+    # build_misc(xml_model)
+    # build_field(xml_model)
+    # build_drivetrain(xml_model)
+    # xml = xml_model.build()
+    # open("temp.xml", "w").write(xml)
+    # # xml = open("temp.xml", "r").read()
 
-    Simulator.xml = xml
+    Simulator.Field = CrescendoField
+    Simulator.buildables.append(Drivetrain)
+    Simulator.build("temp.xml")
     Simulator.simulate(Robot)
 
 

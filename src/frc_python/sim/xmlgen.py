@@ -16,45 +16,98 @@ class Stringable(Protocol):
 
 
 class Buildable(ABC):
+    """
+    Represents any object which can be built into XML.
+    """
+
     @abstractmethod
     def build(self, indentation: int = 0) -> str:
+        """
+        Generates XML from the current state of the object.
+        """
+
         pass
 
 
 class LabelBuilder(Buildable):
+    """
+    Simple Python wrapper for XML element generation, ideally only used
+    internally.
+
+    An element with no children and one flag would generate like this:
+
+    ```
+    <element flag="something" />
+    ```
+
+    An element with a child would generate like this:
+
+    ```
+    <element flag="something" >
+      <child />
+    </element>
+    ```
+
+    As you can see indentation is handled correctly so the generated XML is
+    human readable.
+    """
+
     def __init__(self, name: str) -> None:
         self.name = name
         self.options: list[tuple[str, str]] = []
         self.children: list[Buildable] = []
 
     def add_optional(self, name: str, value: Stringable | None) -> None:
+        """
+        Add an optional flag to the element, if the value is `None` it won't be
+        added.
+        """
+
         if value is not None:
             self.add_option(name, value)
 
     def add_optionals(self, optionals: list[tuple[str, Stringable | None]]) -> None:
+        """
+        Add a list of optional flags.
+        """
+
         for name, value in optionals:
             self.add_optional(name, value)
 
     def add_option(self, name: str, value: Stringable) -> None:
+        """
+        Add a flag to the element.
+        """
+
         self.options.append((name, str(value)))
 
     def add_options(self, options: list[tuple[str, Stringable]]) -> None:
+        """
+        Add a list of flags.
+        """
+
         for name, value in options:
             self.add_option(name, value)
 
     def add_child(self, child: Buildable) -> None:
+        """
+        Adds a child element to this element.
+        """
+
         self.children.append(child)
 
     def add_children(self, children: Sequence[Buildable]) -> None:
+        """
+        Adds a list of children to this element.
+        """
+
         self.children += children
 
     def with_optional(self, name: str, value: Stringable | None) -> LabelBuilder:
         self.add_optional(name, value)
         return self
 
-    def with_optionals(
-        self, optionals: list[tuple[str, Stringable | None]]
-    ) -> LabelBuilder:
+    def with_optionals(self, optionals: list[tuple[str, Stringable | None]]) -> LabelBuilder:
         self.add_optionals(optionals)
         return self
 
@@ -96,36 +149,40 @@ class LabelBuilder(Buildable):
 
 
 class Material(Buildable):
+    """
+    This is a basic wrapper for MuJoCo materials. Right now it only supports
+    the material being a specific RGBA color.
+    """
+
     def __init__(self, name: str, r: float, g: float, b: float, a: float = 1.0) -> None:
         self.name = name
         self.rgba = f"{r} {g} {b} {a}"
 
     @override
     def build(self, indentation: int = 0) -> str:
-        return (
-            LabelBuilder("material")
-            .with_option("name", self.name)
-            .with_option("rgba", self.rgba)
-            .build(indentation)
-        )
+        return LabelBuilder("material").with_option("name", self.name).with_option("rgba", self.rgba).build(indentation)
 
 
 class MeshAsset(Buildable):
+    """
+    This is an asset (not an actual mesh in the world) that can be used as a
+    mesh for the Mesh element.
+    """
+
     def __init__(self, name: str, file: str) -> None:
         self.name = name
         self.file = file
 
     @override
     def build(self, indentation: int = 0) -> str:
-        return (
-            LabelBuilder("mesh")
-            .with_option("name", self.name)
-            .with_option("file", self.file)
-            .build(indentation)
-        )
+        return LabelBuilder("mesh").with_option("name", self.name).with_option("file", self.file).build(indentation)
 
 
 class Asset(Buildable):
+    """
+    Groups all the materials and meshes used in the model.
+    """
+
     def __init__(self) -> None:
         self.materials: list[Material] = []
         self.meshes: list[MeshAsset] = []
@@ -151,12 +208,7 @@ class Asset(Buildable):
             )
             .with_child(
                 LabelBuilder("material").with_options(
-                    [
-                        ("name", "groundplane"),
-                        ("texture", "groundplane"),
-                        ("texrepeat", "5 5"),
-                        ("texuniform", "true"),
-                    ]
+                    [("name", "groundplane"), ("texture", "groundplane"), ("texrepeat", "5 5"), ("texuniform", "true")]
                 )
             )
             .with_children(self.materials)
@@ -166,6 +218,11 @@ class Asset(Buildable):
 
 
 class Geom(Buildable, ABC):
+    """
+    Abstract class for any geometry. Currently this can be a mesh, a sphere or
+    a box.
+    """
+
     class Type(Enum):
         VISUAL = "visual"
         COLLISION = "collision"
@@ -176,6 +233,10 @@ class Geom(Buildable, ABC):
 
 
 class Mesh(Geom):
+    """
+    A mesh, loaded from a MeshAsset.
+    """
+
     def __init__(
         self,
         mesh: MeshAsset,
@@ -204,18 +265,20 @@ class Mesh(Geom):
             .with_option("material", self.material)
             .with_optional("axisangle", self.axisangle)
             .with_optional("pos", self.pos)
-            .with_optionals(
-                [
-                    ("friction", self.friction),
-                    ("solref", self.solref),
-                    ("solimp", self.solimp),
-                ]
-            )
+            .with_optionals([("friction", self.friction), ("solref", self.solref), ("solimp", self.solimp)])
             .build(indentation)
         )
 
 
 class Box(Geom):
+    """
+    Boxes are modeled using a position and a size. These correspond directly
+    to the strings put into the element in MuJoCo. The position is the center
+    of the box, and the size is the **radius** of each axis, meaning that the
+    width of the box on the X axis would be twice the amount of the first number
+    in the size attribute.
+    """
+
     def __init__(
         self,
         pos: str,
@@ -257,13 +320,11 @@ class Box(Geom):
 
 
 class Sphere(Geom):
-    def __init__(
-        self,
-        pos: str,
-        radius: float,
-        name: str | None = None,
-        friction: str | None = None,
-    ) -> None:
+    """
+    A sphere at a position and with a radius.
+    """
+
+    def __init__(self, pos: str, radius: float, name: str | None = None, friction: str | None = None) -> None:
         super().__init__(type=Geom.Type.COLLISION)
         self.pos = pos
         self.name = name
@@ -290,6 +351,11 @@ class Sphere(Geom):
 
 
 class MeshDeformable(Buildable):
+    """
+    Framework for building soft or deformable objects. This is not very well
+    tested and can cause lag in the simulation very easily.
+    """
+
     class DegOF(Enum):
         FULL = "full"
         RADIAL = "radial"
@@ -336,14 +402,7 @@ class MeshDeformable(Buildable):
             LabelBuilder("flexcomp")
             .with_option("type", "gmsh")
             .with_optionals(
-                [
-                    ("name", self.name),
-                    ("mass", self.mass),
-                    ("dof", self.dof.value),
-                    ("pos", self.pos),
-                    ("file", self.file),
-                    ("radius", self.radius),
-                ]
+                [("name", self.name), ("mass", self.mass), ("dof", self.dof.value), ("pos", self.pos), ("file", self.file), ("radius", self.radius)]
             )
             .with_child(
                 LabelBuilder("contact")
@@ -361,35 +420,17 @@ class MeshDeformable(Buildable):
             )
             .with_child(
                 LabelBuilder("elasticity").with_optionals(
-                    [
-                        ("young", self.young),
-                        ("poisson", self.poisson),
-                        ("damping", self.damping),
-                        ("thickness", self.thickness),
-                    ]
+                    [("young", self.young), ("poisson", self.poisson), ("damping", self.damping), ("thickness", self.thickness)]
                 )
             )
-            .with_child(
-                LabelBuilder("edge")
-                .with_option("equality", "true")
-                .with_optional("damping", self.damping)
-            )
+            .with_child(LabelBuilder("edge").with_option("equality", "true").with_optional("damping", self.damping))
             .build(indentation)
         )
 
 
 class Inertial(Buildable):
-    def __init__(
-        self,
-        mass: Mass,
-        pos: Vector3[Distance] | None = None,
-        diaginertia: str | None = None,
-    ) -> None:
-        self.pos = (
-            "0 0 0"
-            if pos is None
-            else f"{pos.x.meters()} {pos.y.meters()} {pos.z.meters()}"
-        )
+    def __init__(self, mass: Mass, pos: Vector3[Distance] | None = None, diaginertia: str | None = None) -> None:
+        self.pos = "0 0 0" if pos is None else f"{pos.x.meters()} {pos.y.meters()} {pos.z.meters()}"
         self.mass = mass.kilograms
         self.diaginertia = diaginertia
 
@@ -405,25 +446,24 @@ class Inertial(Buildable):
 
 
 class Site(Buildable):
+    """
+    Generally used with Gyros.
+    """
+
     def __init__(self, name: str, pos: Vector3[Distance] | None = None) -> None:
         self.name = name
-        self.pos = (
-            "0 0 0"
-            if pos is None
-            else f"{pos.x.meters()} {pos.y.meters()} {pos.z.meters()}"
-        )
+        self.pos = "0 0 0" if pos is None else f"{pos.x.meters()} {pos.y.meters()} {pos.z.meters()}"
 
     @override
     def build(self, indentation: int = 0) -> str:
-        return (
-            LabelBuilder("site")
-            .with_option("name", self.name)
-            .with_option("pos", self.pos)
-            .build(indentation)
-        )
+        return LabelBuilder("site").with_option("name", self.name).with_option("pos", self.pos).build(indentation)
 
 
 class Joint(Buildable):
+    """
+    Joints can be moved by motors.
+    """
+
     class Type(Enum):
         SLIDE = "slide"
         HINGE = "hinge"
@@ -473,6 +513,11 @@ class Joint(Buildable):
 
 
 class Body(Buildable):
+    """
+    Represents a body in the world. It can have a lot of different types of
+    children. These children's positions are relative to the body's position.
+    """
+
     def __init__(self, name: str, free: bool = False, pos: str | None = None) -> None:
         self.name = name
         self.free = free
@@ -485,11 +530,7 @@ class Body(Buildable):
 
     @override
     def build(self, indentation: int = 0) -> str:
-        out = (
-            LabelBuilder("body")
-            .with_option("name", self.name)
-            .with_optional("pos", self.pos)
-        )
+        out = LabelBuilder("body").with_option("name", self.name).with_optional("pos", self.pos)
         if self.free:
             out.add_child(LabelBuilder("freejoint"))
         return (
@@ -503,6 +544,10 @@ class Body(Buildable):
 
 
 class World(Buildable):
+    """
+    The world contains all bodies and geoms in the simulation.
+    """
+
     def __init__(self) -> None:
         self.geoms: list[Geom] = []
         self.bodies: list[Body] = []
@@ -513,24 +558,11 @@ class World(Buildable):
         return (
             LabelBuilder("worldbody")
             .with_child(
-                LabelBuilder("light").with_options(
-                    [
-                        ("pos", "1 -1 1.5"),
-                        ("dir", "-1 1 -1"),
-                        ("diffuse", "0.5 0.5 0.5"),
-                        ("directional", "true"),
-                    ]
-                )
+                LabelBuilder("light").with_options([("pos", "1 -1 1.5"), ("dir", "-1 1 -1"), ("diffuse", "0.5 0.5 0.5"), ("directional", "true")])
             )
             .with_child(
                 LabelBuilder("geom").with_options(
-                    [
-                        ("name", "floor"),
-                        ("size", "0 0 0.05"),
-                        ("type", "plane"),
-                        ("material", "groundplane"),
-                        ("friction", "1.3 0.1 0.01"),
-                    ]
+                    [("name", "floor"), ("size", "0 0 0.05"), ("type", "plane"), ("material", "groundplane"), ("friction", "1.3 0.1 0.01")]
                 )
             )
             .with_children(self.geoms)
@@ -541,6 +573,11 @@ class World(Buildable):
 
 
 class Motor(Buildable):
+    """
+    A motor can move a joint. Eventually this should be migrated to use the
+    dcmotor element and simplify the Python motor code.
+    """
+
     def __init__(self, name: str, joint: Joint, gear_ratio: float) -> None:
         self.name = name
         self.joint = joint
@@ -548,17 +585,7 @@ class Motor(Buildable):
 
     @override
     def build(self, indentation: int = 0) -> str:
-        return (
-            LabelBuilder("motor")
-            .with_options(
-                [
-                    ("name", self.name),
-                    ("joint", self.joint.name),
-                    ("gear", self.gear_ratio),
-                ]
-            )
-            .build(indentation)
-        )
+        return LabelBuilder("motor").with_options([("name", self.name), ("joint", self.joint.name), ("gear", self.gear_ratio)]).build(indentation)
 
 
 class Gyro(Buildable):
@@ -568,27 +595,35 @@ class Gyro(Buildable):
 
     @override
     def build(self, indentation: int = 0) -> str:
-        return (
-            LabelBuilder("gyro")
-            .with_option("name", self.name)
-            .with_option("site", self.site.name)
-            .build(indentation)
-        )
+        return LabelBuilder("gyro").with_option("name", self.name).with_option("site", self.site.name).build(indentation)
 
 
 class Plugin(Buildable):
+    """
+    Generally not used, this is here for the future.
+    """
+
     def __init__(self, plugin: str) -> None:
         self.plugin = plugin
 
     @override
     def build(self, indentation: int = 0) -> str:
-        return (
-            LabelBuilder("plugin").with_option("plugin", self.plugin).build(indentation)
-        )
+        return LabelBuilder("plugin").with_option("plugin", self.plugin).build(indentation)
 
 
 class Model(Buildable):
+    """
+    The model contains everything about the simulation, and is the thing that
+    is actually explicitly converted to XML.
+    """
+
     class Integrator(Enum):
+        """
+        Specifies the type of integrator used in the simulation. This is very
+        important and effects performance. More info can be found in the MuJoCo
+        documentation.
+        """
+
         EULER = "euler"
         IMPLICIT = "implicit"
         IMPLICITFAST = "implicitfast"
@@ -615,17 +650,18 @@ class Model(Buildable):
         self.motors: list[Motor] = []
         self.gyros: list[Gyro] = []
 
+    def add_mesh(self, name: str, file: str) -> MeshAsset:
+        out = MeshAsset(name, file)
+        self.asset.meshes.append(out)
+        return out
+
     @override
     def build(self, indentation: int = 0) -> str:
         return (
             LabelBuilder("mujoco")
             .with_option("model", self.name)
             .with_child(LabelBuilder("extension").with_children(self.plugins))
-            .with_child(
-                LabelBuilder("compiler")
-                .with_option("angle", "radian")
-                .with_option("coordinate", "local")
-            )
+            .with_child(LabelBuilder("compiler").with_option("angle", "radian").with_option("coordinate", "local"))
             .with_child(
                 LabelBuilder("option").with_optionals(
                     [
@@ -639,38 +675,16 @@ class Model(Buildable):
                     ]
                 )
             )
-            .with_child(
-                LabelBuilder("size")
-                .with_option("njmax", 20000)
-                .with_option("nconmax", 10000)
-            )
+            .with_child(LabelBuilder("size").with_option("njmax", 20000).with_option("nconmax", 10000))
             .with_child(
                 LabelBuilder("default").with_children(
                     [
                         LabelBuilder("default")
                         .with_option("class", "visual")
-                        .with_child(
-                            LabelBuilder("geom").with_options(
-                                [
-                                    ("type", "mesh"),
-                                    ("group", 2),
-                                    ("contype", 0),
-                                    ("conaffinity", 0),
-                                ]
-                            )
-                        ),
+                        .with_child(LabelBuilder("geom").with_options([("type", "mesh"), ("group", 2), ("contype", 0), ("conaffinity", 0)])),
                         LabelBuilder("default")
                         .with_option("class", "collision")
-                        .with_child(
-                            LabelBuilder("geom").with_options(
-                                [
-                                    ("type", "mesh"),
-                                    ("group", 3),
-                                    ("contype", 1),
-                                    ("conaffinity", 1),
-                                ]
-                            )
-                        ),
+                        .with_child(LabelBuilder("geom").with_options([("type", "mesh"), ("group", 3), ("contype", 1), ("conaffinity", 1)])),
                     ]
                 )
             )

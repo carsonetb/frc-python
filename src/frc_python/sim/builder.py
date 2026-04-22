@@ -42,20 +42,10 @@ def build_field(model: Model) -> None:
     geoms = model.world.geoms
     meshes = model.asset.meshes
 
-    audience_side_field_wall = MeshAsset(
-        "audience_side_field_wall", "frc_python/resources/AudienceSideFieldWall.stl"
-    )
-    scoring_side_field_wall = MeshAsset(
-        "scoring_side_field_wall", "frc_python/resources/ScoringSideFieldWall.stl"
-    )
-    red_alliance_driver_station = MeshAsset(
-        "red_alliance_driver_station",
-        "frc_python/resources/RedAllianceDriverStation.stl",
-    )
-    blue_alliance_driver_station = MeshAsset(
-        "blue_alliance_driver_station",
-        "frc_python/resources/BlueAllianceDriverStation.stl",
-    )
+    audience_side_field_wall = MeshAsset("audience_side_field_wall", "frc_python/resources/AudienceSideFieldWall.stl")
+    scoring_side_field_wall = MeshAsset("scoring_side_field_wall", "frc_python/resources/ScoringSideFieldWall.stl")
+    red_alliance_driver_station = MeshAsset("red_alliance_driver_station", "frc_python/resources/RedAllianceDriverStation.stl")
+    blue_alliance_driver_station = MeshAsset("blue_alliance_driver_station", "frc_python/resources/BlueAllianceDriverStation.stl")
     red_speaker = MeshAsset("red_speaker", "frc_python/resources/RedSpeaker.stl")
     red_source = MeshAsset("red_source", "frc_python/resources/RedSource.stl")
     red_stage = MeshAsset("red_stage", "frc_python/resources/RedStage.stl")
@@ -65,51 +55,24 @@ def build_field(model: Model) -> None:
     blue_stage = MeshAsset("blue_stage", "frc_python/resources/BlueStage.stl")
     blue_amp = MeshAsset("blue_amp", "frc_python/resources/BlueAmp.stl")
 
-    red_speaker_ll_wall_collision = MeshAsset(
-        "red_speaker_lower_left_wall_collision",
-        "frc_python/resources/collisions/RedSpeakerLowerLeftWall.stl",
-    )
+    red_speaker_ll_wall_collision = MeshAsset("red_speaker_lower_left_wall_collision", "frc_python/resources/collisions/RedSpeakerLowerLeftWall.stl")
     red_speaker_lr_wall_collision = MeshAsset(
-        "red_speaker_lower_right_wall_collision",
-        "frc_python/resources/collisions/RedSpeakerLowerRightWall.stl",
+        "red_speaker_lower_right_wall_collision", "frc_python/resources/collisions/RedSpeakerLowerRightWall.stl"
     )
-    red_source_wall_collision = MeshAsset(
-        "red_source_wall_collision",
-        "frc_python/resources/collisions/RedSourceWall.stl",
-    )
-    red_stage_collision_1 = MeshAsset(
-        "red_stage_collision_1", "frc_python/resources/collisions/RedStage1.stl"
-    )
-    red_stage_collision_2 = MeshAsset(
-        "red_stage_collision_2", "frc_python/resources/collisions/RedStage2.stl"
-    )
-    red_stage_collision_3 = MeshAsset(
-        "red_stage_collision_3", "frc_python/resources/collisions/RedStage2.stl"
-    )
+    red_source_wall_collision = MeshAsset("red_source_wall_collision", "frc_python/resources/collisions/RedSourceWall.stl")
+    red_stage_collision_1 = MeshAsset("red_stage_collision_1", "frc_python/resources/collisions/RedStage1.stl")
+    red_stage_collision_2 = MeshAsset("red_stage_collision_2", "frc_python/resources/collisions/RedStage2.stl")
+    red_stage_collision_3 = MeshAsset("red_stage_collision_3", "frc_python/resources/collisions/RedStage2.stl")
     blue_speaker_ll_wall_collision = MeshAsset(
-        "blue_speaker_lower_left_wall_collision",
-        "frc_python/resources/collisions/BlueSpeakerLowerLeftWall.stl",
+        "blue_speaker_lower_left_wall_collision", "frc_python/resources/collisions/BlueSpeakerLowerLeftWall.stl"
     )
     blue_speaker_lr_wall_collision = MeshAsset(
-        "blue_speaker_lower_right_wall_collision",
-        "frc_python/resources/collisions/BlueSpeakerLowerRightWall.stl",
+        "blue_speaker_lower_right_wall_collision", "frc_python/resources/collisions/BlueSpeakerLowerRightWall.stl"
     )
-    blue_source_wall_collision = MeshAsset(
-        "blue_source_wall_collision",
-        "frc_python/resources/collisions/BlueSourceWall.stl",
-    )
-    blue_stage_collision_1 = MeshAsset(
-        "blue_stage_collision_1",
-        "frc_python/resources/collisions/BlueStage1.stl",
-    )
-    blue_stage_collision_2 = MeshAsset(
-        "blue_stage_collision_2",
-        "frc_python/resources/collisions/BlueStage2.stl",
-    )
-    blue_stage_collision_3 = MeshAsset(
-        "blue_stage_collision_3",
-        "frc_python/resources/collisions/BlueStage3.stl",
-    )
+    blue_source_wall_collision = MeshAsset("blue_source_wall_collision", "frc_python/resources/collisions/BlueSourceWall.stl")
+    blue_stage_collision_1 = MeshAsset("blue_stage_collision_1", "frc_python/resources/collisions/BlueStage1.stl")
+    blue_stage_collision_2 = MeshAsset("blue_stage_collision_2", "frc_python/resources/collisions/BlueStage2.stl")
+    blue_stage_collision_3 = MeshAsset("blue_stage_collision_3", "frc_python/resources/collisions/BlueStage3.stl")
     note = MeshAsset("note", "frc_python/resources/collisions/Note.stl")
 
     carpet = MeshAsset("carpet", "frc_python/resources/Carpet.stl")
@@ -167,23 +130,9 @@ def build_field(model: Model) -> None:
     geoms.append(Mesh(white_tape))
 
     geoms.append(
-        Box(
-            "0 -4.206 0.2615",
-            "8.268 0.1 0.241",
-            "audience_side_field_wall_collision",
-            type=Geom.Type.COLLISION,
-            friction="0.3 0.005 0.0001",
-        )
+        Box("0 -4.206 0.2615", "8.268 0.1 0.241", "audience_side_field_wall_collision", type=Geom.Type.COLLISION, friction="0.3 0.005 0.0001")
     )
-    geoms.append(
-        Box(
-            "0 4.206 0.2615",
-            "8.268 0.1 0.241",
-            "scoring_side_field_wall_collision",
-            type=Geom.Type.COLLISION,
-            friction="0.3 0.005 0.0001",
-        )
-    )
+    geoms.append(Box("0 4.206 0.2615", "8.268 0.1 0.241", "scoring_side_field_wall_collision", type=Geom.Type.COLLISION, friction="0.3 0.005 0.0001"))
     geoms.append(
         Box(
             "8.2955 1.163 0.9955",
@@ -221,22 +170,10 @@ def build_field(model: Model) -> None:
         )
     )
     geoms.append(
-        Box(
-            "-7.355 -1.442 0.111",
-            "0.01 0.521 0.1",
-            "red_alliance_speaker_low_wall_flat",
-            type=Geom.Type.COLLISION,
-            friction="0.3 0.005 0.0001",
-        )
+        Box("-7.355 -1.442 0.111", "0.01 0.521 0.1", "red_alliance_speaker_low_wall_flat", type=Geom.Type.COLLISION, friction="0.3 0.005 0.0001")
     )
     geoms.append(
-        Box(
-            "7.355 -1.442 0.111",
-            "0.01 0.521 0.1",
-            "blu_alliance_speaker_low_wall_flat",
-            type=Geom.Type.COLLISION,
-            friction="0.3 0.005 0.0001",
-        )
+        Box("7.355 -1.442 0.111", "0.01 0.521 0.1", "blu_alliance_speaker_low_wall_flat", type=Geom.Type.COLLISION, friction="0.3 0.005 0.0001")
     )
 
     geoms.append(Mesh(red_speaker_ll_wall_collision, type=Geom.Type.COLLISION))
@@ -253,13 +190,7 @@ def build_field(model: Model) -> None:
     geoms.append(Mesh(blue_stage_collision_3, type=Geom.Type.COLLISION))
 
     for _ in range(30):
-        model.world.bodies.append(
-            _build_note(
-                f"{uniform(0, 1000)}",
-                f"{uniform(-4, 4)} {uniform(-4, 4)} {uniform(5, 10)}",
-                note,
-            )
-        )
+        model.world.bodies.append(_build_note(f"{uniform(0, 1000)}", f"{uniform(-4, 4)} {uniform(-4, 4)} {uniform(5, 10)}", note))
 
 
 def build_drivetrain(model: Model) -> None:
@@ -268,14 +199,8 @@ def build_drivetrain(model: Model) -> None:
 
     fl_swerve_module = MeshAsset("fl_swerve_module", prefix + "FLSwerveModule.stl")
     fr_swerve_module = MeshAsset("fr_swerve_module", prefix + "FRSwerveModule.stl")
-    swerve_module_turret = MeshAsset(
-        "swerve_module_turret",
-        prefix + "FLSwerveModuleTurret.stl",
-    )
-    swerve_module_wheel = MeshAsset(
-        "swerve_module_wheel",
-        prefix + "FLSwerveModuleWheel.stl",
-    )
+    swerve_module_turret = MeshAsset("swerve_module_turret", prefix + "FLSwerveModuleTurret.stl")
+    swerve_module_wheel = MeshAsset("swerve_module_wheel", prefix + "FLSwerveModuleWheel.stl")
     drivetrain_frame = MeshAsset("drivetrain_frame", prefix + "DriveTrainFrame.stl")
     bumpers = MeshAsset("bumpers", prefix + "Bumpers.stl")
 
@@ -289,42 +214,10 @@ def build_drivetrain(model: Model) -> None:
     frame = Body("drive_train_frame", True)
     frame.inertials.append(Inertial(kilograms(50), diaginertia="5 5 5"))
 
-    frame.geoms.append(
-        Box(
-            "0 -0.3935 0.106",
-            "0.422 0.0255 0.057",
-            friction="0.6 0.1 0.01",
-            solimp="0.8 0.95 0.01",
-            solref="0.02 1.5",
-        )
-    )
-    frame.geoms.append(
-        Box(
-            "0 0.3935 0.106",
-            "0.422 0.0255 0.057",
-            friction="0.6 0.1 0.01",
-            solimp="0.8 0.95 0.01",
-            solref="0.02 1.5",
-        )
-    )
-    frame.geoms.append(
-        Box(
-            "0.3965 0.0 0.106",
-            "0.0255 0.368 0.057",
-            friction="0.6 0.1 0.01",
-            solimp="0.8 0.95 0.01",
-            solref="0.02 1.5",
-        )
-    )
-    frame.geoms.append(
-        Box(
-            "-0.3965 0.0 0.106",
-            "0.0255 0.368 0.057",
-            friction="0.6 0.1 0.01",
-            solimp="0.8 0.95 0.01",
-            solref="0.02 1.5",
-        )
-    )
+    frame.geoms.append(Box("0 -0.3935 0.106", "0.422 0.0255 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
+    frame.geoms.append(Box("0 0.3935 0.106", "0.422 0.0255 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
+    frame.geoms.append(Box("0.3965 0.0 0.106", "0.0255 0.368 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
+    frame.geoms.append(Box("-0.3965 0.0 0.106", "0.0255 0.368 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
 
     frame.geoms.append(Mesh(bumpers, "bumper_blue", pos="0 0 0.02"))
     frame.geoms.append(Mesh(drivetrain_frame))
@@ -337,108 +230,40 @@ def build_drivetrain(model: Model) -> None:
     frame.sites.append(imu_site)
     model.gyros.append(Gyro("chassis_gyro", imu_site))
 
-    frame.bodies.append(
-        _build_module(
-            model,
-            "fl",
-            "0.276225 0.276225 0",
-            swerve_module_turret,
-            swerve_module_wheel,
-        )
-    )
-    frame.bodies.append(
-        _build_module(
-            model,
-            "fr",
-            "0.276225 -0.276225 0",
-            swerve_module_turret,
-            swerve_module_wheel,
-        )
-    )
-    frame.bodies.append(
-        _build_module(
-            model,
-            "bl",
-            "-0.276225 0.276225 0",
-            swerve_module_turret,
-            swerve_module_wheel,
-        )
-    )
-    frame.bodies.append(
-        _build_module(
-            model,
-            "br",
-            "-0.276225 -0.276225 0",
-            swerve_module_turret,
-            swerve_module_wheel,
-        )
-    )
+    frame.bodies.append(_build_module(model, "fl", "0.276225 0.276225 0", swerve_module_turret, swerve_module_wheel))
+    frame.bodies.append(_build_module(model, "fr", "0.276225 -0.276225 0", swerve_module_turret, swerve_module_wheel))
+    frame.bodies.append(_build_module(model, "bl", "-0.276225 0.276225 0", swerve_module_turret, swerve_module_wheel))
+    frame.bodies.append(_build_module(model, "br", "-0.276225 -0.276225 0", swerve_module_turret, swerve_module_wheel))
 
     model.world.bodies.append(frame)
 
 
-def _build_module(
-    model: Model, side: str, pos: str, turret_mesh: MeshAsset, wheel_mesh: MeshAsset
-) -> Body:
+def _build_module(model: Model, side: str, pos: str, turret_mesh: MeshAsset, wheel_mesh: MeshAsset) -> Body:
     module = Body(f"{side}_swerve_module_turret", pos=pos)
 
     module.inertials.append(Inertial(kilograms(1.5), diaginertia="0.02 0.02 0.02"))
-    module.joints.append(
-        Joint(
-            f"{side}_swerve_module_suspension",
-            Joint.Type.SLIDE,
-            Joint.Axis.Z,
-            stiffness=50000,
-            damping=1000,
-            springref=0,
-        )
-    )
-    turret_hinge = Joint(
-        f"{side}_swerve_module_turret_hinge",
-        Joint.Type.HINGE,
-        Joint.Axis.Z,
-        armature=0.0015,
-        damping=0.8,
-    )
+    module.joints.append(Joint(f"{side}_swerve_module_suspension", Joint.Type.SLIDE, Joint.Axis.Z, stiffness=50000, damping=1000, springref=0))
+    turret_hinge = Joint(f"{side}_swerve_module_turret_hinge", Joint.Type.HINGE, Joint.Axis.Z, armature=0.0015, damping=0.8)
     module.joints.append(turret_hinge)
     module.geoms.append(Mesh(turret_mesh, pos="0.066675 0.066675 0"))
 
     wheel = Body(f"{side}_swerve_module_wheel", pos="0 0 0.0508")
     module.bodies.append(wheel)
 
-    wheel.inertials.append(
-        Inertial(kilograms(0.4), diaginertia="0.000702 0.000499 0.000499")
-    )
-    wheel_hinge = Joint(
-        f"{side}_swerve_module_wheel_hinge",
-        Joint.Type.HINGE,
-        Joint.Axis.Y,
-        damping=0.03,
-    )
+    wheel.inertials.append(Inertial(kilograms(0.4), diaginertia="0.000702 0.000499 0.000499"))
+    wheel_hinge = Joint(f"{side}_swerve_module_wheel_hinge", Joint.Type.HINGE, Joint.Axis.Y, damping=0.03)
     wheel.joints.append(wheel_hinge)
     wheel.geoms.append(Mesh(wheel_mesh, pos="0.066675 0.066675 -0.0508"))
-    wheel.geoms.append(
-        Sphere(
-            "0 0 0", 0.0508, f"{side}_swerve_module_wheel_collision", "2.255 0.001 0.01"
-        )
-    )
+    wheel.geoms.append(Sphere("0 0 0", 0.0508, f"{side}_swerve_module_wheel_collision", "2.255 0.001 0.01"))
 
-    model.motors.append(
-        Motor(f"{side}_swerve_module_turret_motor", turret_hinge, 26.09)
-    )
+    model.motors.append(Motor(f"{side}_swerve_module_turret_motor", turret_hinge, 26.09))
     model.motors.append(Motor(f"{side}_swerve_module_wheel_motor", wheel_hinge, 5.27))
 
     return module
 
 
 def _build_note(name: str, pos: str, mesh: MeshAsset) -> Body:
-    col = Mesh(
-        mesh,
-        type=Geom.Type.COLLISION,
-        friction="1.2 0.005 0.0001",
-        solref="0.04 1",
-        solimp="0.8 0.99 0.001",
-    )
+    col = Mesh(mesh, type=Geom.Type.COLLISION, friction="1.2 0.005 0.0001", solref="0.04 1", solimp="0.8 0.99 0.001")
     vis = Mesh(mesh, "orange", Geom.Type.VISUAL)
     out = Body(name, True, pos)
     out.geoms.append(col)

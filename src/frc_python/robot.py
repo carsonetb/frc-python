@@ -21,9 +21,10 @@ from wpilib import Alert, DriverStation, PowerDistribution, Preferences
 from frc_python.bindings import configure_bindings
 from frc_python.dashboard import Auto, Dashboard
 from frc_python.sim.common import SimulatableRobot, SimulationInfo
+from frc_python.sim.xmlgen import Body
 from frc_python.subsystems.drivetrain.drivetrain import Drivetrain
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
-from frc_python.utils.misc import TIMESTEP, Model
+from frc_python.utils.misc import TIMESTEP, RobotModel
 
 
 class Robot(SimulatableRobot):
@@ -38,7 +39,7 @@ class Robot(SimulatableRobot):
 
         self.last_selected_auto: Auto | None = None
         self.auto_command: Command | None = None
-        self.model: Model = Model.COMPETITION  # by default
+        self.model: RobotModel = RobotModel.COMPETITION  # by default
 
         self.rio_can_bus: Final = CANBus("rio")
         self.canivore: Final = CANBus("*")
@@ -51,11 +52,11 @@ class Robot(SimulatableRobot):
 
         if self.isSimulation():
             assert info is not None
-            self.model = Model.SIMULATION
+            self.model = RobotModel.SIMULATION
         else:
             key = Preferences.getString("Model", "competition")
             if key == "competition":
-                self.model = Model.COMPETITION
+                self.model = RobotModel.COMPETITION
             else:
                 raise RuntimeError(f"Invalid model found in preferences: {key}")
 
@@ -64,17 +65,17 @@ class Robot(SimulatableRobot):
         if (status := SignalLogger.enable_auto_logging(False)) != StatusCode.OK:
             self.logger.warning(f"Failed to disable auto logging ({status.name})")
 
-        DriverStation.silenceJoystickConnectionWarning(self.model != Model.COMPETITION)
+        DriverStation.silenceJoystickConnectionWarning(self.model != RobotModel.COMPETITION)
 
         self.driver_controller = CommandXboxController(0)
 
         self.configure_subsystems()
         configure_bindings()
 
+        self._body: Body | None = None
+
     def configure_subsystems(self) -> None:
-        self.drivetrain.setDefaultCommand(
-            self.drivetrain.drive_with_controller(self.driver_controller.getHID())
-        )
+        self.drivetrain.setDefaultCommand(self.drivetrain.drive_with_controller(self.driver_controller.getHID()))
 
     def configure_pykit(self) -> None:
         Logger.recordMetadata("Model", self.model.name)
@@ -112,9 +113,7 @@ class Robot(SimulatableRobot):
                 case Auto.NONE:
                     self.auto_command = cmd.none()
                 case _:
-                    raise RuntimeError(
-                        "Auto chooser returned a non-Auto object, logic error."
-                    )
+                    raise RuntimeError("Auto chooser returned a non-Auto object, logic error.")
 
     @override
     def autonomousInit(self) -> None:

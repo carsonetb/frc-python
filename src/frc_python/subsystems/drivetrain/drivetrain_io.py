@@ -5,12 +5,7 @@ from typing import cast, override
 from phoenix6 import BaseStatusSignal
 from pykit.autolog import autolog
 from wpimath.geometry import Rotation2d
-from wpimath.kinematics import (
-    ChassisSpeeds,
-    SwerveDrive4Kinematics,
-    SwerveModulePosition,
-    SwerveModuleState,
-)
+from wpimath.kinematics import ChassisSpeeds, SwerveDrive4Kinematics, SwerveModulePosition, SwerveModuleState
 
 from frc_python.can import CTREDeviceID
 from frc_python.sim.common import DriveModuleID, SimulationInfo
@@ -19,11 +14,7 @@ from frc_python.subsystems.drivetrain.module import SimMk5nSwerveModule, SwerveM
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
 from frc_python.units.angle import Angle
 from frc_python.units.distance import inches
-from frc_python.units.velocity import (
-    AngularVelocity,
-    feet_per_second,
-    radians_per_second,
-)
+from frc_python.units.velocity import AngularVelocity, feet_per_second, radians_per_second
 from frc_python.utils.math import Vector2
 from frc_python.utils.swerve import DrivetrainCorner, PerCorner
 
@@ -32,24 +23,16 @@ from frc_python.utils.swerve import DrivetrainCorner, PerCorner
 @dataclass
 class DrivetrainInputs:
     swerve_states_field_relative: PerCorner[SwerveModuleState] = field(
-        default_factory=lambda: PerCorner[SwerveModuleState].generate(
-            lambda corner: SwerveModuleState()
-        )
+        default_factory=lambda: PerCorner[SwerveModuleState].generate(lambda corner: SwerveModuleState())
     )
     swerve_states: PerCorner[SwerveModuleState] = field(
-        default_factory=lambda: PerCorner[SwerveModuleState].generate(
-            lambda corner: SwerveModuleState()
-        )
+        default_factory=lambda: PerCorner[SwerveModuleState].generate(lambda corner: SwerveModuleState())
     )
     swerve_positions: PerCorner[SwerveModulePosition] = field(
-        default_factory=lambda: PerCorner[SwerveModulePosition].generate(
-            lambda corner: SwerveModulePosition()
-        )
+        default_factory=lambda: PerCorner[SwerveModulePosition].generate(lambda corner: SwerveModulePosition())
     )
     gyro_rotation: Rotation2d = field(default_factory=lambda: Rotation2d())
-    gyro_velocity: AngularVelocity = field(
-        default_factory=lambda: radians_per_second(0)
-    )
+    gyro_velocity: AngularVelocity = field(default_factory=lambda: radians_per_second(0))
     gyro_connected: bool = field(default_factory=lambda: True)
 
 
@@ -118,35 +101,24 @@ class DrivetrainIO(ABC):
     def periodic(self) -> None:
         pass
 
-    def for_each_corner(
-        self, inputs: DrivetrainInputs, i: int, module: SwerveModule
-    ) -> None:
+    def for_each_corner(self, inputs: DrivetrainInputs, i: int, module: SwerveModule) -> None:
         module.periodic()
         inputs.swerve_states[i] = module.state
         inputs.swerve_positions[i] = module.position
-        inputs.swerve_states_field_relative[i] = SwerveModuleState(
-            module.state.speed,
-            module.position.angle + self.gyro.yaw.to_rotation2d(),
-        )
+        inputs.swerve_states_field_relative[i] = SwerveModuleState(module.state.speed, module.position.angle + self.gyro.yaw.to_rotation2d())
 
     def update_inputs(self, inputs: DrivetrainInputs) -> None:
         self.gyro.periodic()
-        self.modules.for_each_corner_indexed(
-            lambda corner, index, module: self.for_each_corner(inputs, index, module)
-        )
+        self.modules.for_each_corner_indexed(lambda corner, index, module: self.for_each_corner(inputs, index, module))
         inputs.gyro_rotation = self.gyro.yaw.to_rotation2d()
         inputs.gyro_velocity = self.gyro.yaw_velocity
         inputs.gyro_connected = self.gyro.connected
 
 
 class DrivetrainIOReal(DrivetrainIO):
-    def __init__(
-        self, modules: PerCorner[SwerveModule], odometry_thread: PhoenixOdometryThread
-    ) -> None:
+    def __init__(self, modules: PerCorner[SwerveModule], odometry_thread: PhoenixOdometryThread) -> None:
         self._modules: PerCorner[SwerveModule] = modules
-        self._gyro: GyroPigeon = GyroPigeon(
-            CTREDeviceID.PIGEON_GYRO.to_pigeon2(), odometry_thread
-        )
+        self._gyro: GyroPigeon = GyroPigeon(CTREDeviceID.PIGEON_GYRO.to_pigeon2(), odometry_thread)
 
     @property
     @override
@@ -175,10 +147,7 @@ class Mk5nDrivetrainIOSim(DrivetrainIO):
         )
         self._gyro = SimGyro(info, self.GYRO_NAME)
         self.kinematics = SwerveDrive4Kinematics(
-            self.FL_POS.to_translation2d(),
-            self.FR_POS.to_translation2d(),
-            self.BL_POS.to_translation2d(),
-            self.BR_POS.to_translation2d(),
+            self.FL_POS.to_translation2d(), self.FR_POS.to_translation2d(), self.BL_POS.to_translation2d(), self.BR_POS.to_translation2d()
         )
 
     @property
@@ -200,9 +169,7 @@ class Mk5nDrivetrainIOSim(DrivetrainIO):
         # TODO: Thsi is sped
         if abs(speeds.vx) > 0.1 or abs(speeds.vy) > 0.1 or abs(speeds.omega) > 0.1:
             module_states = self.kinematics.toSwerveModuleStates(speeds)
-            module_states = SwerveDrive4Kinematics.desaturateWheelSpeeds(
-                module_states, self.TOP_SPEED.meters_per_second()
-            )
+            module_states = SwerveDrive4Kinematics.desaturateWheelSpeeds(module_states, self.TOP_SPEED.meters_per_second())
         else:
             module_states = (
                 SwerveModuleState(0, Rotation2d.fromDegrees(45)),
@@ -227,10 +194,7 @@ class Mk5nDrivetrainIOSim(DrivetrainIO):
             module.periodic()
             inputs.swerve_states[i] = module.state
             inputs.swerve_positions[i] = module.position
-            inputs.swerve_states_field_relative[i] = SwerveModuleState(
-                module.state.speed,
-                module.position.angle + self._gyro.yaw.to_rotation2d(),
-            )
+            inputs.swerve_states_field_relative[i] = SwerveModuleState(module.state.speed, module.position.angle + self._gyro.yaw.to_rotation2d())
 
         inputs.gyro_rotation = self._gyro.yaw.to_rotation2d()
         inputs.gyro_velocity = self._gyro.yaw_velocity

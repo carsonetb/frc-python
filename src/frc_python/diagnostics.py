@@ -23,9 +23,7 @@ class Diagnostics:
             self.add_alert(f'The "{can_bus.name}" CAN bus has FAILED!')
 
         if status.rec > 0 or status.tec > 0:
-            self.add_alert(
-                f'Devices on the "{can_bus.name}" CAN bus are experiencing errors (REC={status.rec}, TEC={status.tec}).'
-            )
+            self.add_alert(f'Devices on the "{can_bus.name}" CAN bus are experiencing errors (REC={status.rec}, TEC={status.tec}).')
 
     def report_ds_peripheral(self, device: GenericHID, is_joystick: bool) -> None:
         if not device.isConnected():
@@ -36,19 +34,11 @@ class Diagnostics:
 
         device_type = device.getType()
         if (
-            not (
-                device_type == GenericHID.HIDType.kHIDJoystick
-                or device_type == GenericHID.HIDType.kHIDFlight
-            )
+            not (device_type == GenericHID.HIDType.kHIDJoystick or device_type == GenericHID.HIDType.kHIDFlight)
             if is_joystick
-            else (
-                device_type == GenericHID.HIDType.kHIDGamepad
-                or device_type == GenericHID.HIDType.kXInputGamepad
-            )
+            else (device_type == GenericHID.HIDType.kHIDGamepad or device_type == GenericHID.HIDType.kXInputGamepad)
         ):
-            self.add_alert(
-                "Check USB device order in the Driver Station! The connected devices are likely in the wrong order."
-            )
+            self.add_alert("Check USB device order in the Driver Station! The connected devices are likely in the wrong order.")
 
     def periodic(self) -> None:
         self.alerts = set()

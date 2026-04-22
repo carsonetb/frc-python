@@ -1,28 +1,19 @@
-from abc import ABC, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Protocol, override
 
+from commands2 import Subsystem
 from mujoco import MjData, MjModel, mj_name2id, mjtObj
 from pykit.loggedrobot import LoggedRobot
 from wpimath.geometry import Rotation2d
-from wpimath.kinematics import (
-    SwerveModulePosition,
-    SwerveModuleState,
-)
+from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 
-from frc_python.sim.xmlgen import Model
+from frc_python.sim.xmlgen import Body, Model
 from frc_python.units.angle import Angle, radians
 from frc_python.units.force import Newtons, newtons
-from frc_python.units.velocity import (
-    AngularVelocity,
-    radians_per_second,
-    rotations_per_minute,
-)
-from frc_python.units.voltage import (
-    Voltage,
-    voltage,
-)
+from frc_python.units.velocity import AngularVelocity, radians_per_second, rotations_per_minute
+from frc_python.units.voltage import Voltage, voltage
 
 
 @dataclass
@@ -31,15 +22,17 @@ class SimulationInfo:
     data: MjData
 
 
-class SimulatableSubsystem(ABC):
-    @abstractmethod
-    def build(self, model: Model) -> None:
-        pass
-
-
 class SimulatableRobot(LoggedRobot):
     def __init__(self, info: SimulationInfo | None = None) -> None:
         super().__init__()
+
+
+# Annoying multiple inheritance rules mean I can't inherit ABC, so this is what
+# I do instead.
+class SimulatableSubsystem(Subsystem):
+    @staticmethod
+    def build(model: Model, robot: Body) -> None:
+        raise RuntimeError("Subsystem doesn't implement build.")
 
 
 @dataclass
@@ -76,18 +69,11 @@ class DriveModuleID(Enum):
 
 
 class SimMotor(ABC):
-    def __init__(
-        self,
-        info: SimulationInfo,
-        id: MotorID,
-        reversed: bool = False,
-    ) -> None:
+    def __init__(self, info: SimulationInfo, id: MotorID, reversed: bool = False) -> None:
         self.direction = -1 if reversed else 1
         self.info = info
         self.joint_id = mj_name2id(self.info.model, mjtObj.mjOBJ_JOINT, id.joint_name)
-        self.motor_id: int = mj_name2id(
-            self.info.model, mjtObj.mjOBJ_ACTUATOR, id.motor_name
-        )
+        self.motor_id: int = mj_name2id(self.info.model, mjtObj.mjOBJ_ACTUATOR, id.motor_name)
         self.qpos_idx: int = self.info.model.jnt_qposadr[self.joint_id]
         self.qvel_idx: int = self.info.model.jnt_dofadr[self.joint_id]
 
@@ -112,19 +98,12 @@ class SimKrakenX60(SimMotor):
     MAX_TORQUE = STALL_TORQUE.raw * (STATOR_LIMIT_AMPS / KRAKEN_STALL_AMPS)
 
     def apply_voltage(self, voltage: Voltage) -> None:
-        self.info.data.ctrl[self.motor_id] = (
-            self._voltage_to_torque(voltage, self.velocity) * self.direction
-        )
+        self.info.data.ctrl[self.motor_id] = self._voltage_to_torque(voltage, self.velocity) * self.direction
 
     # Returns a torque in newton meters, probably should be unit-ed in the future.
     def _voltage_to_torque(self, voltage: Voltage, velocity: AngularVelocity) -> float:
-        v_norm = (
-            voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE).voltage()
-            / self.NOMINAL_VOLTAGE.voltage()
-        )
-        omega_norm = (
-            velocity.radians_per_second() / self.FREE_SPEED.radians_per_second()
-        )
+        v_norm = voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE).voltage() / self.NOMINAL_VOLTAGE.voltage()
+        omega_norm = velocity.radians_per_second() / self.FREE_SPEED.radians_per_second()
 
         torque = (v_norm - omega_norm) * self.STALL_TORQUE.raw
 
@@ -143,19 +122,12 @@ class SimKrakenX44(SimMotor):
     MAX_TORQUE = STALL_TORQUE.raw * (STATOR_LIMIT_AMPS / KRAKEN_STALL_AMPS)
 
     def apply_voltage(self, voltage: Voltage) -> None:
-        self.info.data.ctrl[self.motor_id] = (
-            self._voltage_to_torque(voltage, self.velocity) * self.direction
-        )
+        self.info.data.ctrl[self.motor_id] = self._voltage_to_torque(voltage, self.velocity) * self.direction
 
     # Returns a torque in newton meters, probably should be unit-ed in the future.
     def _voltage_to_torque(self, voltage: Voltage, velocity: AngularVelocity) -> float:
-        v_norm = (
-            voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE).voltage()
-            / self.NOMINAL_VOLTAGE.voltage()
-        )
-        omega_norm = (
-            velocity.radians_per_second() / self.FREE_SPEED.radians_per_second()
-        )
+        v_norm = voltage.clamp(-self.NOMINAL_VOLTAGE, self.NOMINAL_VOLTAGE).voltage() / self.NOMINAL_VOLTAGE.voltage()
+        omega_norm = velocity.radians_per_second() / self.FREE_SPEED.radians_per_second()
 
         torque = (v_norm - omega_norm) * self.STALL_TORQUE.raw
 

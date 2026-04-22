@@ -5,6 +5,6 @@ from frc_python.units.time import seconds
 TIMESTEP = seconds(0.003)
 
 
-class Model(Enum):
+class RobotModel(Enum):
     SIMULATION = auto()
     COMPETITION = auto()

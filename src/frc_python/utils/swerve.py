@@ -11,12 +11,7 @@ from wpimath.kinematics import ChassisSpeeds, SwerveDrive4Kinematics, SwerveModu
 
 from frc_python.units.angle import Angle
 from frc_python.units.temperature import Temperature
-from frc_python.units.velocity import (
-    AngularVelocity,
-    LinearVelocity,
-    meters_per_second,
-    radians_per_second,
-)
+from frc_python.units.velocity import AngularVelocity, LinearVelocity, meters_per_second, radians_per_second
 
 
 class DrivetrainCorner(Enum):
@@ -77,9 +72,7 @@ class PerCorner[T]:
     def to_tuple(self) -> tuple[T, T, T, T]:
         return (self.front_left, self.front_right, self.back_left, self.back_right)
 
-    def for_each_corner_indexed(
-        self, block: Callable[[DrivetrainCorner, int, T], None]
-    ):
+    def for_each_corner_indexed(self, block: Callable[[DrivetrainCorner, int, T], None]):
         block(DrivetrainCorner.FRONT_LEFT, 0, self.front_left)
         block(DrivetrainCorner.FRONT_RIGHT, 1, self.front_right)
         block(DrivetrainCorner.BACK_LEFT, 2, self.back_left)
@@ -92,12 +85,7 @@ class PerCorner[T]:
         block(self.back_right)
 
     def map_items[O](self, fun: Callable[[T], O]) -> PerCorner[O]:
-        return PerCorner(
-            fun(self.front_left),
-            fun(self.front_right),
-            fun(self.back_left),
-            fun(self.back_right),
-        )
+        return PerCorner(fun(self.front_left), fun(self.front_right), fun(self.back_left), fun(self.back_right))
 
     def zip_with[O](self, other: PerCorner[O]) -> PerCorner[tuple[T, O]]:
         return PerCorner(
@@ -129,16 +117,10 @@ class SwerveModuleTemp:
 
 
 class SwerveDriveKinematicsExt(SwerveDrive4Kinematics):
-    def to_corner_swerve_module_states(
-        self, speeds: ChassisSpeeds
-    ) -> PerCorner[SwerveModuleState]:
-        return PerCorner[SwerveModuleState].from_sequence(
-            self.toSwerveModuleStates(speeds)
-        )
+    def to_corner_swerve_module_states(self, speeds: ChassisSpeeds) -> PerCorner[SwerveModuleState]:
+        return PerCorner[SwerveModuleState].from_sequence(self.toSwerveModuleStates(speeds))
 
-    def corner_states_to_speeds(
-        self, states: PerCorner[SwerveModuleState]
-    ) -> ChassisSpeeds:
+    def corner_states_to_speeds(self, states: PerCorner[SwerveModuleState]) -> ChassisSpeeds:
         return self.toChassisSpeeds(states.to_tuple())
 
 

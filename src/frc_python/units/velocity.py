@@ -15,14 +15,10 @@ class LinearVelocity(UnitPerUnit[Distance, Time]):
     """
 
     def get_vertical_component(self, angle: Angle) -> LinearVelocity:
-        return LinearVelocity(
-            meters(self.meters_per_second() * sin(angle.radians())), seconds(1)
-        )
+        return LinearVelocity(meters(self.meters_per_second() * sin(angle.radians())), seconds(1))
 
     def get_horizontal_component(self, angle: Angle) -> LinearVelocity:
-        return LinearVelocity(
-            meters(self.meters_per_second() * cos(angle.radians())), seconds(1)
-        )
+        return LinearVelocity(meters(self.meters_per_second() * cos(angle.radians())), seconds(1))
 
     def to_angular(self, radius: Distance) -> AngularVelocity:
         return radians_per_second(self.raw / radius.raw)

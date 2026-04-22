@@ -29,13 +29,8 @@ class PhoenixOdometryThread(Process):
         while True:
             self.signals_lock.acquire()
             if len(self.phoenix_signals) > 0:
-                if (
-                    BaseStatusSignal.wait_for_all(2.0 / 250.0, *self.phoenix_signals)
-                    == StatusCode.RX_TIMEOUT
-                ):
-                    self.logger.warning(
-                        "Took too long to receive all phoenix odometry signals."
-                    )
+                if BaseStatusSignal.wait_for_all(2.0 / 250.0, *self.phoenix_signals) == StatusCode.RX_TIMEOUT:
+                    self.logger.warning("Took too long to receive all phoenix odometry signals.")
             self.signals_lock.release()
 
             self.odometry_lock.acquire()
