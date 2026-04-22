@@ -39,6 +39,7 @@ class Simulator:
 
         model = Model("FRC")
 
+        build_misc(model)
         robot = Body("robot", True)
         field = cls.Field()
         field.build(model)
@@ -139,11 +140,12 @@ class Simulator:
 
                 mj_step(model, data)
 
-                if tick % 4 == 0:
+                if tick % 2 == 0:
                     viewer.sync(True)
 
                 wait = TIMESTEP.seconds() - (time() - step_start)
                 if wait > 0:
+                    print(wait)
                     sleep(wait)
 
         return 0
@@ -162,7 +164,7 @@ def main():
     Simulator.Field = CrescendoField
     Simulator.buildables.append(Drivetrain)
     Simulator.build("temp.xml")
-    Simulator.simulate(Robot)
+    Simulator.simulate(Robot, FLIGHT_STICKS)
 
 
 if __name__ == "__main__":

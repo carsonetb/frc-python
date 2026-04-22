@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from math import pi, tau
 from typing import override
 
 from commands2 import Command, cmd
@@ -48,7 +49,7 @@ class Drivetrain(SimulatableSubsystem):
         (CTREDeviceID.BACK_RIGHT_DRIVE_MOTOR, CTREDeviceID.BACK_RIGHT_TURN_MOTOR, CTREDeviceID.BACK_RIGHT_TURN_ENCODER),
     )
 
-    JOYSTICK_DEADBAND = 0.2
+    JOYSTICK_DEADBAND = 0.05
     INPUT_EXP = 1.7
 
     def __init__(self, odometry_thread: PhoenixOdometryThread, info: SimulationInfo | None, model: RobotModel, period: Time) -> None:
@@ -109,7 +110,7 @@ class Drivetrain(SimulatableSubsystem):
             self.desired_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                 self._calculate_input_curve(translation.x) * DrivetrainIO.TOP_SPEED.meters_per_second(),
                 self._calculate_input_curve(translation.y) * DrivetrainIO.TOP_SPEED.meters_per_second(),
-                rotation.x * 16,
+                rotation.x * tau,
                 self.io.gyro.yaw.to_rotation2d(),
             )
 
@@ -136,7 +137,7 @@ class Drivetrain(SimulatableSubsystem):
         bumpers = model.add_mesh("bumpers", prefix + "Bumpers.stl")
 
         frame = robot
-        frame.inertials.append(Inertial(kilograms(50), diaginertia="5 5 5"))
+        frame.inertials.append(Inertial(kilograms(50), diaginertia="5 5 4.06585208333"))
 
         frame.geoms.append(Box("0 -0.3935 0.106", "0.422 0.0255 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
         frame.geoms.append(Box("0 0.3935 0.106", "0.422 0.0255 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))

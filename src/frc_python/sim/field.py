@@ -113,7 +113,7 @@ class CrescendoField(SimField):
         geoms.append(Mesh(blue_source))
         geoms.append(Mesh(blue_stage))
         geoms.append(Mesh(blue_amp))
-        geoms.append(Mesh(carpet))
+        geoms.append(Mesh(carpet, friction="1.3 0.1 0.01"))
         geoms.append(Mesh(red_tape))
         geoms.append(Mesh(blue_tape))
         geoms.append(Mesh(white_tape))
