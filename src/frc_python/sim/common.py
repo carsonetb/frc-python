@@ -1,15 +1,17 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import override
+from typing import Protocol, override
 
 from mujoco import MjData, MjModel, mj_name2id, mjtObj
+from pykit.loggedrobot import LoggedRobot
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import (
     SwerveModulePosition,
     SwerveModuleState,
 )
 
+from frc_python.sim.xmlgen import Model
 from frc_python.units.angle import Angle, radians
 from frc_python.units.force import Newtons, newtons
 from frc_python.units.velocity import (
@@ -27,6 +29,17 @@ from frc_python.units.voltage import (
 class SimulationInfo:
     model: MjModel
     data: MjData
+
+
+class SimulatableSubsystem(ABC):
+    @abstractmethod
+    def build(self, model: Model) -> None:
+        pass
+
+
+class SimulatableRobot(LoggedRobot):
+    def __init__(self, info: SimulationInfo | None = None) -> None:
+        super().__init__()
 
 
 @dataclass

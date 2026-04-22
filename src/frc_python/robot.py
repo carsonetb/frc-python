@@ -7,7 +7,6 @@ from time import time
 from typing import Final, override
 
 from commands2 import Command, cmd
-from commands2.button.commandjoystick import CommandJoystick
 from commands2.button.commandxboxcontroller import CommandXboxController
 from commands2.commandscheduler import CommandScheduler
 from phoenix6.canbus import CANBus
@@ -21,20 +20,21 @@ from wpilib import Alert, DriverStation, PowerDistribution, Preferences
 
 from frc_python.bindings import configure_bindings
 from frc_python.dashboard import Auto, Dashboard
-from frc_python.sim.common import SimulationInfo
+from frc_python.sim.common import SimulatableRobot, SimulationInfo
 from frc_python.subsystems.drivetrain.drivetrain import Drivetrain
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
 from frc_python.utils.misc import TIMESTEP, Model
 
 
-class Robot(LoggedRobot):
+class Robot(SimulatableRobot):
     odometry_lock: RLockType = RLock()
     phoenix_thread: PhoenixOdometryThread = PhoenixOdometryThread(odometry_lock)
 
     def __init__(self, info: SimulationInfo | None = None) -> None:
-        multiprocessing.freeze_support()
+        LoggedRobot.__init__(self)
+        SimulatableRobot.__init__(self, info)
 
-        super().__init__()
+        multiprocessing.freeze_support()
 
         self.last_selected_auto: Auto | None = None
         self.auto_command: Command | None = None
