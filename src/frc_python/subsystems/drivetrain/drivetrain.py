@@ -107,10 +107,12 @@ class Drivetrain(SimulatableSubsystem):
         if self._is_in_deadzone(translation) and self._is_in_deadzone(rotation):
             self.desired_speeds = ChassisSpeeds(0, 0, 0)
         else:
+            x = self._calculate_input_curve(translation.x)
+            y = self._calculate_input_curve(translation.y)
             self.desired_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                self._calculate_input_curve(translation.x) * DrivetrainIO.TOP_SPEED.meters_per_second(),
-                self._calculate_input_curve(translation.y) * DrivetrainIO.TOP_SPEED.meters_per_second(),
-                rotation.x * tau,
+                x * DrivetrainIO.TOP_SPEED.meters_per_second(),
+                y * DrivetrainIO.TOP_SPEED.meters_per_second(),
+                rotation.x * tau * (1 + abs(x) + abs(y)),
                 self.io.gyro.yaw.to_rotation2d(),
             )
 
