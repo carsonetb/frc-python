@@ -11,10 +11,9 @@ from pygame.joystick import JoystickType
 from pykit.loggedrobot import LoggedRobot
 from wpilib.simulation import DriverStationSim, XboxControllerSim
 
-from frc_python.sim.builder import build_drivetrain, build_field, build_misc
 from frc_python.sim.common import SimulatableRobot, SimulatableSubsystem, SimulationInfo
 from frc_python.sim.field import CrescendoField, SimField
-from frc_python.sim.xmlgen import Body, Inertial, Model
+from frc_python.sim.xmlgen import Body, Inertial, Material, Model
 from frc_python.subsystems.drivetrain.drivetrain import Drivetrain
 from frc_python.units.mass import kilograms
 from frc_python.utils.misc import TIMESTEP
@@ -31,7 +30,21 @@ class Simulator:
     xml: str | None = None
 
     @classmethod
-    def build(cls, save: str | None = None) -> str:
+    def build_misc(cls, model: Model) -> None:
+        model.timestep = TIMESTEP.seconds()
+        materials = model.asset.materials
+
+        materials.append(Material("grey", 0.4, 0.4, 0.4))
+        materials.append(Material("white", 0.8, 0.8, 0.8))
+        materials.append(Material("bright_white", 1, 1, 1))
+        materials.append(Material("black", 0.2, 0.2, 0.2))
+        materials.append(Material("red", 0.9, 0, 0))
+        materials.append(Material("blue", 0, 0, 0.9))
+        materials.append(Material("bumper_blue", 0.2, 0.2, 0.8))
+        materials.append(Material("orange", 1, 0.5, 0))
+
+    @classmethod
+    def build(cls, save: str | None = None, suspend: bool = False) -> str:
 
         if cls.Field is None:
             print("Must set Simulator.Field.")
@@ -39,8 +52,8 @@ class Simulator:
 
         model = Model("FRC")
 
-        build_misc(model)
-        robot = Body("robot", True)
+        cls.build_misc(model)
+        robot = Body("robot", True if not suspend else False, "0 0 0" if not suspend else "0 0 2")
         field = cls.Field()
         field.build(model)
 
@@ -145,7 +158,7 @@ class Simulator:
 
                 wait = TIMESTEP.seconds() - (time() - step_start)
                 if wait > 0:
-                    print(wait)
+                    # print(wait)
                     sleep(wait)
 
         return 0

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from math import pi, tau
+from math import pi, sqrt, tau
 from typing import override
 
 from commands2 import Command, cmd
@@ -112,7 +112,7 @@ class Drivetrain(SimulatableSubsystem):
             self.desired_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                 x * DrivetrainIO.TOP_SPEED.meters_per_second(),
                 y * DrivetrainIO.TOP_SPEED.meters_per_second(),
-                rotation.x * tau * (1 + abs(x) + abs(y)),
+                rotation.x * tau * (1 + sqrt(abs(x) ** 2 + abs(y) ** 2) * 0.6) * 0.8,
                 self.io.gyro.yaw.to_rotation2d(),
             )
 
@@ -139,7 +139,7 @@ class Drivetrain(SimulatableSubsystem):
         bumpers = model.add_mesh("bumpers", prefix + "Bumpers.stl")
 
         frame = robot
-        frame.inertials.append(Inertial(kilograms(50), diaginertia="5 5 4.06585208333"))
+        frame.inertials.append(Inertial(kilograms(40), diaginertia="5 5 4.06585208333"))
 
         frame.geoms.append(Box("0 -0.3935 0.106", "0.422 0.0255 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
         frame.geoms.append(Box("0 0.3935 0.106", "0.422 0.0255 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))

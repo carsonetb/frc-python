@@ -5,8 +5,13 @@ from collections.abc import Sequence
 from enum import Enum
 from typing import Protocol, override
 
+from wpimath.controller import PIDController
+from wpimath.units import ohms
+
 from frc_python.units.distance import Distance
+from frc_python.units.force import Newtons
 from frc_python.units.mass import Mass
+from frc_python.units.voltage import Voltage
 from frc_python.utils.math import Vector3
 
 
@@ -483,6 +488,8 @@ class Joint(Buildable):
         damping: float | None = None,
         armature: float | None = None,
         springref: float | None = None,
+        actuatorfrcrange: str | None = None,
+        frictionloss: str | None = None,
     ) -> None:
         self.name = name
         self.type = type
@@ -492,6 +499,8 @@ class Joint(Buildable):
         self.damping = damping
         self.armature = armature
         self.springref = springref
+        self.actuatorfrcrange = actuatorfrcrange
+        self.frictionloss = frictionloss
 
     @override
     def build(self, indentation: int = 0) -> str:
@@ -506,6 +515,9 @@ class Joint(Buildable):
                     ("damping", self.damping),
                     ("armature", self.armature),
                     ("springref", self.springref),
+                    ("actuatorfrcrange", self.actuatorfrcrange),
+                    ("actuatorfrclimited", "false" if self.actuatorfrcrange is None else "true"),
+                    ("frictionloss", self.frictionloss),
                 ]
             )
             .build(indentation)
@@ -588,6 +600,103 @@ class Motor(Buildable):
         return LabelBuilder("motor").with_options([("name", self.name), ("joint", self.joint.name), ("gear", self.gear_ratio)]).build(indentation)
 
 
+class DCMotor(Buildable):
+    """
+    A DCMotor is a special type of motor where a lot of the physics are handled
+    by MuJoCo. This is probably the right type of motor to use for robotics
+    simulation.
+    """
+
+    class InputMode(Enum):
+        VOLTAGE = "voltage"
+        POSITION = "position"
+        VELOCITY = "velocity"
+
+    @staticmethod
+    def kraken_x60(name: str, joint: Joint, gear_ratio: float, input: InputMode = InputMode.VOLTAGE, pid: PIDController | None = None) -> DCMotor:
+        # Nominal: voltage is from the battery, 9.2 is the stall torque with FOC, 605.80 is the no-load speed in rad/s (6777 RPM)
+        return DCMotor(
+            name,
+            joint,
+            gear_ratio,
+            nominal="12 9.2 605.80",
+            input=input,
+            ctrlrange="-12 12",
+            pid=f"{pid.getP()} {pid.getI()} {pid.getD()}" if pid is not None else None,
+        )
+
+    @staticmethod
+    def kraken_x44(name: str, joint: Joint, gear_ratio: float, input: InputMode = InputMode.VOLTAGE, pid: PIDController | None = None) -> DCMotor:
+        # Nominal: voltage is from the battery, 4.05 is the stall torque with FOC, 788.54 is the no-load speed in rad/s (7530 RPM).
+        return DCMotor(
+            name,
+            joint,
+            gear_ratio,
+            nominal="12 4.05 788.54",
+            input=input,
+            ctrlrange="-12 12",
+            pid=f"{pid.getP()} {pid.getI()} {pid.getD()}" if pid is not None else None,
+        )
+
+    def __init__(
+        self,
+        name: str,
+        joint: Joint,
+        gear_ratio: float,
+        resistance: ohms | None = None,
+        motorconst: str | None = None,
+        nominal: str | None = None,
+        inductance: str | None = None,
+        thermal: str | None = None,
+        saturation: str | None = None,
+        cogging: str | None = None,
+        lugre: str | None = None,
+        ctrlrange: str | None = None,
+        input: InputMode = InputMode.VOLTAGE,
+        pid: str | None = None,
+    ) -> None:
+        self.name = name
+        self.joint = joint
+        self.gear = gear_ratio
+        self.resistance = resistance
+        self.motorconst = motorconst
+        self.nominal = nominal
+        self.inductance = inductance
+        self.thermal = thermal
+        self.saturation = saturation
+        self.cogging = cogging
+        self.lugre = lugre
+        self.ctrlrange = ctrlrange
+        self.input = input
+        self.pid = pid
+
+    @override
+    def build(self, indentation: int = 0) -> str:
+        return (
+            LabelBuilder("dcmotor")
+            .with_optionals(
+                [
+                    ("name", self.name),
+                    ("joint", self.joint.name),
+                    ("gear", self.gear),
+                    ("resistance", self.resistance),
+                    ("motorconst", self.motorconst),
+                    ("nominal", self.nominal),
+                    ("inductance", self.inductance),
+                    ("thermal", self.thermal),
+                    ("saturation", self.saturation),
+                    ("cogging", self.cogging),
+                    ("lugre", self.lugre),
+                    ("ctrlrange", self.ctrlrange),
+                    ("ctrllimited", "true" if self.ctrlrange is not None else "false"),
+                    ("input", self.input.value),
+                    ("pid", self.pid),
+                ]
+            )
+            .build(indentation)
+        )
+
+
 class Gyro(Buildable):
     def __init__(self, name: str, site: Site) -> None:
         self.name = name
@@ -647,7 +756,7 @@ class Model(Buildable):
         self.plugins: list[Plugin] = []
         self.asset = Asset()
         self.world = World()
-        self.motors: list[Motor] = []
+        self.motors: list[Motor | DCMotor] = []
         self.gyros: list[Gyro] = []
 
     def add_mesh(self, name: str, file: str) -> MeshAsset:

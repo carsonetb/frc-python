@@ -98,7 +98,7 @@ class SimKrakenX60(SimMotor):
     MAX_TORQUE = STALL_TORQUE.raw * (STATOR_LIMIT_AMPS / KRAKEN_STALL_AMPS)
 
     def apply_voltage(self, voltage: Voltage) -> None:
-        self.info.data.ctrl[self.motor_id] = self._voltage_to_torque(voltage, self.velocity) * self.direction
+        self.info.data.ctrl[self.motor_id] = voltage.voltage() * self.direction
 
     # Returns a torque in newton meters, probably should be unit-ed in the future.
     def _voltage_to_torque(self, voltage: Voltage, velocity: AngularVelocity) -> float:
@@ -122,7 +122,7 @@ class SimKrakenX44(SimMotor):
     MAX_TORQUE = STALL_TORQUE.raw * (STATOR_LIMIT_AMPS / KRAKEN_STALL_AMPS)
 
     def apply_voltage(self, voltage: Voltage) -> None:
-        self.info.data.ctrl[self.motor_id] = self._voltage_to_torque(voltage, self.velocity) * self.direction
+        self.info.data.ctrl[self.motor_id] = voltage.voltage() * self.direction
 
     # Returns a torque in newton meters, probably should be unit-ed in the future.
     def _voltage_to_torque(self, voltage: Voltage, velocity: AngularVelocity) -> float:

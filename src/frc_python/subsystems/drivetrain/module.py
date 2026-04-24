@@ -17,7 +17,7 @@ from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 
 from frc_python.can import CTREDeviceID
 from frc_python.sim.common import DriveModuleID, SimKrakenX44, SimKrakenX60, SimulationInfo
-from frc_python.sim.xmlgen import Body, Inertial, Joint, Mesh, MeshAsset, Model, Motor, Sphere
+from frc_python.sim.xmlgen import Body, DCMotor, Inertial, Joint, Mesh, MeshAsset, Model, Motor, Sphere
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
 from frc_python.units.amps import Current, amps
 from frc_python.units.angle import Angle, degrees, radians, rotations
@@ -449,7 +449,7 @@ class SimMk5nSwerveModule(SwerveModule):
     STEER_GAINS: AngularPIDGains = AngularPIDGains(volts_per_radian(125), volts_per_radian_second(0), volt_seconds_per_radian(10))
 
     DRIVE_PID: LinearPIDGains = LinearPIDGains(volts_per_meter(0.7433))
-    DRIVE_FF: LinearMotorFFGains = LinearMotorFFGains(voltage(0.19991), volt_seconds_per_meter(0.63508), volt_seconds_squared_per_meter(0.07864))
+    DRIVE_FF: LinearMotorFFGains = LinearMotorFFGains(voltage(0.19991), volt_seconds_per_meter(1.95), volt_seconds_squared_per_meter(0.07864))
 
     STEER_OFFSET = degrees(0)
 
@@ -547,12 +547,12 @@ class SimMk5nSwerveModule(SwerveModule):
         module.bodies.append(wheel)
 
         wheel.inertials.append(Inertial(kilograms(0.4), diaginertia="0.000702 0.000499 0.000499"))
-        wheel_hinge = Joint(f"{side}_swerve_module_wheel_hinge", Joint.Type.HINGE, Joint.Axis.Y, damping=0.03)
+        wheel_hinge = Joint(f"{side}_swerve_module_wheel_hinge", Joint.Type.HINGE, Joint.Axis.Y, actuatorfrcrange="-9.70 9.70", frictionloss="0.81")
         wheel.joints.append(wheel_hinge)
         wheel.geoms.append(Mesh(wheel_mesh, pos="0.066675 0.066675 -0.0508"))
         wheel.geoms.append(Sphere("0 0 0", 0.0508, f"{side}_swerve_module_wheel_collision", "2.255 0.001 0.01"))
 
-        model.motors.append(Motor(f"{side}_swerve_module_turret_motor", turret_hinge, 26.09))
-        model.motors.append(Motor(f"{side}_swerve_module_wheel_motor", wheel_hinge, 5.27))
+        model.motors.append(DCMotor.kraken_x44(f"{side}_swerve_module_turret_motor", turret_hinge, 26.09))
+        model.motors.append(DCMotor.kraken_x60(f"{side}_swerve_module_wheel_motor", wheel_hinge, 5.27))
 
         return module
