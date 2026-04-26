@@ -141,12 +141,12 @@ class Drivetrain(SimulatableSubsystem):
         frame = robot
         frame.inertials.append(Inertial(kilograms(40), diaginertia="5 5 4.06585208333"))
 
-        frame.geoms.append(Box("0 -0.3935 0.106", "0.422 0.0255 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
-        frame.geoms.append(Box("0 0.3935 0.106", "0.422 0.0255 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
-        frame.geoms.append(Box("0.3965 0.0 0.106", "0.0255 0.368 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
-        frame.geoms.append(Box("-0.3965 0.0 0.106", "0.0255 0.368 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
+        frame.geoms.append(Box("0 -0.3935 0.126", "0.422 0.0255 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
+        frame.geoms.append(Box("0 0.3935 0.126", "0.422 0.0255 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
+        frame.geoms.append(Box("0.3965 0.0 0.126", "0.0255 0.368 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
+        frame.geoms.append(Box("-0.3965 0.0 0.126", "0.0255 0.368 0.057", friction="0.6 0.1 0.01", solimp="0.8 0.95 0.01", solref="0.02 1.5"))
 
-        frame.geoms.append(Mesh(bumpers, "bumper_blue", pos="0 0 0.02"))
+        frame.geoms.append(Mesh(bumpers, "bumper_blue", pos="0 0 0.04"))
         frame.geoms.append(Mesh(drivetrain_frame))
         frame.geoms.append(Mesh(fl_swerve_module))
         frame.geoms.append(Mesh(fr_swerve_module))

@@ -3,7 +3,13 @@ from enum import Enum
 from phoenix6 import CANBus
 from phoenix6.hardware import CANcoder, Pigeon2, TalonFX
 
+from frc_python.sim.common import MotorID
+
 _canivore_bus = CANBus("*")
+
+
+class SIMDeviceID(Enum):
+    INTAKE_ROLLER = MotorID("intake_roller_joint", "intake_roller_motor")
 
 
 class CTREDeviceID(Enum):
@@ -18,11 +24,13 @@ class CTREDeviceID(Enum):
     FRONT_RIGHT_TURN_MOTOR = (8, _canivore_bus)
 
     FRONT_LEFT_TURN_ENCODER = (9, _canivore_bus)
-    BACK_LEFT_TURN_ENCODER = (9, _canivore_bus)
-    BACK_RIGHT_TURN_ENCODER = (9, _canivore_bus)
-    FRONT_RIGHT_TURN_ENCODER = (9, _canivore_bus)
+    BACK_LEFT_TURN_ENCODER = (10, _canivore_bus)
+    BACK_RIGHT_TURN_ENCODER = (11, _canivore_bus)
+    FRONT_RIGHT_TURN_ENCODER = (12, _canivore_bus)
 
     PIGEON_GYRO = (20, _canivore_bus)
+
+    INTAKE_ROLLER = (30, _canivore_bus)
 
     @property
     def num(self) -> int:
