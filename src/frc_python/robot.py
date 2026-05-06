@@ -24,6 +24,7 @@ from frc_python.sim.common import SimulatableRobot, SimulationInfo
 from frc_python.sim.xmlgen import Body
 from frc_python.subsystems.drivetrain.drivetrain import Drivetrain
 from frc_python.subsystems.drivetrain.phoenix_odometry import PhoenixOdometryThread
+from frc_python.subsystems.intake.intake import Intake
 from frc_python.utils.misc import TIMESTEP, RobotModel
 
 
@@ -61,6 +62,7 @@ class Robot(SimulatableRobot):
                 raise RuntimeError(f"Invalid model found in preferences: {key}")
 
         self.drivetrain = Drivetrain(self.phoenix_thread, info, self.model, TIMESTEP)
+        self.intake = Intake(self.phoenix_thread, info, self.model)
 
         if (status := SignalLogger.enable_auto_logging(False)) != StatusCode.OK:
             self.logger.warning(f"Failed to disable auto logging ({status.name})")
@@ -76,6 +78,7 @@ class Robot(SimulatableRobot):
 
     def configure_subsystems(self) -> None:
         self.drivetrain.setDefaultCommand(self.drivetrain.drive_with_controller(self.driver_controller.getHID()))
+        self.intake.setDefaultCommand(self.intake.intake())
 
     def configure_pykit(self) -> None:
         Logger.recordMetadata("Model", self.model.name)

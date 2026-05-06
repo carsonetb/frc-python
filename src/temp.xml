@@ -98,154 +98,154 @@
     <geom mesh="blue_stage_collision_1" class="collision" material="white" />
     <geom mesh="blue_stage_collision_2" class="collision" material="white" />
     <geom mesh="blue_stage_collision_3" class="collision" material="white" />
-    <body name="64.31673896757628" pos="2.3114253863067145 -2.802686743736449 7.528004301108247" >
+    <body name="558.6319054791104" pos="-3.1793610518123385 0.2886909190360303 7.45999359786858" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="130.36698677814607" pos="-1.5711562155492578 2.517360244722795 5.715863930952604" >
+    <body name="823.4756346977864" pos="2.53216398075498 1.7378051335209213 9.51759391938042" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="564.2611250208967" pos="-1.0280100760270443 1.229656375690496 8.164812189772514" >
+    <body name="10.99541846601937" pos="-3.915865524291208 -2.9892707161557492 9.136163867498396" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="783.7868199867115" pos="-1.7313756887892318 2.18797394776752 8.790146046176528" >
+    <body name="964.7117843382739" pos="-1.728240801226522 1.0255213873682347 8.337142053361344" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="726.7773783479597" pos="-1.7155339888431893 3.6523968422736406 7.709392286828605" >
+    <body name="448.9327354381226" pos="-0.4268785709057683 0.5121452592058242 6.748206589795496" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="832.893191596293" pos="-0.11630949991598438 -2.6209803211800153 6.341284703709064" >
+    <body name="240.38090129626477" pos="1.8365099496583284 2.1458088583641155 7.756335498623761" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="462.02801744982327" pos="0.5015636136889254 3.609120748464062 5.62038879511542" >
+    <body name="200.83236829732365" pos="1.0795665204206424 2.3593359077653835 9.441106669383283" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="947.3597677997994" pos="-0.4879885115779725 -0.5865124832717035 7.770553552791371" >
+    <body name="711.7303307865593" pos="2.348113930783067 -1.3246812237138093 7.601571969697532" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="843.9606553800858" pos="-0.28246715073410655 1.0999959600530982 9.496930949452855" >
+    <body name="642.9414925278235" pos="3.914194671034715 0.4420565655187465 8.955183561166274" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="984.6705908685454" pos="3.030067742097012 -3.514594487408927 9.294374222210717" >
+    <body name="885.931398298469" pos="-0.2863176573476487 -0.1558178790549256 7.539786908086484" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="848.3179583676988" pos="-1.5897655099810786 2.225517320095321 8.627600091278623" >
+    <body name="895.7524944814896" pos="-3.5327489504025253 -3.201390276244818 6.642757223181124" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="966.9168408575796" pos="2.1475480345718587 0.9086958203253603 8.093771960453758" >
+    <body name="178.31499567797204" pos="3.1067010642318618 -3.0030559230491995 8.587153631104696" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="752.005369691331" pos="1.2568366094159655 -2.855704063832886 8.828196963444107" >
+    <body name="470.1216187688185" pos="-1.7861920964589144 1.0952545317970275 9.284958323728866" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="433.19630780726027" pos="-2.339806833085147 3.744704661065118 8.816304819139141" >
+    <body name="733.3097800302493" pos="0.8961013003762455 -1.4603980901473488 5.951977461159034" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="826.1487153549263" pos="1.3606283509506705 -0.6757384575619803 6.182632548538759" >
+    <body name="110.87423023289821" pos="-2.990962796180453 3.0022890654518815 5.6242296631256385" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="666.9302818946628" pos="0.01939604403724271 1.4339983545914627 5.13330207186584" >
+    <body name="380.18243876608284" pos="3.865536967897257 1.6992390747032884 7.50936620030115" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="547.8587570056823" pos="-2.372375449622388 0.7538719507106144 6.492404081337906" >
+    <body name="54.89306671074146" pos="-1.1458939763186908 -3.7340099965502063 7.988676832246549" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="670.0980392731719" pos="-3.5646969532523247 3.569126678183806 9.806516412481093" >
+    <body name="313.7890747737755" pos="-3.2100199139214345 0.6516688629285197 5.1269183516767205" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="434.2164207539816" pos="1.654470623773566 2.267381206308082 9.121529942816492" >
+    <body name="8.150749488211595" pos="0.3607631473278081 -1.4845163068784082 8.406159259791655" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="892.8302895000912" pos="0.6364299451897537 -0.1808726452992273 8.932824518795414" >
+    <body name="193.25675314041914" pos="-0.39774613082389276 -2.797166969158626 9.021119909667425" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="541.8189936452242" pos="1.847399343311598 1.872892599175116 7.196259450358817" >
+    <body name="371.35911537205646" pos="3.7379850802393477 0.14218163717459031 6.593840769243613" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="898.5718880196224" pos="3.409983189652971 2.117102578456824 6.589951061212637" >
+    <body name="417.3856361832396" pos="-2.1036333344604072 -0.2290273681470607 8.713411822845792" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="595.2301606548772" pos="3.448069352521582 -1.2026473044843113 9.914157478717502" >
+    <body name="491.1313480838729" pos="-3.735964032152723 3.565721048974777 7.308222539288618" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="95.18375430703307" pos="-3.766257127731669 3.310807986325144 5.884149582699219" >
+    <body name="862.787954661622" pos="-2.9179374967660063 1.045896581012638 8.406706863032616" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="412.7855250287607" pos="-2.9528573595125724 2.874398790835036 7.0696922830666775" >
+    <body name="351.7808190458187" pos="-1.5560095945757357 -1.1042032283700962 9.887034033319859" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="52.4256692581011" pos="-0.8328928432984206 -3.5498629834903648 7.363303730939059" >
+    <body name="490.1714118084751" pos="-3.670073232842314 0.4176173340240954 8.503821386674083" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="570.7214016795593" pos="0.08494212140141055 0.42163215460450676 9.026825306330952" >
+    <body name="88.21335507348749" pos="0.2624283573642714 2.0789241204711812 8.693721131655419" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="510.8888367163339" pos="0.360202973328966 2.3949979173341527 5.252927544412524" >
+    <body name="906.8950603747713" pos="3.143029628015679 -2.4435659513563515 6.688794027997718" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="237.38406007656977" pos="-1.766744953326926 -1.4384754263348531 6.433523988631591" >
+    <body name="800.6858921652445" pos="3.3804631989604035 -1.1455075471620075 5.843089108955965" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
-    <body name="988.327340915178" pos="-3.9182364861950694 1.5363262200351544 5.2250662274933894" >
+    <body name="274.74434674879035" pos="1.1405169114426066 2.5506353894457696 7.330677790249894" >
       <freejoint />
-      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.04 1" solimp="0.8 0.99 0.001" />
+      <geom mesh="note" class="collision" material="white" friction="1.2 0.005 0.0001" solref="0.025 1" solimp="0.95 0.99 0.001" />
       <geom mesh="note" class="visual" material="orange" />
     </body>
     <body name="robot" pos="0 0 0" >
@@ -300,6 +300,18 @@
         </body>
         <geom mesh="swerve_module_turret" class="visual" material="white" pos="0.066675 0.066675 0" />
       </body>
+      <body name="intake_roller_1" pos="0 0.25 0.026" >
+        <inertial pos="0 0 0" mass="2.5" diaginertia="0.06 0.06 0.06" />
+        <joint name="intake_roller_1_hinge" type="hinge" axis="1 0 0" damping="0.8" armature="0.0015" actuatorfrclimited="false" />
+        <geom mesh="intake_roller_1" class="visual" material="white" pos="0 0.606 0.044" />
+        <geom type="cylinder" pos="0 0 0" size="0.0125 0.211" euler="0 1.5707 0" class="collision" material="white" friction="1.5 0.1 0.01" />
+      </body>
+      <body name="intake_roller_2" pos="0 0.323 0.07" >
+        <inertial pos="0 0 0" mass="2.5" diaginertia="0.06 0.06 0.06" />
+        <joint name="intake_roller_2_hinge" type="hinge" axis="-1 0 0" damping="0.8" armature="0.0015" actuatorfrclimited="false" />
+        <geom type="cylinder" pos="0 0 0" size="0.025 0.2" euler="0 1.5707 0" class="collision" material="white" friction="1.5 0.1 0.01" />
+        <geom mesh="intake_roller_1" class="visual" material="white" pos="0 0.606 0.044" />
+      </body>
       <geom type="box" pos="0 -0.3935 0.126" size="0.422 0.0255 0.057" class="collision" material="white" friction="0.6 0.1 0.01" solimp="0.8 0.95 0.01" solref="0.02 1.5" />
       <geom type="box" pos="0 0.3935 0.126" size="0.422 0.0255 0.057" class="collision" material="white" friction="0.6 0.1 0.01" solimp="0.8 0.95 0.01" solref="0.02 1.5" />
       <geom type="box" pos="0.3965 0.0 0.126" size="0.0255 0.368 0.057" class="collision" material="white" friction="0.6 0.1 0.01" solimp="0.8 0.95 0.01" solref="0.02 1.5" />
@@ -310,7 +322,6 @@
       <geom mesh="fr_swerve_module" class="visual" material="white" />
       <geom mesh="fl_swerve_module" class="visual" material="white" axisangle="0 0 1 3.1416" />
       <geom mesh="fr_swerve_module" class="visual" material="white" axisangle="0 0 1 3.1416" />
-      <geom mesh="intake_roller_1" class="visual" material="white" pos="0 0.356 0.07" />
     </body>
   </worldbody>
   <actuator >
@@ -322,8 +333,12 @@
     <dcmotor name="bl_swerve_module_wheel_motor" joint="bl_swerve_module_wheel_hinge" gear="5.27" nominal="12 9.2 605.80" ctrlrange="-12 12" ctrllimited="true" input="voltage" />
     <dcmotor name="br_swerve_module_turret_motor" joint="br_swerve_module_turret_hinge" gear="26.09" nominal="12 4.05 788.54" ctrlrange="-12 12" ctrllimited="true" input="voltage" />
     <dcmotor name="br_swerve_module_wheel_motor" joint="br_swerve_module_wheel_hinge" gear="5.27" nominal="12 9.2 605.80" ctrlrange="-12 12" ctrllimited="true" input="voltage" />
+    <dcmotor name="intake_roller_1_motor" joint="intake_roller_1_hinge" gear="2.0" nominal="12 9.2 605.80" ctrlrange="-12 12" ctrllimited="true" input="voltage" />
   </actuator>
   <sensor >
     <gyro name="chassis_gyro" site="imu_site" />
   </sensor>
+  <equality >
+    <joint joint1="intake_roller_1_hinge" joint2="intake_roller_2_hinge" />
+  </equality>
 </mujoco>

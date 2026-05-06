@@ -329,8 +329,8 @@ class Sphere(Geom):
     A sphere at a position and with a radius.
     """
 
-    def __init__(self, pos: str, radius: float, name: str | None = None, friction: str | None = None) -> None:
-        super().__init__(type=Geom.Type.COLLISION)
+    def __init__(self, pos: str, radius: float, name: str | None = None, friction: str | None = None, type: Geom.Type = Geom.Type.COLLISION) -> None:
+        super().__init__(type=type)
         self.pos = pos
         self.name = name
         self.radius = radius
@@ -346,6 +346,47 @@ class Sphere(Geom):
                     ("type", "sphere"),
                     ("pos", self.pos),
                     ("size", self.radius),
+                    ("class", self.type.value),
+                    ("material", self.material),
+                    ("friction", self.friction),
+                ]
+            )
+            .build(indentation)
+        )
+
+
+class Cylinder(Geom):
+    """
+    A sphere at a position and with a radius.
+    """
+
+    def __init__(
+        self,
+        pos: str,
+        size: str,
+        name: str | None = None,
+        euler: str | None = None,
+        friction: str | None = None,
+        type: Geom.Type = Geom.Type.COLLISION,
+    ) -> None:
+        super().__init__(type=type)
+        self.pos = pos
+        self.euler = euler
+        self.name = name
+        self.size = size
+        self.friction = friction
+
+    @override
+    def build(self, indentation: int = 0) -> str:
+        return (
+            LabelBuilder("geom")
+            .with_optionals(
+                [
+                    ("name", self.name),
+                    ("type", "cylinder"),
+                    ("pos", self.pos),
+                    ("size", self.size),
+                    ("euler", self.euler),
                     ("class", self.type.value),
                     ("material", self.material),
                     ("friction", self.friction),
@@ -477,6 +518,9 @@ class Joint(Buildable):
         X = "1 0 0"
         Y = "0 1 0"
         Z = "0 0 1"
+        NX = "-1 0 0"
+        NY = "0 -1 0"
+        NZ = "0 0 -1"
 
     def __init__(
         self,
@@ -613,11 +657,13 @@ class DCMotor(Buildable):
         VELOCITY = "velocity"
 
     @staticmethod
-    def kraken_x60(name: str, joint: Joint, gear_ratio: float, input: InputMode = InputMode.VOLTAGE, pid: PIDController | None = None) -> DCMotor:
+    def kraken_x60(
+        name: str, joints: Joint | list[Joint], gear_ratio: float, input: InputMode = InputMode.VOLTAGE, pid: PIDController | None = None
+    ) -> DCMotor:
         # Nominal: voltage is from the battery, 9.2 is the stall torque with FOC, 605.80 is the no-load speed in rad/s (6777 RPM)
         return DCMotor(
             name,
-            joint,
+            joints,
             gear_ratio,
             nominal="12 9.2 605.80",
             input=input,
@@ -626,11 +672,13 @@ class DCMotor(Buildable):
         )
 
     @staticmethod
-    def kraken_x44(name: str, joint: Joint, gear_ratio: float, input: InputMode = InputMode.VOLTAGE, pid: PIDController | None = None) -> DCMotor:
+    def kraken_x44(
+        name: str, joints: Joint | list[Joint], gear_ratio: float, input: InputMode = InputMode.VOLTAGE, pid: PIDController | None = None
+    ) -> DCMotor:
         # Nominal: voltage is from the battery, 4.05 is the stall torque with FOC, 788.54 is the no-load speed in rad/s (7530 RPM).
         return DCMotor(
             name,
-            joint,
+            joints,
             gear_ratio,
             nominal="12 4.05 788.54",
             input=input,
@@ -641,7 +689,7 @@ class DCMotor(Buildable):
     def __init__(
         self,
         name: str,
-        joint: Joint,
+        joints: Joint | list[Joint],
         gear_ratio: float,
         resistance: ohms | None = None,
         motorconst: str | None = None,
@@ -656,7 +704,7 @@ class DCMotor(Buildable):
         pid: str | None = None,
     ) -> None:
         self.name = name
-        self.joint = joint
+        self.joints = joints if isinstance(joints, list) else [joints]
         self.gear = gear_ratio
         self.resistance = resistance
         self.motorconst = motorconst
@@ -677,7 +725,7 @@ class DCMotor(Buildable):
             .with_optionals(
                 [
                     ("name", self.name),
-                    ("joint", self.joint.name),
+                    ("joint", " ".join(map(lambda j: j.name, self.joints))),
                     ("gear", self.gear),
                     ("resistance", self.resistance),
                     ("motorconst", self.motorconst),
@@ -705,6 +753,35 @@ class Gyro(Buildable):
     @override
     def build(self, indentation: int = 0) -> str:
         return LabelBuilder("gyro").with_option("name", self.name).with_option("site", self.site.name).build(indentation)
+
+
+# class Tendon(Buildable):
+#     def __init__(self, joints: list[Joint], name: str | None = None) -> None:
+#         self.name = name
+#         self.joints = joints
+
+#     @override
+#     def build(self, indentation: int = 0) -> str:
+#         return (
+#             LabelBuilder("fixed")
+#             .with_optional("name", self.name)
+#             .with_children([LabelBuilder("joint").with_option("joint", joint.name).with_option("coef", 1) for joint in self.joints])
+#             .build(indentation)
+#         )
+
+
+class Equality(Buildable):
+    def __init__(self, joint1: Joint, joint2: Joint) -> None:
+        self.joint1 = joint1
+        self.joint2 = joint2
+
+    @override
+    def build(self, indentation: int = 0) -> str:
+        return (
+            LabelBuilder("equality")
+            .with_child(LabelBuilder("joint").with_option("joint1", self.joint1.name).with_option("joint2", self.joint2.name))
+            .build(indentation)
+        )
 
 
 class Plugin(Buildable):
@@ -758,6 +835,7 @@ class Model(Buildable):
         self.world = World()
         self.motors: list[Motor | DCMotor] = []
         self.gyros: list[Gyro] = []
+        self.equalities: list[Equality] = []
 
     def add_mesh(self, name: str, file: str) -> MeshAsset:
         out = MeshAsset(name, file)
@@ -801,5 +879,6 @@ class Model(Buildable):
             .with_child(self.world)
             .with_child(LabelBuilder("actuator").with_children(self.motors))
             .with_child(LabelBuilder("sensor").with_children(self.gyros))
+            .with_children(self.equalities)
             .build(indentation)
         )

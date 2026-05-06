@@ -6,7 +6,6 @@ from wpilib import SendableChooser, SmartDashboard
 class Auto(Enum):
     NONE = "None"
 
-
 class Dashboard:
     def __init__(self) -> None:
         self.auto_chooser: SendableChooser = SendableChooser()

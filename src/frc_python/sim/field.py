@@ -17,7 +17,7 @@ class CrescendoField(SimField):
     NAME = "Crescendo"
 
     def build_note(self, name: str, pos: str, mesh: MeshAsset) -> Body:
-        col = Mesh(mesh, type=Geom.Type.COLLISION, friction="1.2 0.005 0.0001", solref="0.04 1", solimp="0.8 0.99 0.001")
+        col = Mesh(mesh, type=Geom.Type.COLLISION, friction="1.2 0.005 0.0001", solref="0.025 1", solimp="0.95 0.99 0.001")
         vis = Mesh(mesh, "orange", Geom.Type.VISUAL)
         out = Body(name, True, pos)
         out.geoms.append(col)

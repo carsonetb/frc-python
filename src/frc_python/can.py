@@ -9,7 +9,7 @@ _canivore_bus = CANBus("*")
 
 
 class SIMDeviceID(Enum):
-    INTAKE_ROLLER = MotorID("intake_roller_joint", "intake_roller_motor")
+    INTAKE_ROLLER = MotorID("intake_roller_1_hinge", "intake_roller_1_motor")
 
 
 class CTREDeviceID(Enum):

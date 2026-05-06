@@ -15,6 +15,7 @@ from frc_python.sim.common import SimulatableRobot, SimulatableSubsystem, Simula
 from frc_python.sim.field import CrescendoField, SimField
 from frc_python.sim.xmlgen import Body, Inertial, Material, Model
 from frc_python.subsystems.drivetrain.drivetrain import Drivetrain
+from frc_python.subsystems.intake.intake import Intake
 from frc_python.units.mass import kilograms
 from frc_python.utils.misc import TIMESTEP
 
@@ -176,6 +177,7 @@ def main():
 
     Simulator.Field = CrescendoField
     Simulator.buildables.append(Drivetrain)
+    Simulator.buildables.append(Intake)
     Simulator.build("temp.xml")
     Simulator.simulate(Robot, FLIGHT_STICKS)
 
